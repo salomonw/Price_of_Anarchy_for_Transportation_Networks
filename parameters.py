@@ -57,37 +57,3 @@ for i in range(9)[1:]:
             od_pairs.append([i, j])
 
 od_pairs
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -20,7 +20,7 @@ def import_jing_net(dir_shpfile, files_ID, out_dir):
     os.chdir('C:/Users/Salomon Wollenstein/Documents/GitHub/InverseVIsTraffic/Python_files')
     link_with_capac_list = list(zload('C:/Users/Salomon Wollenstein/Documents/GitHub/InverseVIsTraffic/temp_files/links_with_capac.pkz'))
     
-    os.chdir('C:/Users/Salomon Wollenstein/Documents/GitHub/PoA_Jing_net/python')
+    os.chdir('G:/My Drive/Github/PoA/Price_of_Anarchy_for_Transportation_Networks')
     
     shape = nx.read_shp(dir_shpfile)
     
@@ -74,4 +74,4 @@ def import_jing_net(dir_shpfile, files_ID, out_dir):
     
     return G
 
-os.chdir('C:/Users/Salomon Wollenstein/Documents/GitHub/PoA_Jing_net/python')
+os.chdir('G:/My Drive/Github/PoA/Price_of_Anarchy_for_Transportation_Networks')

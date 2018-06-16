@@ -6,7 +6,7 @@ Created on Mon Jun 11 13:50:19 2018
 """
 import os 
 
-os.chdir('C:/Users/Salomon Wollenstein/Documents/GitHub/PoA_Jing_net/python')
+os.chdir('G:/My Drive/Github/PoA/Price_of_Anarchy_for_Transportation_Networks')
 
 
 get_ipython().magic(u'run utils.py')
@@ -22,6 +22,7 @@ get_ipython().magic(u'run unzip_files.py')
 # ---------- Preprocessing -----------------------
 
 G = import_jing_net(dir_shpfile, files_ID, out_dir) 
+
 G = zload(out_dir + 'G' + files_ID + '.pkz')
     
 

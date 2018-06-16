@@ -33,7 +33,7 @@ cap_data = pd.read_pickle(out_dir + 'cap_data' + files_ID + '.pkz')
 
 ### Flows
 
-os.chdir('C:/Users/Salomon Wollenstein/Documents/GitHub/PoA_Jing_net/python')
+os.chdir('G:/My Drive/Github/PoA/Price_of_Anarchy_for_Transportation_Networks')
 instance = 'NT'
 # Convert Salo's flow into Jing 
 

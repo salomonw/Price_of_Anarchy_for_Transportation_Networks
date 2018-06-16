@@ -354,47 +354,16 @@ def createPathLinkIncidenceMatrix(G, link_length, link_freeFlowTravelTime):
     # compute the lenght of a route
     
     def routeTime(route):
-    link_list = []
-    node_list = []
-    for i in route.split('->'):
-        node_list.append(int(i))
-    for i in range(len(node_list))[:-1]:
-        link_list.append('%d->%d' %(node_list[i], node_list[i+1]))
-    time_of_route = sum([link_freeFlowTravelTime_dict[str(link_label_dict_[link])] for link in link_list])
-    return time_of_route
+        link_list = []
+        node_list = []
+        for i in route.split('->'):
+            node_list.append(int(i))
+        for i in range(len(node_list))[:-1]:
+            link_list.append('%d->%d' %(node_list[i], node_list[i+1]))
+        time_of_route = sum([link_freeFlowTravelTime_dict[str(link_label_dict_[link])] for link in link_list])
+        return time_of_route
 
 
     # export a Path link incidence Matrix
         #Maybe use simple paths proposed by networkx
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
