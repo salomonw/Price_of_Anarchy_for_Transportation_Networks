@@ -24,7 +24,6 @@ get_ipython().magic(u'run unzip_files.py')
 G = import_jing_net(dir_shpfile, files_ID, out_dir) 
 
 G = zload(out_dir + 'G' + files_ID + '.pkz')
-    
 
 extract_2012_INRIX_data(dir_data , out_dir, filtered_data_dir, files_ID , confidence_score_min,c_value_min)
 
@@ -40,5 +39,11 @@ filter_time_instances(out_dir, files_ID, time_instances, data_granularity)
 
 G_ = calculate_data_flows(out_dir, files_ID, time_instances, days_of_week)
 
-
 # ---------- OD Demand  -----------------------
+
+od_pair_definition(out_dir, files_ID )
+
+path_incidence_matrix(out_dir, files_ID, time_instances, number_of_routes_per_od, theta )
+
+
+

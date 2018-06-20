@@ -9,7 +9,7 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 
-os.chdir('C:/Users/Salomon Wollenstein/Documents/GitHub/InverseVIsTraffic/000_ETA/')
+os.chdir('G:/My Drive/Github/InverseVIsTraffic/000_ETA/')
 get_ipython().magic(u'run util_data_storage_and_load.py')
 get_ipython().magic(u'run util.py')
 

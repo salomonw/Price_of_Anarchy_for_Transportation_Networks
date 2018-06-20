@@ -22,7 +22,7 @@ import pickle
 import pandas as pd
 import numpy as np
 import datetime 
-
+from math import exp
 from utils import *
 
 
@@ -300,9 +300,6 @@ def calculate_data_flows(out_dir, files_ID, time_instances, days_of_week):
             df2['prod'] = ( df2['xflow'] * df2['Shape_Leng']) / df2['speed']
             df2['travelTime'] = df2['Shape_Leng'] / df2['speed']
             grouped = df2.groupby('measurement_tstamp').sum()
-            
-            #sum_avg_speed_free_flow = sum(df2.groupby('measurement_tstamp').mean()['speed'])
-            #free_flow_speed_link = free_flow_speed[free_flow_speed.index.isin(tmc_list)]
             l_xflows['flow'] = grouped['prod']/(grouped['Shape_Leng']/ grouped['travelTime'] )
             
             if l_xflows.isnull().values.any() == True:
@@ -321,10 +318,10 @@ def calculate_data_flows(out_dir, files_ID, time_instances, days_of_week):
         linkFlow = linkFlow.reset_index()
         unique_t = linkFlow['measurement_tstamp'].unique()
 
-        G_[instance] = G
-        G_[instance] = nx.set_edge_attributes(G , name = 'length', values= l_length )
-        G_[instance] = nx.set_edge_attributes(G , name = 'avgSpeed', values= l_avgSpeed)
-
+        G_[instance] = nx.DiGraph()
+        for edge in list( G.edges()):
+            G_[instance].add_edge(edge[0], edge[1], length = l_length[edge], avgSpeed = l_avgSpeed[edge])
+            
         flow_after_conservation={}
         for idx in list(unique_t):
             ins = linkFlow[linkFlow['measurement_tstamp']==idx]
@@ -333,20 +330,153 @@ def calculate_data_flows(out_dir, files_ID, time_instances, days_of_week):
                 flow_after_conservation[idx] = flow_conservation_adjustment(G,ins)
             
         pd.to_pickle(flow_after_conservation, out_dir + 'flows_after_QP' + files_ID + '_' + instance +'.pkz')
+    zdump(G_, out_dir + 'G_' + files_ID + '.pkz' )
     return G_
-    zdump(G_, out_dir + 'G_' + files_ID +  +'.pkz' )
     
-  
+
 #### ------------ OD Estimation ------------- :
+
+def od_pair_definition(out_dir, files_ID ):
+    G = zload(out_dir + 'G' + files_ID + '.pkz')
+    od_pairs=[]
+    for i in G.nodes():
+        for j in G.nodes():
+            if i != j:
+                od_pairs.append((i, j))
+    zdump(od_pairs, out_dir + 'od_pairs'+ files_ID + '.pkz')
+
+
+def routes(G, out_dir, files_ID, od_pairs, number_of_routes_per_od, instance):
     
-    
-def createPathLinkIncidenceMatrix(G, link_length, link_freeFlowTravelTime):
-    nodes = list(G.nodes())
-    neighbors={}
-    for node in nodes:
-        neighbors_dict = (G.neighbors(node))
+    # Create Routes
+    routes = []
+    link_dict = dict(zip(list(G.edges()),range(len(list(G.edges())))))
+    OD_dict = dict(zip(od_pairs,range(len(od_pairs))))
+    OD_pair_route_dict = {}
+    cnt_od = 0
+    cnt_route = 0
+    for od in od_pairs:
+        route = nx.all_simple_paths(G,od[0],od[1])
+        route = list(route)
+        route_length_od = {}
+        for r in route:
+            total_length = 0
+            total_travelTime = 0
+            for i in range(len(r)-1):
+                source, target = r[i], r[i+1]
+                edge = G[source][target]
+                length = edge['length']
+                total_length += length
+                travelTime = edge['length']/edge['avgSpeed']
+                total_travelTime += travelTime 
+            #routes.append(r)
+            route_length_od[tuple(r)] = [total_length, total_travelTime]
+            filtered_routes = sorted(route_length_od.iteritems(), key=lambda (k,v): (v,k))[:number_of_routes_per_od]
         
+        OD_pair_route_list = []
+        for i in filtered_routes:
+            routes.append([i[0], i[1], cnt_route])
+            OD_pair_route_list.append(cnt_route)
+            cnt_route += 1
+        OD_pair_route_dict[cnt_od] = OD_pair_route_list
+        cnt_od += 1
+            
+        # Create Path-Link Incidence Matrix
+        r = len(routes) # Number of routes
+        m = len(list(G.edges())) # Number of links
+        A = np.zeros((m, r))
+        for route2 in routes:
+            edgesinpath=zip(route2[0][0:],route2[0][1:])           
+            for edge in edgesinpath:
+                #print(link)
+                link = link_dict[edge] 
+                A[link,routes.index(route2)] = 1
+                
+    zdump(A, out_dir + 'path-link_incidence_matrix'+ instance + files_ID + '.pkz')
+
+    #length_of_route_list = [[i[1][0], i[2]] for i in routes]
+    length_of_route_dict = {}
+    for i in routes:
+        length_of_route_dict[i[2]]=i[1][0] 
+    # calculate route choice probability matrix P
+    # logit choice parameter
+    theta = 0.8 #send as parameter !
+    s = len(od_pairs) # number of OD pairs
+    r = len(routes) # Number of routes
+    P = np.zeros((s, r))
+    for i in range(s):
+        for r_ in OD_pair_route_dict[i]:
+            P[i, r_] = 1
+            
+            P[i, r_] = exp(- theta * length_of_route_dict[r_]) / \
+            sum([exp(- theta * length_of_route_dict[j]) \
+                             for j in OD_pair_route_dict[i]])
+    zdump(P, out_dir + 'OD_pair_route_incidence'+ instance + files_ID + '.pkz')     
+      
+    #return routes, A, P
+
+#number_of_routes_per_od = 3
+#routes = routes(G, od_pairs, number_of_routes_per_od)
+
+
+
+def path_incidence_matrix(out_dir, files_ID, time_instances, number_of_routes_per_od, theta ):
+    G_ = zload( out_dir + 'G_' + files_ID + '.pkz' )
+    od_pairs = zload(out_dir + 'od_pairs'+ files_ID + '.pkz')
+    
+    for instance in list(time_instances['id']):
+        G = G_[instance]
+        routes(G, out_dir, files_ID, od_pairs, number_of_routes_per_od, instance)
+
+
+#def path_link_incidence_matrix
+# Create Path-Link Incidence Matrix
+
+
+
+
+
+'''
+
+
+
+
+
+
+
+
+
+
+
+
+def routeLength(route):
+    link_list = []
+    node_list = []
+    for i in route.split('->'):
+        node_list.append(int(i))
+    for i in range(len(node_list))[:-1]:
+        link_list.append('%d->%d' %(node_list[i], node_list[i+1]))
+    length_of_route = sum([link_length_dict[str(link_label_dict_[link])] for link in link_list])
+    return length_of_route
+
+
+def find_paths_of_OD_pairs(G, od_pairs):
+    
+
+
+
+
+
+#def createPathLinkIncidenceMatrix(G, link_length, link_freeFlowTravelTime):
+#    nodes = list(G.nodes())
+#    neighbors={}
+#    for node in nodes:
+#        neighbors_dict = (G.neighbors(node))
+      
     # read link length dictionary
+    
+    
+    
     
     # read link free Flow Travel time
     
@@ -366,4 +496,4 @@ def createPathLinkIncidenceMatrix(G, link_length, link_freeFlowTravelTime):
 
     # export a Path link incidence Matrix
         #Maybe use simple paths proposed by networkx
-    
+'''

@@ -20,11 +20,11 @@ import pandas as pd
 import os 
 import networkx as nx
 import multiprocessing as mp
-from dbfread import DBF    
+#from dbfread import DBF    
 import matplotlib.pyplot as plt
 from gurobipy import *
 import pickle
-import pysal as ps
+#import pysal as ps
 import pandas as pd
 import numpy as np
 import datetime
