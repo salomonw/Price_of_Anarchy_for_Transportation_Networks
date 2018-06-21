@@ -25,6 +25,25 @@ import datetime
 from math import exp
 from utils import *
 
+def is_pos_def(x):
+    return np.all(np.linalg.eigvals(x) > 0)
+
+def samp_cov(x):
+    """
+    x: sample matrix, each column is a link flow vector sample
+    K: number of samples
+    S: sample covariance matrix
+    ----------------
+    return: S
+    ----------------
+    """
+    x = np.matrix(x)
+    K = np.size(x, 1)
+    x_mean = sum(x[:,k] for k in range(K)) / K
+    S = sum(np.dot(x[:,k] - x_mean, np.transpose(x[:,k] - x_mean)) for k in range(K)) / (K - 1)
+    S = adj_PSD(S)
+    return S
+
 
 def flow_conservation_adjustment(G,y):
     # y is a dict with flows and TMCs
@@ -296,11 +315,11 @@ def calculate_data_flows(out_dir, files_ID, time_instances, days_of_week):
             #df2['prod'] = df2['xflow'] * df2['LENGTH']
             #grouped = df2.groupby('measurement_tstamp').sum()
             #l_xflows ['flow'] = grouped['prod'] / grouped['LENGTH'] 
-            df2['Shape_Leng'] =  0.000621371 * df2['Shape_Leng']  #since the speed (miles/hr) and len (meters --> miles)
-            df2['prod'] = ( df2['xflow'] * df2['Shape_Leng']) / df2['speed']
+            df2['Shape_Leng'] = 0.000621371192 * df2['Shape_Leng']  #since the speed (miles/hr) and len (meters --> miles)
+            df2['prod'] = df2['xflow'] * df2['Shape_Leng'] / df2['speed']
             df2['travelTime'] = df2['Shape_Leng'] / df2['speed']
             grouped = df2.groupby('measurement_tstamp').sum()
-            l_xflows['flow'] = grouped['prod']/(grouped['Shape_Leng']/ grouped['travelTime'] )
+            l_xflows['flow'] = grouped['prod'] / (grouped['travelTime'])
             
             if l_xflows.isnull().values.any() == True:
                 time.sleep()
@@ -392,7 +411,7 @@ def routes(G, out_dir, files_ID, od_pairs, number_of_routes_per_od, instance):
                 link = link_dict[edge] 
                 A[link,routes.index(route2)] = 1
                 
-    zdump(A, out_dir + 'path-link_incidence_matrix'+ instance + files_ID + '.pkz')
+    zdump(A, out_dir + 'path-link_incidence_matrix_'+ instance + files_ID + '.pkz')
 
     #length_of_route_list = [[i[1][0], i[2]] for i in routes]
     length_of_route_dict = {}
@@ -411,7 +430,7 @@ def routes(G, out_dir, files_ID, od_pairs, number_of_routes_per_od, instance):
             P[i, r_] = exp(- theta * length_of_route_dict[r_]) / \
             sum([exp(- theta * length_of_route_dict[j]) \
                              for j in OD_pair_route_dict[i]])
-    zdump(P, out_dir + 'OD_pair_route_incidence'+ instance + files_ID + '.pkz')     
+    zdump(P, out_dir + 'OD_pair_route_incidence_'+ instance + files_ID + '.pkz')     
       
     #return routes, A, P
 
@@ -432,11 +451,299 @@ def path_incidence_matrix(out_dir, files_ID, time_instances, number_of_routes_pe
 #def path_link_incidence_matrix
 # Create Path-Link Incidence Matrix
 
-
-
-
-
 '''
+G = zload(out_dir + 'G' + files_ID + '.pkz')
+
+N = nx.incidence_matrix(G,oriented=True)
+
+# load link_route incidence matrix
+N = nx.incidence_matrix(G,oriented=True)
+N = N.todense()
+
+
+numEdges = len(G.edges())
+instance = 'AM'
+flow_after_conservation = pd.read_pickle(out_dir + 'flows_after_QP' + files_ID + '_' + instance +'.pkz')
+x = np.zeros(numEdges)
+
+for ts in flow_after_conservation :
+    #x = np.zeros(numEdges)
+    a = np.array(list(flow_after_conservation[ts].values()))
+    x = np.c_[x,a]
+
+x = np.delete(x,0,1)
+x = np.asmatrix(x)
+A = zload(out_dir + 'path-link_incidence_matrix'+ instance + files_ID + '.pkz')
+A = np.asmatrix(A)
+P = zload(out_dir + 'OD_pair_route_incidence'+ instance + files_ID + '.pkz')
+P = np.asmatrix(P)
+
+L = np.size(P, 1) 
+'''
+
+# implement GLS method to estimate OD demand matrix
+
+
+from numpy import linalg as LA
+def adj_PSD(Sigma):
+    # Ensure Sigma to be symmetric
+    Sigma = (1.0 / 2) * (Sigma + np.transpose(Sigma))
+
+    # Ensure Sigma to be positive semi-definite
+    D, V = LA.eig(Sigma)
+    D = np.diag(D)
+    Q, R = LA.qr(V)
+    for i in range(0, np.size(Sigma,0)):
+        if D[i, i] < 1e-5:
+            D[i, i] = 1e-5
+    Sigma = np.dot(np.dot(Q, D), LA.inv(Q))
+    return Sigma
+
+
+def GLS(xa, A, L):
+    import numpy as np
+    from numpy.linalg import inv
+    import json
+    """
+    x: sample matrix, each column is a link flow vector sample; 24 * K
+    A: path-link incidence matrix
+    P: logit route choice probability matrix
+    L: dimension of xi
+    ----------------
+    return: xi
+    ----------------
+    """
+    K = np.size(xa, 1)
+    S = samp_cov(xa)
+
+    inv_S = inv(S).real
+
+    A_t = np.transpose(A)
+
+    Q_ = np.dot(np.dot(A_t, inv_S), A)
+    Q = adj_PSD(Q_).real  # Ensure Q to be PSD
+    #Q = Q_
+
+    b = sum([np.dot(np.dot(A_t, inv_S), xa[:, k]) for k in range(K)])
+
+    model = Model("OD_matrix_estimation")
+
+    xi = []
+    for l in range(L):
+        xi.append(model.addVar(name='xi_' + str(l)))
+
+    model.update() 
+
+    # Set objective: (K/2) xi' * Q * xi - b' * xi
+    obj = 0
+    for i in range(L):
+        for j in range(L):
+            obj += (1.0 / 2) * K * xi[i] * Q[i, j] * xi[j]
+    for l in range(L):
+        obj += - b[l] * xi[l]
+    model.setObjective(obj)
+
+    # Add constraint: xi >= 0
+    for l in range(L):
+        model.addConstr(xi[l] >= 0)
+   
+    model.update() 
+
+    model.setParam('OutputFlag', False)
+    model.optimize()
+
+    xi_list = []
+    for v in model.getVars():
+        xi_list.append(v.x)
+ 
+    return xi_list
+
+def ODandRouteChoiceMat(P, xi_list):
+    model = Model("OD_matrix_and_route_choice_matrix")
+    
+    L = np.size(P,0)  # dimension of lam
+    
+    lam = []
+    for l in range(L):
+        lam.append(model.addVar(name='lam_' + str(l)))
+        model.update()
+        model.addConstr(lam[l] >= 0)
+        
+    p = {}
+    for i in range(np.size(P,0)):
+        for j in range(np.size(P,1)):
+            p[(i,j)] = model.addVar(name='p_' + str(i) + ',' + str(j))  
+            model.update()
+            model.addConstr(p[(i,j)] >= 0)
+            if P[i,j] == 0:
+                model.addConstr(p[(i,j)] == 0)
+    
+    for i in range(np.size(P,0)):
+        model.addConstr(sum([p[(i,j)] for j in range(np.size(P,1))]) == 1)
+    
+    for idx in range(len(xi_list)):
+        model.addConstr(sum([p[(l,idx)] * lam[l] for l in range(L)]) >= xi_list[idx])
+        model.addConstr(sum([p[(l,idx)] * lam[l] for l in range(L)]) <= xi_list[idx])
+    
+    model.update()
+    
+    obj = 1
+    model.setObjective(obj)
+    
+    model.update() 
+    
+    model.setParam('OutputFlag', False)
+    model.optimize()
+    
+    lam_list = []
+    for v in model.getVars():
+        # print('%s %g' % (v.varName, v.x))
+        if 'lam' in v.varName:
+            lam_list.append(v.x)
+            
+    return lam_list
+
+                    
+def runGLS(out_dir, files_ID, time_instances):
+    import numpy as np
+    from numpy.linalg import inv
+    import json
+    
+    G = zload(out_dir + 'G' + files_ID + '.pkz')
+        
+    N = nx.incidence_matrix(G,oriented=True)
+    N = N.todense()
+    
+    numEdges = len(G.edges())
+    
+    for instance in list(time_instances['id']):
+        #instance = 'AM'
+        flow_after_conservation = pd.read_pickle(out_dir + 'flows_after_QP' + files_ID + '_' + instance +'.pkz')
+        x = np.zeros(numEdges)
+        
+        for ts in flow_after_conservation :
+            #x = np.zeros(numEdges)
+            a = np.array(list(flow_after_conservation[ts].values()))
+            x = np.c_[x,a]
+        
+        x = np.delete(x,0,1)
+        x = np.asmatrix(x)
+        A = zload(out_dir + 'path-link_incidence_matrix_'+ instance + files_ID + '.pkz')
+        A = np.asmatrix(A)
+        P = zload(out_dir + 'OD_pair_route_incidence_'+ instance + files_ID + '.pkz')
+        P = np.asmatrix(P)
+        
+        L = np.size(P, 1) 
+        
+        x = np.nan_to_num(x)
+        y = np.array(np.transpose(x))
+        y = y[np.all(y != 0, axis=1)]
+        x = np.transpose(y)
+        x = np.matrix(x)
+          
+        L = np.size(P,1)  # dimension of xi
+        
+        xi_list = GLS(x, A, L)
+        
+        def saveDemandVec(G, out_dir, instance, files_ID, lam_list):
+            lam_dict = {}
+            n = len(G.nodes())  # number of nodes
+            with open(out_dir + 'OD_demand_matrix_Apr_weekday_'+ instance + files_ID + '.txt', 'w') as the_file:
+                idx = 0
+                for i in range(n + 1)[1:]:
+                    for j in range(n + 1)[1:]:
+                        if i != j: 
+                            key = str(idx)
+                            lam_dict[key] = lam_list[idx]
+                            the_file.write("%d,%d,%f\n" %(i, j, lam_list[idx]))
+                            idx += 1
+        saveDemandVec(G, out_dir, instance, files_ID, xi_list)
+       
+    
+    
+    
+    
+    
+ 
+    '''
+    xi_dict = {}
+
+    L, len(xi_list), xi_list
+    
+    range(31)[1:]
+    
+    link_day_Apr_list = []
+    for link_idx in range(24):
+        for day in range(31)[1:]: 
+            key = 'link_' + str(link_idx) + '_' + str(day)
+            link_day_minute_Apr_list.append(link_day_minute_Apr_dict_JSON[key] ['PM_flow'])
+    
+    # print(len(link_day_minute_Apr_list))
+    
+    x_ = np.matrix(link_day_Apr_list)
+    x_ = np.matrix.reshape(x_, 24, 30)
+    
+    x_ = np.nan_to_num(x_)
+    y_ = np.array(np.transpose(x_))
+    y_ = y_[np.all(y_ != 0, axis=1)]
+    x_ = np.transpose(y_)
+    x_ = np.matrix(x_)
+
+    
+   
+    
+    
+    
+    
+    # load link counts data
+    with open('../temp_files/link_day_minute_Apr_dict_JSON.json', 'r') as json_file:
+        link_day_minute_Apr_dict_JSON = json.load(json_file)
+    
+    # week_day_Apr_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30]
+    week_day_Apr_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23]
+    
+    link_day_minute_Apr_list = []
+    for link_idx in range(24):
+        for day in week_day_Apr_list: 
+            for minute_idx in range(120):
+                key = 'link_' + str(link_idx) + '_' + str(day)
+                link_day_minute_Apr_list.append(link_day_minute_Apr_dict_JSON[key] ['NT_flow_minute'][minute_idx])
+    
+    # print(len(link_day_minute_Apr_list))
+    
+    x = np.matrix(link_day_minute_Apr_list)
+    x = np.matrix.reshape(x, 24, 120 * len(week_day_Apr_list))
+    
+    x = np.nan_to_num(x)
+    y = np.array(np.transpose(x))
+    y = y[np.all(y != 0, axis=1)]
+    x = np.transpose(y)
+    x = np.matrix(x)
+    
+    # print(np.size(x,0), np.size(x,1))
+    # print(x[:,:2])
+    # print(np.size(A,0), np.size(A,1))
+    
+    L = np.size(P,1)  # dimension of xi
+    
+    xi_list = GLS(x, A, L)
+    
+    # write estimation result to file
+    def saveDemandVec(lam_list):
+        lam_dict = {}
+        n = 8  # number of nodes
+        with open('../temp_files/OD_demand_matrix_Apr_weekday_NT.txt', 'w') as the_file:
+            idx = 0
+            for i in range(n + 1)[1:]:
+                for j in range(n + 1)[1:]:
+                    if i != j: 
+                        key = str(idx)
+                        lam_dict[key] = lam_list[idx]
+                        the_file.write("%d,%d,%f\n" %(i, j, lam_list[idx]))
+                        idx += 1
+    
+
+
 
 
 

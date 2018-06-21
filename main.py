@@ -4,10 +4,9 @@ Created on Mon Jun 11 13:50:19 2018
 
 @author: Salomon Wollenstein
 """
-import os 
+import os
 
 os.chdir('G:/My Drive/Github/PoA/Price_of_Anarchy_for_Transportation_Networks')
-
 
 get_ipython().magic(u'run utils.py')
 
@@ -19,11 +18,11 @@ get_ipython().magic(u'run functions.py')
 
 get_ipython().magic(u'run unzip_files.py')
 
-# ---------- Preprocessing -----------------------
+# ---------------------------- Preprocessing -----------------------------
 
-G = import_jing_net(dir_shpfile, files_ID, out_dir) 
+G = import_jing_net(dir_shpfile, files_ID, out_dir)
 
-G = zload(out_dir + 'G' + files_ID + '.pkz')
+#G = zload(out_dir + 'G' + files_ID + '.pkz')
 
 extract_2012_INRIX_data(dir_data , out_dir, filtered_data_dir, files_ID , confidence_score_min,c_value_min)
 
@@ -39,11 +38,10 @@ filter_time_instances(out_dir, files_ID, time_instances, data_granularity)
 
 G_ = calculate_data_flows(out_dir, files_ID, time_instances, days_of_week)
 
-# ---------- OD Demand  -----------------------
+# ------------------------------- OD Demand  -----------------------
 
 od_pair_definition(out_dir, files_ID )
 
 path_incidence_matrix(out_dir, files_ID, time_instances, number_of_routes_per_od, theta )
 
-
-
+runGLS(out_dir, files_ID, time_instances)
