@@ -8,10 +8,10 @@ import pandas as pd
 import os 
 
 'Parameters'
-dir_shpfile = 'G:/My Drive/GitHub/PoA/shp/Jing/journal.shp'
-dir_data = 'G:/Team Drives/MPO 2012/raw/Apr' # Will take all of the csv files contained in folders and subfolders
+dir_shpfile = 'C:/Users/Salomon Wollenstein/Documents/GitHub/PoA/shp/Jing/journal.shp'
+dir_data = 'C:/Users/Salomon Wollenstein/Documents/InverseVisTraffic/INRIX_data_gz' # Will take all of the csv files contained in folders and subfolders
 files_ID = '_cdc_all_comp_apr_2012'
-dir_capacity_data = 'G:/Team Drives/MPO 2012/capacity data/'
+dir_capacity_data = '../data/'
 
 out_dir = '../results/' + files_ID + '/' 
 filtered_data_dir =  out_dir + 'filtered_tmc_data' 	+ '/'
@@ -22,7 +22,7 @@ if os.path.isdir(out_dir) == False:
 # Filtering by date range and tmc
 dates_input = [#{'id':'Jan','start_date': '2015-01-01' , 'end_date':'2015-01-10'}, 
                #{'id':'Feb','start_date': '2015-02-01' , 'end_date':'2015-02-15'}] 
-               {'id':'Apr','start_date': '2012-04-01' , 'end_date':'2012-04-30'}] 
+               {'id':'Apr','start_date': '2012-04-01' , 'end_date':'2012-04-2'}] 
                #{'id':'Aug','start_date': '2015-08-01' , 'end_date':'2015-08-10'}, 
                #{'id':'Nov','start_date': '2015-11-01' , 'end_date':'2015-11-10'}]
  
@@ -30,7 +30,7 @@ dates_input = [#{'id':'Jan','start_date': '2015-01-01' , 'end_date':'2015-01-10'
 days_of_week = 'weekdays'
 
 dates = pd.DataFrame(dates_input)
-percentile_free_flow = 95
+percentile_free_flow = 85
 
 # Time instances
 time_instances_input = [{'id':'AM','start_time':'7:00', 'end_time':'9:00'}, 

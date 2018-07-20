@@ -43,7 +43,7 @@ def dbf2DF(dbfile, upper=True): #Reads in DBF files and returns Pandas DF
 #Filtering by TMC
 def filter_tmc(df,tmc_list,confidence_score_min,c_value_min): 
     df = df[df.tmc_code.isin(tmc_list)]
-    df = df[df.confidence_score >= confidence_score_min]
+    #df = df[df.confidence_score >= confidence_score_min]
     df2 = df[df.cvalue >= c_value_min]
     
     return df2
@@ -72,9 +72,17 @@ def percentile(n):
 
 
 #Green Shield model
+#def greenshield(speed,capacity,free_flow_speed):
+#    x = 4 * capacity * (np.true_divide(speed,free_flow_speed)-(np.true_divide(speed,free_flow_speed)**2))
+#    return x
+
 def greenshield(speed,capacity,free_flow_speed):
-    x = 4 * capacity * (np.true_divide(speed,free_flow_speed)-(np.true_divide(speed,free_flow_speed)**2))
+    if speed > free_flow_speed or capacity < 0:
+        return 0
+    x = 4 * capacity * speed / free_flow_speed - 4 * capacity * (speed ** 2) / (free_flow_speed ** 2)
     return x
+
+
 
 # Plot shapefiles
 def plot_shp(shp_obj):
@@ -240,7 +248,11 @@ def flow_conservation_adjustment(y_0):
     # print('Obj: %g' % obj.getValue())
     return y
 
-
+'''
+def isPSD(A, tol=1e-8):
+  E,V = scipy.linalg.eigh(A)
+  return np.all(E > -tol)
+'''
 
 # Data Storage and Load
 # These two functions "zdump" and "zload" were written by Jing Wang

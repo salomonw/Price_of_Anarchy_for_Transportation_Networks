@@ -9,7 +9,7 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 
-os.chdir('G:/My Drive/Github/InverseVIsTraffic/000_ETA/')
+os.chdir('G:/My Drive/Github/InverseVIsTraffic/Python_files/') # CHANGES 
 get_ipython().magic(u'run util_data_storage_and_load.py')
 get_ipython().magic(u'run util.py')
 
@@ -17,8 +17,8 @@ from util import *
 
 def import_jing_net(dir_shpfile, files_ID, out_dir):
     # Importing Jing data about the relation between TMC and link as well as the incidence matrix
-    os.chdir('C:/Users/Salomon Wollenstein/Documents/GitHub/InverseVIsTraffic/Python_files')
-    link_with_capac_list = list(zload('C:/Users/Salomon Wollenstein/Documents/GitHub/InverseVIsTraffic/temp_files/links_with_capac.pkz'))
+    os.chdir('G:/My Drive/GitHub/InverseVIsTraffic/Python_files')
+    link_with_capac_list = list(zload('G:/My Drive/GitHub/InverseVIsTraffic/temp_files/links_with_capac.pkz'))
     
     os.chdir('G:/My Drive/Github/PoA/Price_of_Anarchy_for_Transportation_Networks')
     
@@ -29,7 +29,6 @@ def import_jing_net(dir_shpfile, files_ID, out_dir):
     tmc_edge_dict = dict(zip(list(shape.edges()), [shape.get_edge_data(list(shape.edges())[i][0],list(shape.edges())[i][1])['TMC']  for i in range(len(shape.edges()))]))
     
     edge_tmc_dict = dict(zip([shape.get_edge_data(list(shape.edges())[i][0],list(shape.edges())[i][1])['TMC']  for i in range(len(shape.edges()))] , list(shape.edges())))
-    
     
     G = nx.DiGraph()
     shapeG = nx.DiGraph()
