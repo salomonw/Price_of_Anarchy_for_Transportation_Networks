@@ -14,6 +14,7 @@ get_ipython().magic(u'run util_data_storage_and_load.py')
 get_ipython().magic(u'run util.py')
 
 from util import *   
+from util_data_storage_and_load import * 
 
 def import_jing_net(dir_shpfile, files_ID, out_dir):
     # Importing Jing data about the relation between TMC and link as well as the incidence matrix

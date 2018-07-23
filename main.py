@@ -48,3 +48,10 @@ od_pair_definition(out_dir, files_ID )
 path_incidence_matrix(out_dir, files_ID, time_instances, number_of_routes_per_od, theta )
 
 runGLS(out_dir, files_ID, time_instances)
+
+
+
+
+
+plt.hist(np.array(x[1:]), bins='auto')
+plt.show()

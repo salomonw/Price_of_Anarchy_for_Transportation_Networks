@@ -40,8 +40,10 @@ def adj_PSD(Sigma):
     Sigma = np.dot(np.dot(Q, D), LA.inv(Q))
     return Sigma
 
-def is_pos_def(x):
-    return np.all(np.linalg.eigvals(x) > 0)
+
+def isPSD(A, tol=1e-8):
+  E,V = np.linalg.eigh(A)
+  return np.all(E > -tol)
 
 def samp_cov(x):
     """

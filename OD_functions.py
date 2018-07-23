@@ -1,5 +1,8 @@
 
 #### ------------ OD Estimation ------------- :
+from utils import *
+from math import exp
+from functions import *
 
 def od_pair_definition(out_dir, files_ID ):
     G = zload(out_dir + 'G' + files_ID + '.pkz')
@@ -83,8 +86,27 @@ def routes(G, out_dir, files_ID, od_pairs, number_of_routes_per_od, instance):
 #number_of_routes_per_od = 3
 #routes = routes(G, od_pairs, number_of_routes_per_od)
 
-
-
+def filter_routes(out_dir, instance, files_ID, lower_bound_route):
+    A = zload(out_dir + 'path-link_incidence_matrix_'+ instance + files_ID + '.pkz')
+    P = zload(out_dir + 'OD_pair_route_incidence_'+ instance + files_ID + '.pkz')
+    P_t = np.transpose(P)
+    A_t = np.transpose(A)
+    
+    idx = np.where(sum(P)>lower_bound_route)
+    
+    P_t = P_t[idx]
+    P = np.transpose(P_t)
+    
+    A_t = A_t[idx]
+    A = np.transpose(A_t)
+    
+    P = [[float(i)/sum(P[j]) for i in P[j]] for j in range(len(P))]
+    P = np.asmatrix(P)
+   
+    zdump(A, out_dir + 'path-link_incidence_matrix_'+ instance + files_ID + '.pkz')
+    zdump(P, out_dir + 'OD_pair_route_incidence_'+ instance + files_ID + '.pkz') 
+    
+    
 def path_incidence_matrix(out_dir, files_ID, time_instances, number_of_routes_per_od, theta ):
     G_ = zload( out_dir + 'G_' + files_ID + '.pkz' )
     od_pairs = zload(out_dir + 'od_pairs'+ files_ID + '.pkz')
@@ -92,8 +114,8 @@ def path_incidence_matrix(out_dir, files_ID, time_instances, number_of_routes_pe
     for instance in list(time_instances['id']):
         G = G_[instance]
         routes(G, out_dir, files_ID, od_pairs, number_of_routes_per_od, instance)
-
-
+        filter_routes(out_dir, instance, files_ID, lower_bound_route)
+        
 #def path_link_incidence_matrix
 # Create Path-Link Incidence Matrix
 
@@ -153,7 +175,8 @@ def GLS(xa, A, L):
     A_t = np.transpose(A)
 
     Q_ = np.dot(np.dot(A_t, inv_S), A)
-    #Q = adj_PSD(Q_).real  # Ensure Q to be PSD
+    #Q_ = adj_PSD(Q_).real  # Ensure Q to be PSD
+   
     Q = Q_
 
     b = sum([np.dot(np.dot(A_t, inv_S), xa[:, k]) for k in range(K)])
@@ -214,7 +237,8 @@ def GLS2(x, A, P, L):
     #print(np.size(S, 1))
 
     inv_S = inv(S).real
-
+    inv_S = inv(S)
+    
     A_t = np.transpose(A)
     P_t = np.transpose(P)
     # PA'
@@ -230,9 +254,11 @@ def GLS2(x, A, P, L):
     AP_t = np.transpose(PA_t)
 
     Q_ = np.dot(np.dot(PA_t, inv_S), AP_t)
-    #Q = adj_PSD(Q_).real  # Ensure Q to be PSD
+    Q = adj_PSD(Q_).real  # Ensure Q to be PSD
     Q = Q_
-
+    
+    #isPSD(Q)
+    
     #print("rank of Q is: \n")
     #print(matrix_rank(Q))
     #print("sizes of Q are: \n")
@@ -263,7 +289,7 @@ def GLS2(x, A, P, L):
     # Add constraint: lam >= 0
     for l in range(L):
         model.addConstr(lam[l] >= 0)
-        model.addConstr(lam[l] <= 5000)
+      #  model.addConstr(lam[l] <= 5000)
     #fictitious_OD_list = zload('../temp_files/fictitious_OD_list')
     #for l in fictitious_OD_list:
         #model.addConstr(lam[l] == 0)
@@ -339,6 +365,10 @@ def runGLS(out_dir, files_ID, time_instances):
     
     numEdges = len(G.edges())
     
+    #week_day_Apr_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30]
+    week_day_Apr_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20]
+    #week_day_Apr_list = [2, 25,  30]
+    
     for instance in list(time_instances['id']):
         #instance = 'AM'
         flow_after_conservation = pd.read_pickle(out_dir + 'flows_after_QP' + files_ID + '_' + instance +'.pkz')
@@ -347,8 +377,10 @@ def runGLS(out_dir, files_ID, time_instances):
         for ts in flow_after_conservation :
             #ts = flow_after_conservation.keys()[0]
             #x = np.zeros(numEdges)
-            a = np.array(list(flow_after_conservation[ts].values()))
-            x = np.c_[x,a]
+            day = (ts.astype('datetime64[D]') - ts.astype('datetime64[M]') + 1).astype(int)
+            if np.isin(day, week_day_Apr_list)+0 == np.int32(1) :
+                a = np.array(list(flow_after_conservation[ts].values()))
+                x = np.c_[x,a]
         
         x = np.delete(x,0,1)
         x = np.asmatrix(x)
@@ -365,12 +397,35 @@ def runGLS(out_dir, files_ID, time_instances):
         y = y[np.all(y != 0, axis=1)]
         x = np.transpose(y)
         x = np.matrix(x)
-          
+        
         L = np.size(P,0)  # dimension of xi
         
+        super_threshold_indices = P > 0.005
+        P5[super_threshold_indices] = 1
+        
+        #lam_list = GLS2(x, A, P, L)
+
+        
+        '''
+        lam_list = None
+        while lam_list is None:
+            try:
+                len_x = np.size(x,1)
+                sample_size = np.random.randint(.5*len_x ,len_x)
+                col_idx = np.random.choice(range(len_x), sample_size, replace=False)
+                x1 = x[:,col_idx]
+                lam_list = GLS2(x1, A, P, L)
+                print(a)
+            except:
+                 pass
+        '''
+        
+        
+            
+                     
         xi_list = GLS(x, A, L)
         
-       # lam_list = GLS2(x, A, P, L)
+        #lam_list = GLS2(x, A, P, L)
         
         #lam_list = ODandRouteChoiceMat(P, xi_list)
         
@@ -534,3 +589,53 @@ def find_paths_of_OD_pairs(G, od_pairs):
     # export a Path link incidence Matrix
         #Maybe use simple paths proposed by networkx
 '''
+
+
+
+# include measurement error described in Hazelton paper
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

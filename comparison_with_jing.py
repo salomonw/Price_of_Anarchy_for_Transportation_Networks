@@ -12,6 +12,9 @@ jing_folders = ['G:/My Drive/Github/InverseVIsTraffic/temp_files/',
 'G:/My Drive/Github/InverseVIsTraffic_zero/temp_files/',
 'G:/My Drive/Github/InverseVIsTraffic1/temp_files/']
 
+jing_folders = [
+'G:/My Drive/Github/InverseVIsTraffic1/temp_files/']
+
 salo_folder = out_dir
 
 number_plots = 2
@@ -45,7 +48,7 @@ for folder in jing_folders:
     plt.title('scatter percentiles -' + folder_jing[-30:] )
 
 
-'''
+
 #### -------------- Speed comparison  ---------------------------------------------------------------------------
 print('Speed Profiles')
 
@@ -96,29 +99,27 @@ os.chdir('G:/My Drive/Github/PoA/Price_of_Anarchy_for_Transportation_Networks')
 
 tmc_net_list = zload(out_dir + 'tmc_net_list' + files_ID + '.pkz')
 df1 = pd.read_pickle(out_dir + 'filtered_tmc_date_time_flow' + files_ID + '_' + instance +'.pkz')
-os.chdir('G:/My Drive/Github/InverseVIsTraffic/Python_files')
+os.chdir('G:/My Drive/Github/InverseVIsTraffic1/Python_files')
 import util
 from util import *
 os.chdir('G:/My Drive/Github/InverseVIsTraffic1/000_ETA')
 import util
 from util import *
 
-
-os.chdir('G:/My Drive/Github/InverseVIsTraffic/Python_files')
+os.chdir('G:/My Drive/Github/InverseVIsTraffic1/Python_files')
 
 #flow 
-#tmc_day_capac_flow_minute_dict = zload('G:/My Drive/Github/InverseVIsTraffic1/temp_files/tmc_day_capac_flow_minute_dict_Apr.pkz')
-#road_seg_inr_capac = zload('G:/My Drive/Github/InverseVIsTraffic/temp_files/road_seg_inr_capac.pkz')
-tmc_day_capac_flow_dict = zload('G:/My Drive/Github/InverseVIsTraffic/temp_files/tmc_day_capac_flow_dict_Apr.pkz')
-tmc_ref_speed_dict = zload('G:/My Drive/Github/InverseVIsTraffic/temp_files/tmc_ref_speed_dict.pkz')
+tmc_day_capac_flow_minute_dict = zload('G:/My Drive/Github/InverseVIsTraffic1/temp_files/tmc_day_capac_flow_minute_dict_Apr.pkz')
+road_seg_inr_capac = zload('G:/My Drive/Github/InverseVIsTraffic1/temp_files/road_seg_inr_capac.pkz')
+#tmc_day_capac_flow_dict = zload('G:/My Drive/Github/InverseVIsTraffic1/temp_files/tmc_day_capac_flow_dict_Apr.pkz')
+#tmc_ref_speed_dict = zload('G:/My Drive/Github/InverseVIsTraffic1/temp_files/tmc_ref_speed_dict.pkz')
 
 #tmc_day_capac_flow_dict_Apr.pkz
 tmc = np.random.choice(tmc_net_list)
 day = np.random.randint(1,30)
 
-#jing_flow = tmc_day_capac_flow_minute_dict[tmc + str(day)].AM_flow_minute()
-jing_flow = tmc_day_capac_flow_dict[tmc + str(day)].AM_flow()
-
+jing_flow = tmc_day_capac_flow_minute_dict[tmc + str(day)].AM_flow_minute()
+#jing_flow = tmc_day_capac_flow_dict[tmc + str(day)].AM_flow()
 
 os.chdir('G:/My Drive/Github/PoA/Price_of_Anarchy_for_Transportation_Networks')
 df = df1[(df1['measurement_tstamp'] > '2012-04-'+str(day)) & (df1['measurement_tstamp'] < '2012-04-'+str(day+1))]
@@ -171,7 +172,7 @@ for folder in jing_folders:
     plt.plot(cap_jing,cap_salo,'.' )
     plt.title('scatter capacities' )
 
-'''
+
 #### -------------  Flows before conservation  (Link level) ---------------------------------------------------------------------------
 
 import json
@@ -187,6 +188,7 @@ with open('../temp_files/link_day_minute_Apr_dict_JSON.json', 'r') as json_file:
 
 for i in range(number_plots):
     a = np.random.choice(link_day_minute_Apr_dict_JSON.keys())
+    a = 'link_0_14' 
     day = link_day_minute_Apr_dict_JSON[a]['day']
     link_idx = link_day_minute_Apr_dict_JSON[a]['link_idx']
     
@@ -351,6 +353,34 @@ for root,dirs,files in os.walk(files_dir_jing):
 
 '''
 
+### ----------- Link follow up
+link = '(1, 2)'
+link_tmc_dict = zload(out_dir + 'link_tmc_dict' + files_ID + '.pkz')
+link_tmc_flows = pd.DataFrame()
+df1 = pd.read_pickle(out_dir + 'filtered_tmc_date_time_flow' + files_ID + '_' + instance +'.pkz')
+for tmc in link_tmc_dict.keys():
+    if str(link_tmc_dict[tmc]) == link:
+        df = df1[(df1['measurement_tstamp'] > '2012-04-'+str(day)) & (df1['measurement_tstamp'] < '2012-04-'+str(day+1))]
+        df = df[df['tmc_code'] == tmc]
+        df = df['xflow']       
+        df = df.reset_index()
+        df = df['xflow']
+        link_tmc_flows[tmc] = df
+       # salo_flow = df.tolist()[:-1]
+        
+        #plt.figure()
+        #plt.plot(salo_flow, label="salo")
+
+
+
+
+
 ### ----------- Comparison of OD-Demands --------------
+
+
+
+
+
+
 
 

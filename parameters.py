@@ -57,5 +57,6 @@ for i in range(9)[1:]:
             od_pairs.append([i, j])
 
 od_pairs
-number_of_routes_per_od = 3
+number_of_routes_per_od = 6
 theta = 0.8
+lower_bound_route = 0.02
