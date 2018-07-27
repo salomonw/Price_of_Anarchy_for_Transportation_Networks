@@ -5,6 +5,8 @@ Created on Mon Jun 11 13:50:19 2018
 @author: Salomon Wollenstein
 """
 
+# ------------ Load libraries, functions and parameters -----------------------
+
 import os
 
 os.chdir('G:/My Drive/Github/PoA/Price_of_Anarchy_for_Transportation_Networks')
@@ -18,6 +20,8 @@ get_ipython().magic(u'run import_jing_net.py')
 get_ipython().magic(u'run functions.py')
 
 get_ipython().magic(u'run OD_functions.py')
+
+get_ipython().magic(u'run python_to_julia_fctn.py')
 
 get_ipython().magic(u'run unzip_files.py')
 
@@ -45,13 +49,11 @@ G_ = calculate_data_flows(out_dir, files_ID, time_instances, days_of_week)
 
 od_pair_definition(out_dir, files_ID )
 
-path_incidence_matrix(out_dir, files_ID, time_instances, number_of_routes_per_od, theta )
+path_incidence_matrix(out_dir, files_ID, time_instances, number_of_routes_per_od, theta, lower_bound_route )
 
 runGLS(out_dir, files_ID, time_instances)
 
+# ------------------------------ Inverse Optimization -------------------------
 
+parse_data_for_Julia(out_dir, files_ID, time_instances)
 
-
-
-plt.hist(np.array(x[1:]), bins='auto')
-plt.show()

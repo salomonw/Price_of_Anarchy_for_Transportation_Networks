@@ -188,7 +188,7 @@ with open('../temp_files/link_day_minute_Apr_dict_JSON.json', 'r') as json_file:
 
 for i in range(number_plots):
     a = np.random.choice(link_day_minute_Apr_dict_JSON.keys())
-    a = 'link_0_14' 
+    a = 'link_0_2' 
     day = link_day_minute_Apr_dict_JSON[a]['day']
     link_idx = link_day_minute_Apr_dict_JSON[a]['link_idx']
     
@@ -266,7 +266,7 @@ for i in range(number_plots):
     #    day = link_day_minute_Apr_dict_JSON_[a]['day']
     #    link_idx = link_day_minute_Apr_dict_JSON_[a]['link_idx']
         
-        os.chdir(folder)
+        os.chdir(jing_folders[0])
         with open('../temp_files/link_day_minute_Apr_dict_JSON_adjusted.json', 'r') as json_file:
             link_day_minute_Apr_dict_JSON_ = json.load(json_file)
         
@@ -366,21 +366,147 @@ for tmc in link_tmc_dict.keys():
         df = df.reset_index()
         df = df['xflow']
         link_tmc_flows[tmc] = df
-       # salo_flow = df.tolist()[:-1]
+        salo_flow = df.tolist()[:-1]
         
-        #plt.figure()
-        #plt.plot(salo_flow, label="salo")
+        plt.figure()
+        plt.plot(salo_flow, label="salo")
 
 
+#### ----------- Comparioson flows to OD-Demands ----------
+instances= ['AM', 'MD', 'PM', 'NT'  ]
+folder = jing_folders[0] 
 
+os.chdir('G:\My Drive\Github\PoA\Price_of_Anarchy_for_Transportation_Networks')
+import numpy as np
+from numpy.linalg import inv
+import json
+import collections 
+
+G = zload(out_dir + 'G' + files_ID + '.pkz')
+    
+N = nx.incidence_matrix(G,oriented=True)
+N = N.todense()
+
+numEdges = len(G.edges())
+
+week_day_Apr_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27,30]
+#week_day_Apr_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 20]
+#week_day_Apr_list = range(30)
+for instance in instances:
+    os.chdir('G:\My Drive\Github\PoA\Price_of_Anarchy_for_Transportation_Networks')
+    
+    flow_after_conservation = pd.read_pickle(out_dir + 'flows_after_QP' + files_ID + '_' + instance +'.pkz')
+    flow_after_conservation = pd.read_pickle(out_dir + 'flows_before_QP_2_' + files_ID + '_' + instance +'.pkz')
+    
+    flow_after_conservation = collections.OrderedDict(sorted(flow_after_conservation.items()))
+    
+    x = np.zeros(numEdges)
+    
+    for ts in flow_after_conservation :
+        #ts = flow_after_conservation.keys()[0]
+        #x = np.zeros(numEdges)
+        day = (ts.astype('datetime64[D]') - ts.astype('datetime64[M]') + 1).astype(int)
+        if np.isin(day, week_day_Apr_list)+0 == np.int32(1) :
+            a = np.array(list(flow_after_conservation[ts].values()))
+            x = np.c_[x,a]
+    
+    x = np.delete(x,0,1)
+    x = np.asmatrix(x)
+    
+    A = zload(out_dir + 'path-link_incidence_matrix_'+ instance + files_ID + '.pkz')
+    A = np.asmatrix(A)
+    P = zload(out_dir + 'OD_pair_route_incidence_'+ instance + files_ID + '.pkz')
+    P = np.asmatrix(P)
+    
+    L = np.size(P, 0) 
+    
+    x = np.nan_to_num(x)
+    y = np.array(np.transpose(x))
+    y = y[np.all(y != 0, axis=1)]
+    x = np.transpose(y)
+    x = np.matrix(x)
+    
+    x_s = x
+   
+    os.chdir(folder)
+       
+    with open('../temp_files/link_day_minute_Apr_dict_JSON.json', 'r') as json_file:
+       link_day_minute_Apr_dict_JSON = json.load(json_file)
+       
+    link_day_minute_Apr_list = []
+    for link_idx in range(24):
+        for day in week_day_Apr_list: 
+            for minute_idx in range(120):
+                key = 'link_' + str(link_idx) + '_' + str(day)
+                link_day_minute_Apr_list.append(link_day_minute_Apr_dict_JSON[key] [instance + '_flow_minute'][minute_idx])
+    
+    # print(len(link_day_minute_Apr_list))
+    
+    x = np.matrix(link_day_minute_Apr_list)
+    x = np.matrix.reshape(x, 24, 120 * len(week_day_Apr_list))
+    
+    x = np.nan_to_num(x)
+    y = np.array(np.transpose(x))
+    y = y[np.all(y != 0, axis=1)]
+    x = np.transpose(y)
+    x = np.matrix(x)
+    
+    x_j = x
+    
+    i = 10
+    # Check for flows 
+  
+    plt.figure()
+    plt.hist(np.transpose(x_s[i]), label='salo_flow')
+    plt.hist(np.transpose(x_j[i]), alpha = 0.5, label='jing_flow')
+    plt.legend()
+    plt.show()
+        
+    
+    plt.figure()
+    plt.plot(np.transpose(x_s[i]), label='salo_flow')
+    plt.plot(np.transpose(x_j[i]), label='jing_flow')
+    plt.legend()
+    plt.show()
+        
 
 
 ### ----------- Comparison of OD-Demands --------------
-
-
-
-
-
-
-
-
+instances= ['AM', 'MD', 'PM', 'NT'  ]
+folder = jing_folders[0]
+for instance in instances:
+    os.chdir('G:\My Drive\Github\PoA\Price_of_Anarchy_for_Transportation_Networks')
+    list_of_lists_s = []
+    with open(out_dir + 'OD_demand_matrix_Apr_weekday_'+ instance + files_ID + '.txt', 'r') as the_file:
+        idx = 0
+        for line in the_file:
+            inner_list = [elt.strip() for elt in line.split(',')]
+            list_of_lists_s.append(inner_list)
+    
+    os.chdir(folder)
+    list_of_lists_j = []
+    with open('../temp_files/OD_demand_matrix_Apr_weekday_'+ instance + '.txt', 'r') as the_file:
+        idx = 0
+        for line in the_file:
+            inner_list = [elt.strip() for elt in line.split(',')]
+            list_of_lists_j.append(inner_list)
+    
+    od_demand_j=[]
+    x_axis=[]
+    for i in list_of_lists_j:
+        od_demand_j.append(float(i[2]))
+        x_axis.append(str((int(i[0]),int(i[1]))))
+        
+    
+    od_demand_s=[]
+    for i in list_of_lists_s:
+        od_demand_s.append(float(i[2]))
+    
+    plt.figure()
+    plt.title('OD Demand '+ instance + ' period')
+    plt.bar(range(len(x_axis)), od_demand_j, label= 'od jing', alpha = 0.5)
+    plt.bar(range(len(x_axis)),od_demand_s,label= 'od salo', alpha = 0.5)
+    #plt.xlabel(x_axis)
+    plt.legend()
+    
+    plt.show()

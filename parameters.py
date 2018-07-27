@@ -22,10 +22,13 @@ if os.path.isdir(out_dir) == False:
 # Filtering by date range and tmc
 dates_input = [#{'id':'Jan','start_date': '2015-01-01' , 'end_date':'2015-01-10'}, 
                #{'id':'Feb','start_date': '2015-02-01' , 'end_date':'2015-02-15'}] 
-               {'id':'Apr','start_date': '2012-04-01' , 'end_date':'2012-04-30'}] 
+               {'id':'Apr','start_date': '2012-04-01' , 'end_date':'2012-05-01'}] 
                #{'id':'Aug','start_date': '2015-08-01' , 'end_date':'2015-08-10'}, 
                #{'id':'Nov','start_date': '2015-11-01' , 'end_date':'2015-11-10'}]
  
+''' ALWAYS WRITE ONE MORE DAY'''
+    
+    
 # Select of you want to analyze weekends or weekdays
 days_of_week = 'weekdays'
 

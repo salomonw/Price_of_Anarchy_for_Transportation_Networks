@@ -291,13 +291,14 @@ def filter_time_instances(out_dir, files_ID, time_instances, data_granularity):
         pd.to_pickle(result2, out_dir + 'result_2' + files_ID + '_' + row['id'] +'.pkz') #!!!!!!!!!!!!!!! RENAME !!!!!!!!!!!
         
 def calculate_data_flows(out_dir, files_ID, time_instances, days_of_week):
+    import json
     # Filtering by weekdays/weekends
     G = zload(out_dir + 'G' + files_ID + '.pkz')
     link_tmc_dict = zload(out_dir + 'link_tmc_dict' + files_ID + '.pkz')
     free_flow_speed = pd.read_pickle(out_dir + 'free_flow_speed_ ' + files_ID + '.pkz')
     tmc_att = zload(out_dir + 'tmc_att' + files_ID + '.pkz')
     tmc_att = tmc_att.set_index('TMC')
-    
+    free_flow_link = {}
     G_ = {}
     for instance in list(time_instances['id']):
         link_ = list()
@@ -308,8 +309,8 @@ def calculate_data_flows(out_dir, files_ID, time_instances, days_of_week):
         result2 = result2[~result2.index.duplicated(keep='first')]
         df = df.join(tmc_att['Shape_Leng'], on = 'tmc_code', how = 'inner')
         if days_of_week == 'weekdays':
-            df = df[df['dayWeek']>0]
-            df = df[df['dayWeek']<7]
+           # df = df[df['dayWeek']>0]
+            df = df[df['dayWeek']<5]
         
         # TMC to link aggregation  
         l_length = {}
@@ -340,7 +341,15 @@ def calculate_data_flows(out_dir, files_ID, time_instances, days_of_week):
             link_flow[link] = l_xflows
             linkFlow = linkFlow.append(l_xflows)
             link_.extend([link]*len(l_xflows))
-        
+            
+            free_flow_tmc = free_flow_speed.reset_index()
+            #free_flow_tmc = free_flow_tmc[free_flow_tmc['tmc_code'].isin(tmc_list)]
+            free_flow_tmc = pd.merge(df2, free_flow_tmc, on='tmc_code', how='inner')
+            free_flow_tmc = free_flow_tmc[~free_flow_tmc.tmc_code.duplicated(keep='first')]
+            free_flow_tmc = free_flow_tmc.set_index('tmc_code')
+            free_flow_tmc = sum(free_flow_tmc['free_flow_speed']*free_flow_tmc['Shape_Leng'])/sum(free_flow_tmc['Shape_Leng'])
+            free_flow_link[link] = free_flow_tmc
+            
         linkFlow['link'] = link_
         linkFlow = linkFlow.reset_index()
         unique_t = linkFlow['measurement_tstamp'].unique()
@@ -350,15 +359,30 @@ def calculate_data_flows(out_dir, files_ID, time_instances, days_of_week):
             G_[instance].add_edge(edge[0], edge[1], length = l_length[edge], avgSpeed = l_avgSpeed[edge])
             
         flow_after_conservation={}
+        flow_before_conservation_ = {}
         for idx in list(unique_t):
             ins = linkFlow[linkFlow['measurement_tstamp']==idx]
             ins = ins[['link','flow']].set_index('link').to_dict()['flow']
             if len(ins) == len(link_flow): #if there is no data of one llnk for an instance, then delete it
                 flow_after_conservation[idx] = flow_conservation_adjustment(G,ins)
+                flow_before_conservation_[idx] = ins
             
         pd.to_pickle(flow_after_conservation, out_dir + 'flows_after_QP' + files_ID + '_' + instance +'.pkz')
         pd.to_pickle(linkFlow, out_dir + 'flows_before_QP' + files_ID + '_' + instance +'.pkz')
+        pd.to_pickle(flow_before_conservation_, out_dir + 'flows_before_QP_2_' + files_ID + '_' + instance +'.pkz')
+        
+        for i in flow_after_conservation.keys():
+            ts = pd.to_datetime(i) 
+            d = ts.strftime('%Y-%m-%d-%H-%M-%S')
+            flow_after_conservation[d] = flow_after_conservation.pop(i)
+          
+        
+        with open(out_dir + 'flows_after_QP' + files_ID + '_' + instance +'.json', 'w') as fp:
+            json.dump(flow_after_conservation, fp)
+            
+            
     zdump(G_, out_dir + 'G_' + files_ID + '.pkz' )
+    zdump(free_flow_link, out_dir + 'free_flow_link' + files_ID + '.pkz' )
     return G_
 
 
