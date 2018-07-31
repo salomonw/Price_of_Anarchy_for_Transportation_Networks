@@ -46,14 +46,20 @@ filter_time_instances(out_dir, files_ID, time_instances, data_granularity)
 G_ = calculate_data_flows(out_dir, files_ID, time_instances, days_of_week)
 
 # ------------------------------- OD Demand  ----------------------------------
+# this algorithms runs for whole months, for example apr, we encourage to treat monthly timeframes beyond this point
+# a future implementation can be easly done to overcome this problem 
 
 od_pair_definition(out_dir, files_ID )
 
 path_incidence_matrix(out_dir, files_ID, time_instances, number_of_routes_per_od, theta, lower_bound_route )
 
-runGLS(out_dir, files_ID, time_instances)
+runGLS(out_dir, files_ID, time_instances, 'Apr') 
 
 # ------------------------------ Inverse Optimization -------------------------
 
 parse_data_for_Julia(out_dir, files_ID, time_instances)
 
+
+
+
+link_min_dict = zload(out_dir + 'link_min_dict' + files_ID + 'pkz')

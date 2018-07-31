@@ -285,7 +285,7 @@ def ODandRouteChoiceMat(P, xi_list):
     return lam_list
 
                     
-def runGLS(out_dir, files_ID, time_instances):
+def runGLS(out_dir, files_ID, time_instances, month_id):
     import numpy as np
     from numpy.linalg import inv
     import json
@@ -391,10 +391,10 @@ def runGLS(out_dir, files_ID, time_instances):
                 pass 
         
 
-        def saveDemandVec(G, out_dir, instance, files_ID, lam_list):
+        def saveDemandVec(G, out_dir, instance, files_ID, lam_list, month_id ):
             lam_dict = {}
             n = len(G.nodes())  # number of nodes
-            with open(out_dir + 'OD_demand_matrix_Apr_weekday_'+ instance + files_ID + '.txt', 'w') as the_file:
+            with open(out_dir + 'OD_demand_matrix_'+ month_id +'_weekday_'+ instance + files_ID + '.txt', 'w') as the_file:
                 idx = 0
                 for i in range(n + 1)[1:]:
                     for j in range(n + 1)[1:]:
@@ -404,5 +404,5 @@ def runGLS(out_dir, files_ID, time_instances):
                             the_file.write("%d,%d,%f\n" %(i, j, lam_list[idx]))
                             idx += 1
                             
-        saveDemandVec(G, out_dir, instance, files_ID, lam_list)
+        saveDemandVec(G, out_dir, instance, files_ID, lam_list, month_id )
       

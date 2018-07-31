@@ -248,6 +248,16 @@ def filter_time_instances(out_dir, files_ID, time_instances, data_granularity):
             print(cnt)        
         del df2
         
+        print('file readed!, calculating dataflows for instance: ' + row[1] + '...')
+        
+        df = df.reset_index()
+        df['tmc_date'] = df['tmc_code']  + '_' + row[1] + '_'  + df['measurement_tstamp'].dt.date.map(str)
+        avg_speed = df.groupby('tmc_date').mean()
+        avg_speed['avg_speed_day'] = avg_speed['speed']
+        df = df.set_index('tmc_date')
+        df = df.join(avg_speed['avg_speed_day'], on = 'tmc_date', how = 'inner')
+        df = df.set_index('measurement_tstamp')
+        
         # creating a table with the characteristics of TMCs in instance AM,MD,PM,NT    
         tmc_instance_stats = df.groupby('tmc_code').agg(np.mean)
         result2 = capacity_df.join(tmc_instance_stats, how='inner')
@@ -269,23 +279,31 @@ def filter_time_instances(out_dir, files_ID, time_instances, data_granularity):
         df['idx'] = range(1, len(df) + 1)
         df = df.reset_index()
         a=[]
+        avg = []
         for idx, row2 in df.iterrows():
             capacity = tmc_instance_char['AB_'+ time_instances.id[index] +'CAPAC'][row2['tmc_code']]
             free_flow_sp = tmc_instance_char['free_flow_speed'][row2['tmc_code']]
             speed = row2['speed']
+            avg_speed = row2['avg_speed_day']
             if np.isnan(speed)  == True:
                 speed = ref_speed_collection[row2['tmc_code']].iloc[row2['min']-1, row2['dayWeek']-1]
                 #speed = 0.0000001 
                 df.set_value(idx,'speed', speed)
             x_flow = greenshield(min(speed,free_flow_sp) , capacity , free_flow_sp)
+            avg_flow = greenshield(min(avg_speed,free_flow_sp) , capacity , free_flow_sp) # check avg_speed for 2015 dataset
             a.append([row2['idx'], x_flow])
-        
+            avg.append([row2['idx'], avg_flow])
+       
         a = pd.DataFrame(a)
         a = a.rename(index=str, columns={0: "idx", 1 : "xflow"})
         
+        avg = pd.DataFrame(avg)
+        avg = avg.rename(index=str, columns={0: "idx", 1 : "avg_flow"})
+        
+        
         df = df.join(a.set_index('idx'), on='idx')
-
-        del a, chunk, 
+        df = df.join(avg.set_index('idx'), on='idx')
+        del a, chunk, avg
     
         pd.to_pickle(df, out_dir + 'filtered_tmc_date_time_flow' + files_ID + '_' + row['id'] +'.pkz')   
         pd.to_pickle(result2, out_dir + 'result_2' + files_ID + '_' + row['id'] +'.pkz') #!!!!!!!!!!!!!!! RENAME !!!!!!!!!!!
@@ -300,6 +318,8 @@ def calculate_data_flows(out_dir, files_ID, time_instances, days_of_week):
     tmc_att = tmc_att.set_index('TMC')
     free_flow_link = {}
     G_ = {}
+    link_avg_flow = {}
+    capacity_link = {}
     for instance in list(time_instances['id']):
         link_ = list()
         link_flow = {}
@@ -308,6 +328,8 @@ def calculate_data_flows(out_dir, files_ID, time_instances, days_of_week):
         result2 = pd.read_pickle(out_dir + 'result_2' + files_ID + '_' + instance + '.pkz') #!!!!!!!!!!!!!!! RENAME !!!!!!!!!!!
         result2 = result2[~result2.index.duplicated(keep='first')]
         df = df.join(tmc_att['Shape_Leng'], on = 'tmc_code', how = 'inner')
+        df['tmc_date'] = df['tmc_code']  + '_' + instance + '_'  + df['measurement_tstamp'].dt.date.map(str)
+        
         if days_of_week == 'weekdays':
            # df = df[df['dayWeek']>0]
             df = df[df['dayWeek']<5]
@@ -316,17 +338,17 @@ def calculate_data_flows(out_dir, files_ID, time_instances, days_of_week):
         l_length = {}
         l_avgSpeed = {}
         tmc_edge_df = pd.DataFrame(link_tmc_dict.items(),columns = ['TMC','link'])
+    
+        
         for link in list(tmc_edge_df.link.unique()):
             l_xflows = pd.DataFrame()
             tmc_list = tmc_edge_df[tmc_edge_df['link']==link]['TMC']
             df2 = df[df['tmc_code'].isin(tmc_list)]
-            #df2['prod'] = df2['xflow'] * df2['LENGTH']
-            #grouped = df2.groupby('measurement_tstamp').sum()
-            #l_xflows ['flow'] = grouped['prod'] / grouped['LENGTH'] 
-            avg_speed = df2['speed'].mean()
+            
             df2['Shape_Leng'] = 0.000621371192 * df2['Shape_Leng']  #since the speed (miles/hr) and len (meters --> miles)
-            df2['prod'] = df2['xflow'] * df2['Shape_Leng'] / avg_speed 
-            df2['travelTime'] = df2['Shape_Leng'] / avg_speed 
+            df2['prod'] = df2['xflow'] * df2['Shape_Leng'] / df2['avg_speed_day'] 
+            df2['travelTime'] = df2['Shape_Leng'] / df2['avg_speed_day']
+            
             grouped = df2.groupby('measurement_tstamp').sum()
             l_xflows['flow'] = grouped['prod'] / (grouped['travelTime'])
             
@@ -349,6 +371,26 @@ def calculate_data_flows(out_dir, files_ID, time_instances, days_of_week):
             free_flow_tmc = free_flow_tmc.set_index('tmc_code')
             free_flow_tmc = sum(free_flow_tmc['free_flow_speed']*free_flow_tmc['Shape_Leng'])/sum(free_flow_tmc['Shape_Leng'])
             free_flow_link[link] = free_flow_tmc
+            
+            
+            # calculate an average flow for that tmc and day 
+            avg_xflows = pd.DataFrame()
+            avg_flow = df2
+            avg_flow = avg_flow.set_index('tmc_date')
+            avg_flow = avg_flow[~avg_flow.index.duplicated(keep='first')]
+            avg_flow = avg_flow.reset_index()
+            #avg_flow = avg_flow.groupby('tmc_date').mean()
+            avg_flow['prod'] = avg_flow['avg_flow'] * avg_flow['Shape_Leng'] / avg_flow['avg_speed_day']
+            avg_flow['travelTime'] = avg_flow['Shape_Leng'] / avg_flow['avg_speed_day'] 
+            grouped_avg_flow = avg_flow.groupby('measurement_tstamp').sum()
+            avg_xflows['flow'] = grouped_avg_flow['prod'] / (grouped_avg_flow['travelTime'])
+            link_avg_flow[str(link) + '_' + instance] = avg_xflows
+            
+            #calclate link capacity
+            idx_r = result2.index.isin(tmc_list)
+            link_att = result2[idx_r]
+            str_inst = 'AB_' + instance + 'CAPAC'
+            capacity_link[str(link) + '_' + instance] = sum(link_att[str_inst]*link_att['LENGTH'])/sum(link_att['LENGTH'])
             
         linkFlow['link'] = link_
         linkFlow = linkFlow.reset_index()
@@ -379,8 +421,10 @@ def calculate_data_flows(out_dir, files_ID, time_instances, days_of_week):
         
         with open(out_dir + 'flows_after_QP' + files_ID + '_' + instance +'.json', 'w') as fp:
             json.dump(flow_after_conservation, fp)
-            
-            
+      
+    
+    zdump(capacity_link, out_dir + 'capacity_link' + files_ID + '.pkz')       
+    zdump(link_avg_flow, out_dir + 'link_avg_day_flow' + files_ID + '.pkz')        
     zdump(G_, out_dir + 'G_' + files_ID + '.pkz' )
     zdump(free_flow_link, out_dir + 'free_flow_link' + files_ID + '.pkz' )
     return G_

@@ -188,7 +188,7 @@ with open('../temp_files/link_day_minute_Apr_dict_JSON.json', 'r') as json_file:
 
 for i in range(number_plots):
     a = np.random.choice(link_day_minute_Apr_dict_JSON.keys())
-    a = 'link_0_2' 
+    #a = 'link_0_2' 
     day = link_day_minute_Apr_dict_JSON[a]['day']
     link_idx = link_day_minute_Apr_dict_JSON[a]['link_idx']
     
@@ -262,9 +262,9 @@ for i in range(number_plots):
         with open('../temp_files/link_day_minute_Apr_dict_JSON_adjusted.json', 'r') as json_file:
             link_day_minute_Apr_dict_JSON_ = json.load(json_file)
         
-    #    a = np.random.choice(link_day_minute_Apr_dict_JSON_.keys())
-    #    day = link_day_minute_Apr_dict_JSON_[a]['day']
-    #    link_idx = link_day_minute_Apr_dict_JSON_[a]['link_idx']
+       # a = np.random.choice(link_day_minute_Apr_dict_JSON_.keys())
+       # day = link_day_minute_Apr_dict_JSON_[a]['day']
+       # link_idx = link_day_minute_Apr_dict_JSON_[a]['link_idx']
         
         os.chdir(jing_folders[0])
         with open('../temp_files/link_day_minute_Apr_dict_JSON_adjusted.json', 'r') as json_file:
