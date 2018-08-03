@@ -270,7 +270,6 @@ def create_East_Massachusetts_net(out_dir, files_ID, month_w, month, year, time_
     with open(out_dir + 'link_min_dict'+ files_ID + '.json', 'r') as json_file:
         link_day_minute_Apr_dict_JSON_ = json.load(json_file)
     zero_value = 0.0
-    
     G_ = zload(out_dir + 'G_' + files_ID + '.pkz' )
     feas_day = link_day_minute_Apr_dict_JSON_[link_day_minute_Apr_dict_JSON_.keys()[0]]['day']
     
@@ -295,9 +294,4 @@ def create_East_Massachusetts_net(out_dir, files_ID, month_w, month, year, time_
                                    zero_value, \
                                    link_day_minute_Apr_dict_JSON_['link_' + str(idx) + '_' + str(year) + '_' + str(month) + '_' + str(feas_day)]['free_flow_time'], \
                                    zero_value, zero_value, zero_value, zero_value, zero_value))
-        
-        
-        
-      
-        
         

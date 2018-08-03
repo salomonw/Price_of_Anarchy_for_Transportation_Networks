@@ -60,9 +60,8 @@ runGLS(out_dir, files_ID, time_instances, 'Apr')
 parse_data_for_Julia(out_dir, files_ID, time_instances)
 
 '''
-RUN JULIA: InvOpt_salo_f.jl
+RUN JULIA: InvOpt_salo_f.jl                                  !!!!!!!!! IMPORTANT TO USE JULIA 0.6 !!!!!!!!!!!!!!!!!
 '''
-
 # testing sets
 month_w = 'Apr'
 month = 4
@@ -80,8 +79,68 @@ create_East_Massachusetts_net(out_dir, files_ID, month_w, month, year, time_inst
 
 
 '''
-RUN JULIA: uni-class_traffic_assignment_MSA_function.jl
+RUN JULIA: uni-class_traffic_assignment_MSA_function.jl         !!!!!!!!! IMPORTANT TO USE JULIA 0.5.2 !!!!!!!!!!!!!!!!!
 '''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import json
+
+os.chdir(jing_folders[0])
+
+link_label_dict_ = zload('link_label_dict_.pkz')
+
+with open(out_dir + 'coeffs_dict_Apr_AM.json', 'r') as json_file:
+    coeffs_dict_Apr_AM= json.load(json_file)
+
+
+with open(out_dir + 'coeffs_dict_Apr_MD.json', 'r') as json_file:
+    coeffs_dict_Apr_MD= json.load(json_file)
+
+
+with open(out_dir + 'coeffs_dict_Apr_PM.json', 'r') as json_file:
+    coeffs_dict_Apr_PM= json.load(json_file)
+
+
+with open(out_dir + 'coeffs_dict_Apr_NT.json', 'r') as json_file:
+    coeffs_dict_Apr_NT= json.load(json_file)
+
+
+uni-class_traffic_assignment_MSA_flows_Apr_PM
+
+
+
+with open(out_dir + 'uni-class_traffic_assignment_MSA_flows_Apr_PM.json', 'r') as json_file:
+    uni_class_traffic_assignment_MSA_flows_Apr_PM = json.load(json_file)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

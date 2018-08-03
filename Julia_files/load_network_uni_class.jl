@@ -38,6 +38,7 @@ end
 
 
 function load_ta_network_(out_dir, files_ID, month_w, instance)
+
     toll_factor = 0
     distance_factor = 0
     network_data_file = files_ID * "_net_" * month_w * "_" * instance * ".txt"
@@ -49,39 +50,33 @@ function load_ta_network_(out_dir, files_ID, month_w, instance)
     network_data_file =  out_dir * files_ID * "/data_traffic_assignment_uni-class/" * network_data_file
     trip_table_file =   out_dir * files_ID * "/data_traffic_assignment_uni-class/" * trip_table_file
 
-    #network_data_file =  joinpath(files_ID, joinpath("data_traffic_assignment_uni_class", network_data_file))
-    #trip_table_file = joinpath(files_ID, joinpath("data_traffic_assignment_uni_class", trip_table_file))
-
-    ##################################################
-    # Network Data
-    ##################################################
-   # print(network_data_file)
-
     number_of_zones = 0
     number_of_links = 0
     number_of_nodes = 0
     first_thru_node = 0
-
+    
+    n = 0
+    A = 0
     n = open(network_data_file, "r")
-
-    while (line=readline(n)) != ""
+    A = readlines(n)
+    for line in A
+        #print( line)
         if contains(line, "<NUMBER OF ZONES>")
-            number_of_zones = parse( Int, line[ search(line, '>')+1 : end ] )
+            number_of_zones = parse( Int, line[ search(line, '>')+1 : end] )
         elseif contains(line, "<NUMBER OF NODES>")
-            number_of_nodes = parse( Int, line[ search(line, '>')+1 : end-1 ] )
+            number_of_nodes = parse( Int, line[ search(line, '>')+1 : end] )
         elseif contains(line, "<FIRST THRU NODE>")
-            first_thru_node = parse( Int, line[ search(line, '>')+1 : end ] )
+            first_thru_node = parse( Int, line[ search(line, '>')+1 : end] )
         elseif contains(line, "<NUMBER OF LINKS>")
-            number_of_links = parse( Int, line[ search(line, '>')+1 : end-1 ] )
+            number_of_links = parse( Int, line[ search(line, '>')+1 : end] )
         elseif contains(line, "<END OF METADATA>")
-            break
+       # println(line)
         end
     end
 
     @assert number_of_links > 0
-
-    start_node = Array(Int, number_of_links)
-    end_node = Array(Int, number_of_links)
+    start_node = Array{Int}(number_of_links)
+    end_node = Array{Int}(number_of_links)
     capacity = zeros(number_of_links)
     link_length = zeros(number_of_links)
     free_flow_time = zeros(number_of_links)
@@ -89,10 +84,12 @@ function load_ta_network_(out_dir, files_ID, month_w, instance)
     power = zeros(number_of_links)
     speed_limit = zeros(number_of_links)
     toll = zeros(number_of_links)
-    link_type = Array(Int, number_of_links)
+    link_type = Array{Int}(number_of_links)
 
     idx = 1
-    while (line=readline(n)) != ""
+
+    apa = 0
+    for line in A
         if contains(line, "~")
             continue
         end
@@ -100,20 +97,20 @@ function load_ta_network_(out_dir, files_ID, month_w, instance)
         if contains(line, ";")
             line = strip(line, '\n')
             line = strip(line, ';')
-
             numbers = split(line)
-
             start_node[idx] = parse(Int, numbers[1])
             end_node[idx] = parse(Int, numbers[2])
+            
             capacity[idx] = parse(Float64, numbers[3])
             link_length[idx] = parse(Float64, numbers[4])
+            
             free_flow_time[idx] = parse(Float64, numbers[5])
             B[idx] = parse(Float64, numbers[6])
             power[idx] = parse(Float64, numbers[7])
             speed_limit[idx] = parse(Float64, numbers[8])
             toll[idx] = parse(Float64, numbers[9])
             link_type[idx] = parse(Float64, numbers[10])
-
+            
             idx = idx + 1
         end
     end
@@ -124,14 +121,16 @@ function load_ta_network_(out_dir, files_ID, month_w, instance)
 
     number_of_zones_trip = 0
     total_od_flow = 0
-
+    
     f = open(trip_table_file, "r")
-
-    while (line=readline(f)) != ""
+    fe = readlines(f)
+    
+    for line in fe
+        #println(line)
         if contains(line, "<NUMBER OF ZONES>")
             number_of_zones_trip = parse( Int, line[ search(line, '>')+1 : end ] )
         elseif contains(line, "<TOTAL OD FLOW>")
-            total_od_flow = parse( Float64, line[ search(line, '>')+1 : end-1 ] )
+            total_od_flow = parse( Float64, line[ search(line, '>')+1 : end ] )
         elseif contains(line, "<END OF METADATA>")
             break
         end
@@ -141,7 +140,8 @@ function load_ta_network_(out_dir, files_ID, month_w, instance)
 
     travel_demand = zeros(number_of_zones, number_of_zones)
     od_pairs = []
-    while (line=readline(f)) != ""
+    origin = 0
+    for line in fe
         if contains(line, "Origin")
             origin = parse( Int, split(line)[2] )
         elseif contains(line, ";")
@@ -153,7 +153,7 @@ function load_ta_network_(out_dir, files_ID, month_w, instance)
                     od_flow = parse( Float64, strip(pair[2]) )
                     travel_demand[origin, destination] = od_flow
                     push!(od_pairs, (origin, destination))
-                    # println("origin=$origin, destination=$destination, flow=$od_flow")
+                   # println("origin=$origin, destination=$destination, flow=$od_flow")
                 end
             end
         end
@@ -185,6 +185,7 @@ function load_ta_network_(out_dir, files_ID, month_w, instance)
 
     return ta_data
 
+#end # end of load_network 
 end # end of load_network 
 
 
