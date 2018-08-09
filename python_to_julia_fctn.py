@@ -169,24 +169,22 @@ def create_testing_set(train_list_1, train_list_2, train_list_3, year, month, ti
         zdump([testing_set_1, testing_set_2, testing_set_3], out_dir + 'testing_sets_'+ month_w  + '_' + instance + '.pkz')
         
     
-def calculate_testing_errors(out_dir, files_ID, month_w, instance):
+def calculate_testing_errors(out_dir, files_ID, month_w, instance, deg_grid, c_grid, lamb_grid):
     from numpy import arange
     # load testing sets (link flows)
-    testing_set_1, testing_set_2, testing_set_3 = zload('../temp_files/testing_sets_Apr_AM.pkz')
+    testing_set_1, testing_set_2, testing_set_3 = zload( out_dir + 'testing_sets_' + month_w + '_' + instance + '.pkz')
+    
     testing_sets = {}
     testing_sets[1] = testing_set_1
     testing_sets[2] = testing_set_2
     testing_sets[3] = testing_set_3
     
     # load link flow data (solution of the forward problem corresponding to trained costs)
-    with open( out_dir + '../temp_files/uni-class_traffic_assignment_MSA_flows_Apr_AM.json', 'r') as json_file:
+    with open( out_dir + 'uni-class_traffic_assignment_MSA_flows_Apr_AM.json', 'r') as json_file:
         xl = json.load(json_file)
     
     # create a dictionary to store testing errors
     testing_errors_dict = {}
-    deg_grid = range(4, 9)
-    c_grid = list(arange(.5, 3.5, .5))
-    lamb_grid = [10. ** m for m in range(-3, 5)]
     train_idx = range(1, 4)
     
     for deg in deg_grid:
@@ -202,9 +200,6 @@ def calculate_testing_errors(out_dir, files_ID, month_w, instance):
                                                          for j in range(np.size(testing_sets[idx], 1))])
     
     testing_mean_errors_dict = {}
-    deg_grid = range(4, 9)
-    c_grid = list(arange(.5, 3.5, .5))
-    lamb_grid = [10. ** m for m in range(-3, 5)]
     train_idx = range(1, 4)
     
     for deg in deg_grid:
@@ -229,7 +224,7 @@ def calculate_testing_errors(out_dir, files_ID, month_w, instance):
         testing_mean_errors_switch_dict[testing_mean_errors_dict[_key_]] = _key_
         
 
-    best_key = '(8,0.5,10000.0,1)'
+    #best_key = '(8,0.5,10000.0,1)'
     
     # Writing JSON data
     with open(out_dir + 'cross_validation_best_key_' + month_w + '_'+ instance + '.json', 'w') as json_file:
@@ -295,3 +290,7 @@ def create_East_Massachusetts_net(out_dir, files_ID, month_w, month, year, time_
                                    link_day_minute_Apr_dict_JSON_['link_' + str(idx) + '_' + str(year) + '_' + str(month) + '_' + str(feas_day)]['free_flow_time'], \
                                    zero_value, zero_value, zero_value, zero_value, zero_value))
         
+        
+        
+#def calculating_testing_errors(out_dir, files_ID, month_w, month, year, time_instances, n_zones):
+    

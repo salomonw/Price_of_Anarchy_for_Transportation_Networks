@@ -37,12 +37,11 @@ end
 
 
 
-function load_ta_network_(out_dir, files_ID, month_w, instance)
-
+function load_ta_network_(out_dir, files_ID, month_w, instan)
     toll_factor = 0
     distance_factor = 0
-    network_data_file = files_ID * "_net_" * month_w * "_" * instance * ".txt"
-    trip_table_file = files_ID * "_trips_" * month_w * "_" * instance * ".txt"
+    network_data_file = files_ID * "_net_" * month_w * "_" * instan * ".txt"
+    trip_table_file = files_ID * "_trips_" * month_w * "_" * instan * ".txt"
     best_objective = 0
 
     network_name = files_ID
@@ -185,13 +184,12 @@ function load_ta_network_(out_dir, files_ID, month_w, instance)
 
     return ta_data
 
-#end # end of load_network 
 end # end of load_network 
 
 
 
 
-
+#=
 function load_ta_network(network_name="Sioux Falls")
 
     toll_factor = 0
@@ -312,9 +310,9 @@ function load_ta_network(network_name="Sioux Falls")
     end
 
 
-    root_dir = "C:/Users/Salomon Wollenstein/Documents/GitHub/InverseVIsTraffic/"
-    network_data_file = joinpath(root_dir, joinpath("data_traffic_assignment_uni_class", network_data_file))
-    trip_table_file = joinpath(root_dir, joinpath("data_traffic_assignment_uni_class", trip_table_file))
+    #root_dir = "C:/Users/Salomon Wollenstein/Documents/GitHub/InverseVIsTraffic/"
+    #network_data_file = joinpath(root_dir, joinpath("data_traffic_assignment_uni_class", network_data_file))
+    #trip_table_file = joinpath(root_dir, joinpath("data_traffic_assignment_uni_class", trip_table_file))
 
 
 
@@ -323,6 +321,8 @@ function load_ta_network(network_name="Sioux Falls")
     # Network Data
     ##################################################
 
+
+    #network_data_file = files_ID * "_net_" * month_w * "_" * instan * ".txt"
 
     number_of_zones = 0
     number_of_links = 0
@@ -453,3 +453,4 @@ function load_ta_network(network_name="Sioux Falls")
     return ta_data
 
 end # end of load_network function
+=#

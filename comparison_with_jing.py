@@ -509,3 +509,63 @@ for instance in instances:
     plt.legend()
 
     plt.show()
+
+
+
+
+
+
+###### ------------------ Comparison of coefficients -------------------
+import pandas as pd
+import json
+    
+instances= ['AM', 'MD', 'PM', 'NT'  ]
+folder = jing_folders[0]
+
+for instance in instances:
+    os.chdir('G:\My Drive\Github\PoA\Price_of_Anarchy_for_Transportation_Networks')
+    list_of_lists_s = []
+    with open(out_dir + 'uni-class_traffic_assignment_MSA_flows_' + month_w + '_' + instance  +'.json', 'r') as json_file:
+        uni_class_traffic_assignment_MSA_flows_ = json.load(json_file)
+
+    uni_class_salo = pd.DataFrame.from_dict(uni_class_traffic_assignment_MSA_flows_).transpose()
+    
+    
+    
+
+
+    with open(out_dir + "coeffs_dict_" + month_w + "_" + instance +".json", 'r') as the_file:
+        coeffs_dict_ = json.load(the_file)
+
+
+
+ os.chdir(folder)
+   
+
+    os.chdir(folder)
+    list_of_lists_j = []
+    with open('../temp_files/OD_demand_matrix_Apr_weekday_'+ instance + '.txt', 'r') as the_file:
+        idx = 0
+        for line in the_file:
+            inner_list = [elt.strip() for elt in line.split(',')]
+            list_of_lists_j.append(inner_list)
+
+    od_demand_j=[]
+    x_axis=[]
+    for i in list_of_lists_j:
+        od_demand_j.append(float(i[2]))
+        x_axis.append(str((int(i[0]),int(i[1]))))
+
+
+    od_demand_s=[]
+    for i in list_of_lists_s:
+        od_demand_s.append(float(i[2]))
+
+    plt.figure()
+    plt.title('OD Demand '+ instance + ' period')
+    plt.bar(range(len(x_axis)), od_demand_j, label= 'od jing', alpha = 0.5)
+    plt.bar(range(len(x_axis)),od_demand_s,label= 'od salo', alpha = 0.5)
+    #plt.xlabel(x_axis)
+    plt.legend()
+
+    plt.show()

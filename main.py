@@ -23,6 +23,8 @@ get_ipython().magic(u'run OD_functions.py')
 
 get_ipython().magic(u'run python_to_julia_fctn.py')
 
+get_ipython().magic(u'run POA.py')
+
 get_ipython().magic(u'run unzip_files.py')
 
 # ---------------------------- Preprocessing ----------------------------------
@@ -77,15 +79,108 @@ create_East_Massachusetts_trips(out_dir, files_ID, month_w, time_instances, n_zo
 
 create_East_Massachusetts_net(out_dir, files_ID, month_w, month, year, time_instances, n_zones )
 
-
+    
 '''
-RUN JULIA: uni-class_traffic_assignment_MSA_function.jl         !!!!!!!!! IMPORTANT TO USE JULIA 0.5.2 !!!!!!!!!!!!!!!!!
+RUN JULIA:  uni-class_traffic_assignment_MSA_function.jl         
+'''
+'''
+RUN JULIA:  Plot_comparison_results_Apr.ipynb
+'''
+'''
+RUN JULIA:  sensitivity_analysis_Finite_Difference_Approximation
 '''
 
+parse_data_for_TAP(out_dir, files_ID, time_instances, month_w)
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+calculate_testing_errors(out_dir, files_ID, month_w, instance, deg_grid, c_grid, lamb_grid):
+
+
+
+month_w = 'Apr'
+instance = 'AM'
+
+import json
+with open(out_dir + "/data_traffic_assignment_uni-class/" + files_ID + '_net_' + month_w + '_' + instance + '.txt') as MA_flow:
+    MA_flow_lines = MA_flow.readlines()
+MA_links = []
+i = -9
+for line in MA_flow_lines:
+    
+    i += 1
+    if i > 0:
+        MA_links.append(line.split()[1:3])
+numLinks = i
+
+link_list_js = [str(int(MA_links[i][0])) + ',' + str(int(float(MA_links[i][1]))) for \
+             i in range(len(MA_links))]
+
+link_list_pk = [str(int(MA_links[i][0])) + '->' + str(int(float(MA_links[i][1]))) for \
+             i in range(len(MA_links))]
+
+zdump(link_list_js, out_dir +  files_ID '_link_list_js.pkz')
+zdump(link_list_pk, out_dir +  files_ID '_link_list_pk.pkz')
+numNodes = max([int(float(MA_links[i][1])) for i in range(numLinks)])
+
+
+
+#Compute Jacobian
+import json
+with open(out_dir + "/data_traffic_assignment_uni-class/" + files_ID + '_net_' + month_w + '_' + instance + '.txt') as MA_flow:
+    MA_flow_lines = MA_flow.readlines()
+MA_links = []
+i = -9
+for line in MA_flow_lines:
+    i += 1
+    if i > 0:
+        MA_links.append(line.split('  ')[1:3])
+numLinks = i
+
+link_list_js = [str(int(MA_links[i][0])) + ',' + str(int(MA_links[i][1])) for \
+                i in range(len(MA_links))]
+
+link_list_pk = [str(int(MA_links[i][0])) + '->' + str(int(MA_links[i][1])) for \
+                i in range(len(MA_links))]
+
+numNodes = max([int(MA_links[i][1]) for i in range(numLinks)])
+
+from collections import defaultdict
+
+node_neighbors_dict = defaultdict(list)
+
+for node in range(numNodes):
+    for link in MA_links:
+        if node == int(link[0]):
+            node_neighbors_dict[str(node)].append(int(link[1]))
+
+with open(out_dir + "/data_traffic_assignment_uni-class/" + files_ID + '_trips_' + month_w + '_' + instance + '.txt') as MA_trips:
+    MA_trips_lines = MA_trips.readlines()
+
+numZones = int(MA_trips_lines[0].split(' ')[3])
+
+od_pairs = zload(out_dir + 'od_pairs' + files_ID + '.pkz')
 
 
 
