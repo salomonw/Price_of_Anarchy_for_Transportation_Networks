@@ -1,6 +1,15 @@
-from utils import *
-
+import collections
+import numpy as np
+from numpy.linalg import inv
 import json
+import pandas as pd
+import networkx as nx
+from utils_julia import *
+from parameters import *
+import json
+
+instance = 'AM'
+
 
 with open(out_dir + "/data_traffic_assignment_uni-class/" + files_ID + '_net_' + month_w + '_' + instance + '.txt') as MA_journal_flow:
     MA_journal_flow_lines = MA_journal_flow.readlines()

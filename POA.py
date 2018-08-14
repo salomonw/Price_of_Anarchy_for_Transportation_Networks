@@ -8,7 +8,9 @@ Created on Tue Aug 07 16:51:24 2018
 from utils import *
 import json
 import numpy as np
-
+import matplotlib.pyplot as plt
+import pylab
+from pylab import *
 
 def parse_data_for_TAP(out_dir, files_ID, time_instances, month_w):
 
@@ -251,3 +253,171 @@ def parse_data_for_TAP(out_dir, files_ID, time_instances, month_w):
         json.dump(N_dict, json_file)
         
     zdump(N, out_dir + 'node_link_incidence.pkz')
+
+
+
+####### -------------- 08_InverseVI_uni_MA_with_base_trans_python -----------------
+
+def InverseVI_uni_MA_with_base_trans_python(out_dir, files_ID, time_instances, month_w):
+    
+    for instance in list(time_instances['id']):
+
+        N = zload(out_dir + 'node_link_incidence.pkz')
+        def g_true(t):
+            return 1 + 0.15 * (t ** 4)
+        
+        def polyEval(coeffs, pt):
+            return sum([coeffs[i] * (pt ** i) for i in range(len(coeffs))])
+        
+        capac_list = []
+        free_flow_time_list = []
+        capac_dict = {}
+        free_flow_time_dict = {}
+        
+        with open(out_dir + 'data_traffic_assignment_uni-class/'+ files_ID + '_net_' + month_w + '_' + instance + '.txt', 'r') as f:
+            read_data = f.readlines()
+        
+        for row in read_data:
+            if len(row.split()) == 11:
+                key = row.split()[0] + ',' + row.split()[1]
+                capac_list.append(float(row.split()[2]))
+                free_flow_time_list.append(float(row.split()[4]))
+                capac_dict[key] = float(row.split()[2])
+                free_flow_time_dict[key] = float(row.split()[4])
+        
+        # read in link labels
+        with open(out_dir + 'link_label_dict.json', 'r') as json_file:
+            link_label_dict = json.load(json_file)
+            
+        # read in demand data
+        with open(out_dir + 'demands' + files_ID + '.json', 'r') as json_file:
+            demands = json.load(json_file) 
+            
+        numNode = N.shape[0]
+        numLink = N.shape[1]
+        assert(numLink == len(capac_list))
+        
+        flow_list = []
+        flow_dict = {}
+        
+        with open(out_dir + 'flows_converge_'+ month_w + '_' +  instance +'.txt', 'r') as f:
+            read_data = f.readlines()
+        
+        for row in read_data:
+            if len(row.split()) == 3:
+                key = row.split()[0] + ',' + row.split()[1]
+                flow_list.append(float(row.split()[2]))
+                flow_dict[key] = float(row.split()[2])
+        #         print(row.split())
+        
+        flow_normalized = [flow_list[i]/capac_list[i] for i in range(numLink)]
+        
+        def fitCost(c, d, gama):
+            normCoeffs = []
+        
+            for i in range(d+1):
+                normCoeffs.append(sc.comb(d, i, exact=True) * (c ** (d-i)))
+        
+            od_list = []
+            for i in range(numNode + 1)[1:]:
+                for j in range(numNode + 1)[1:]:
+                    if i != j:
+                        key = '(' + str(i) + ',' + str(j) + ')'
+                        od_list.append(key)
+        
+            model = Model("InverseVI")
+        
+            alpha = []
+            for i in range(d+1):
+                key = str(i)
+                alpha.append(model.addVar(name='alpha_' + key))
+        
+            epsilon = model.addVar(name='epsilon')
+        
+            yw = {}
+            for od in od_list:
+                for i in range(numNode):
+                    key = od + str(i)
+                    yw[key] = model.addVar(name='yw_' + key)
+        
+            model.update()
+        
+            # add dual feasibility constraints
+            for od in od_list:
+                for a in range(numLink):
+                    model.addConstr(yw[od+str(int(link_label_dict[str(a)].split(',')[0])-1)] - 
+                                    yw[od+str(int(link_label_dict[str(a)].split(',')[1])-1)] <= 
+                                    free_flow_time_list[a] * polyEval(alpha, flow_normalized[a]))        
+            model.update()
+        
+            # add increasing constraints
+            myList = flow_normalized
+            flow_sorted_idx = sorted(range(len(myList)),key=lambda x:myList[x])
+            # model.addConstr(polyEval(alpha, 0) <= polyEval(alpha, flow_normalized[flow_sorted_idx[0]]))
+            for i in range(numLink):
+                if (i < numLink-1):
+                    a_i_1 = flow_sorted_idx[i]
+                    a_i_2 = flow_sorted_idx[i+1]
+                    model.addConstr(polyEval(alpha, flow_normalized[a_i_1]) <= polyEval(alpha, flow_normalized[a_i_2]))
+            model.update()
+        
+            model.addConstr(epsilon >= 0)
+            model.update()
+        
+            # add primal-dual gap constraint
+        
+            primal_cost = sum([flow_list[a] * free_flow_time_list[a] * polyEval(alpha, flow_normalized[a]) 
+                               for a in range(numLink)])
+            dual_cost = sum([demands[od] * (yw[od + str(int(od.split(',')[1].split(')')[0])-1)] - 
+                                            yw[od + str(int(od.split(',')[0].split('(')[1])-1)]) 
+                             for od in od_list])
+            
+            ref_cost = sum([flow_list[a] * free_flow_time_list[a] for a in range(numLink)])
+        
+            model.addConstr(primal_cost - dual_cost <= epsilon * ref_cost)
+        #     model.addConstr(dual_cost - primal_cost <= epsilon * ref_cost)
+        
+            model.update()
+        
+            # add normalization constraint
+            model.addConstr(alpha[0] == 1)
+            model.update()
+        
+            # Set objective
+            obj = 0
+            obj += sum([alpha[i] * alpha[i] / normCoeffs[i] for i in range(d+1)])
+            obj += gama * epsilon
+        
+            model.setObjective(obj)
+        
+            model.setParam('OutputFlag', False)
+            model.optimize()
+            alpha_list = []
+            for v in model.getVars():
+            #     print('%s %g' % (v.varName, v.x))
+                if 'alpha' in v.varName:
+                    alpha_list.append(v.x)
+            return alpha_list
+        
+        alpha_list = fitCost(1.5, 5, 1.0)
+        
+        
+        
+        xs = linspace(0, 2, 20)
+        zs_true = [g_true(t) for t in xs]
+        
+        def g_est(t):
+            return polyEval(alpha_list, t)
+        
+        zs_est = [g_est(t) for t in xs]
+        true, = plt.plot(xs, zs_true, "bo-")
+        est, = plt.plot(xs, zs_est, "rs-")
+        
+        plt.legend([true, est], ["g_true", "g_est"], loc=0)
+        plt.xlabel('Scaled Flow')
+        plt.ylabel('Scaled Cost')
+        pylab.xlim(-0.1, 1.6)
+        pylab.ylim(0.9, 2.0)
+        grid("on")
+        savefig('fittedCostFunc_'+'_' + instance + '_' + month_w +'.eps')
+    
