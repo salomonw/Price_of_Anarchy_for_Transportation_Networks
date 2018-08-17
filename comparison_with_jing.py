@@ -184,7 +184,6 @@ with open('../temp_files/link_day_minute_Apr_dict_JSON.json', 'r') as json_file:
     link_day_minute_Apr_dict_JSON = json.load(json_file)
 
 
-
 for i in range(number_plots):
     a = np.random.choice(link_day_minute_Apr_dict_JSON.keys())
     #a = 'link_0_2'
@@ -541,7 +540,6 @@ for instance in instances:
 
  os.chdir(folder)
    
-
     os.chdir(folder)
     list_of_lists_j = []
     with open('../temp_files/OD_demand_matrix_Apr_weekday_'+ instance + '.txt', 'r') as the_file:

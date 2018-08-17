@@ -179,7 +179,7 @@ function furInfo()
     link_label_dict_ = readstring(out_dir * files_ID * "/link_label_dict_.json")
     link_label_dict_ = JSON.parse(link_label_dict_)
 
-    link_length_dict = readstring(out_dir * files_ID * "/LINK length DICT.json"))
+    link_length_dict = readstring(out_dir * files_ID * "/link_length_dict.json")
     link_length_dict = JSON.parse(link_length_dict)
     
     return link_label_dict, link_label_dict_, link_length_dict

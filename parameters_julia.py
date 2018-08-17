@@ -42,6 +42,8 @@ time_instances_input = [{'id':'AM','start_time':'7:00', 'end_time':'9:00'},
                         {'id':'PM','start_time':'17:00', 'end_time':'19:00'}, 
                         {'id':'NT','start_time':'21:00', 'end_time':'23:00'}]
 
+instances_ID = ["AM", "MD", "PM", "NT"]
+
 time_instances = pd.DataFrame(time_instances_input)
 
 data_granularity = '1min'
@@ -69,6 +71,7 @@ lower_bound_route = 0.02
 
 #Inverse optimization
 month_w = 'Apr'
+year = 2012
 
 #Machine learning parameters
 deg_grid = range(4, 7)

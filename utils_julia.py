@@ -14,10 +14,10 @@ Created on Wed May 30 10:39:40 2018
 
 ' Packages '
 import os
-import sys
+#import sys
 import numpy as np
 #import pandas as pd
-import os 
+#import os 
 #import networkx as nx
 #import multiprocessing as mp
 #from dbfread import DBF    
@@ -27,7 +27,7 @@ import pickle
 #import pysal as ps
 #import pandas as pd
 #import numpy as np
-import datetime
+#import datetime
 
 '''
 

@@ -21,6 +21,7 @@ def parse_data_for_Julia(out_dir, files_ID, time_instances):
     
     link_edge_dict = {}
     link_min_dict = {}
+    link_length_dict = {}
     idx = 0
     
     # Read flows
@@ -90,9 +91,12 @@ def parse_data_for_Julia(out_dir, files_ID, time_instances):
                 key['flow_'+ instance] = v
                 
             link_min_dict[keys_] = key
-                
+            
+
+
         idx += 1
         link_edge_dict[idx] = edge
+        link_length_dict[idx] = edge_len
         print('link: ' + str(edge) + ' has been processed ' + str(idx)  + ' !')
     
     with open(out_dir + 'link_edge_dict' + files_ID  + '.json', 'w') as fp:
@@ -100,10 +104,13 @@ def parse_data_for_Julia(out_dir, files_ID, time_instances):
     
     with open(out_dir + 'link_min_dict' + files_ID  + '.json', 'w') as fp:
             json.dump(link_min_dict, fp)
+
+    with open(out_dir + 'link_length_dict' + '.json', 'w') as fp:
+            json.dump(link_length_dict, fp)
     
     zdump(link_edge_dict, out_dir + 'link_edge_dict' + files_ID + '.pkz')
     zdump(link_min_dict, out_dir + 'link_min_dict' + files_ID + '.pkz')
-
+    zdump(link_length_dict, out_dir + 'link_length_dict'  + '.pkz')
 
 
 
