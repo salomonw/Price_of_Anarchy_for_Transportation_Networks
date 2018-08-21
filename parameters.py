@@ -77,6 +77,8 @@ n_zones = 8
 week_day_list_1 = [20, 23, 24, 25, 26, 27, 30] # train_idx = 1
 week_day_list_2 = [11, 12, 13, 16, 17, 18, 19] # train_idx = 2
 week_day_list_3 = [2, 3, 4, 5, 6, 9, 10] # train_idx = 3
+week_day_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30]
+
 train_idx = range(1, 4)
 
 #Machine learning parameters

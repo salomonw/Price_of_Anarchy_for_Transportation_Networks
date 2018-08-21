@@ -111,7 +111,23 @@ end
 
 ############
 #Read in the demand file
-file = open("../data_original/SiouxFalls_trips.txt")
+
+
+using PyCall
+unshift!(PyVector(pyimport("sys")["path"]), "");
+@pyimport parameters_julia
+
+out_dir = parameters_julia.out_dir
+files_ID = parameters_julia.files_ID
+month_w = parameters_julia.month_w
+year = parameters_julia.year
+instances_ = parameters_julia.instances_ID
+
+instance = readstring(out_dir * "instance_comm.txt")
+
+
+
+file = open(out_dir * "data_traffic_assignment_uni-class/" * files_ID * "_trips_" * month_w * "_" * instance * ".txt")
 demands = Dict{(Int64,Int64), Float64}()
 s = 0
 for line in eachline(file)
@@ -133,7 +149,7 @@ close(file)
 ############
 #read in the arc files
 arcs = Dict{(Int, Int), Arc}()
-file = open("../data_original/SiouxFalls_net.txt")
+file = open(out_dir * "data_traffic_assignment_uni-class/" * files_ID * "_net_" * month_w * "_" * instance * ".txt")
 inHeader=true
 for line in eachline(file)
     if inHeader
@@ -145,6 +161,7 @@ for line in eachline(file)
 end
 close(file)
 
+#=
 ###########
 #read in the initial flows
 file = open("../data_original/SiouxFallsFlow.txt")
@@ -158,7 +175,7 @@ for line in eachline(file)
     arcs[(int(vals[1]), int(vals[2]))].flow = float(vals[3])
 end
 close(file)
-
+=#
 ##########
 # Set up demand data and flow data
 ##########

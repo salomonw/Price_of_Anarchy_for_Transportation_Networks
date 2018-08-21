@@ -1,6 +1,6 @@
 using JSON
 
-instance1 = "NT"
+instance1 = readstring(out_dir * "instance_comm.txt")
 
 demandsDict = Dict()
 # get ground trueth demands, indexed by 0

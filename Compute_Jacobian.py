@@ -8,7 +8,8 @@ from utils_julia import *
 from parameters import *
 import json
 
-instance = 'AM'
+with open(out_dir + 'instance_comm.txt') as ins_file:
+    instance = file.read(ins_file)
 
 
 with open(out_dir + "/data_traffic_assignment_uni-class/" + files_ID + '_net_' + month_w + '_' + instance + '.txt') as MA_journal_flow:

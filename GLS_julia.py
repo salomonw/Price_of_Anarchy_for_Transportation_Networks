@@ -4,10 +4,12 @@ from numpy.linalg import inv
 import json
 import pandas as pd
 from utils_julia import *
-from parameters import *
+from parameters_julia import *
 
 
-instance = 'PM'
+with open(out_dir + 'instance_comm.txt') as ins_file:
+    instance = file.read(ins_file)
+    
 # load logit_route_choice_probability_matrix
 P = zload( out_dir + 'od_pair_route_incidence_' + instance + files_ID + '.pkz' )
 P = np.matrix(P)
@@ -24,7 +26,7 @@ with open(out_dir + 'link_label_dict_' + '.json', 'r') as json_file:
 
 numEdges = len(link_label_dict_)
 
-week_day_Apr_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30]
+week_day_Apr_list = week_day_list
 
 with open(out_dir + 'link_min_dict'+ files_ID + '.json', 'r') as json_file:
         link_day_minute_Apr_dict_JSON = json.load(json_file)
@@ -57,8 +59,8 @@ x = np.transpose(y)
 x = np.matrix(x)
 
 link_day_Apr_list = []
-year = 2012
-month = 4
+#year = 2012
+#month = 4
 for edge in link_edge_dict.values():
     print edge
     for day in week_day_Apr_list: 
