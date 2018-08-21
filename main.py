@@ -64,20 +64,14 @@ parse_data_for_Julia(out_dir, files_ID, time_instances)
 '''
 RUN JULIA: 01. InvOpt_salo_f.jl  JULIA 0.6.4
 '''
-# testing sets
-month_w = 'Apr'
-month = 4
-year = 2012
-n_zones = 8
-week_day_list_1 = [20, 23, 24, 25, 26, 27, 30]
-week_day_list_2 = [11, 12, 13, 16, 17, 18, 19] 
-week_day_list_3 = [2, 3, 4, 5, 6, 9, 10]
 
 create_testing_set(week_day_list_1, week_day_list_2, week_day_list_3, year, month, time_instances, month_w, out_dir, files_ID)
 
 create_East_Massachusetts_trips(out_dir, files_ID, month_w, time_instances, n_zones)
 
 create_East_Massachusetts_net(out_dir, files_ID, month_w, month, year, time_instances, n_zones )
+
+
 
     
 '''

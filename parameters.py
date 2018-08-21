@@ -70,13 +70,20 @@ lower_bound_route = 0.02
 
 #Inverse optimization
 month_w = 'Apr'
+month = 4
 year = 2012
+n_zones = 8
+
+week_day_list_1 = [20, 23, 24, 25, 26, 27, 30] # train_idx = 1
+week_day_list_2 = [11, 12, 13, 16, 17, 18, 19] # train_idx = 2
+week_day_list_3 = [2, 3, 4, 5, 6, 9, 10] # train_idx = 3
+train_idx = range(1, 4)
 
 #Machine learning parameters
 deg_grid = range(4, 7)
 c_grid = list(np.arange(.5, 3, .5))
 lamb_grid = [10. ** m for m in range(-3, 4)]
-train_idx = range(1, 4)
+
 
 
 
