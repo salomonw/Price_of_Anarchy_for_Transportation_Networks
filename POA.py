@@ -257,7 +257,12 @@ def parse_data_for_TAP(out_dir, files_ID, time_instances, month_w):
         
     zdump(N, out_dir + 'node_link_incidence.pkz')
 
-
+    od_nodesList_dict = {}
+    
+    for i in range(numZones):
+        od_nodesList_dict[i+1] = [i+1]
+    zdump(od_nodesList_dict, out_dir + 'od_nodesList_dict.pkz')
+    
 
 ####### -------------- 08_InverseVI_uni_MA_with_base_trans_python -----------------
 

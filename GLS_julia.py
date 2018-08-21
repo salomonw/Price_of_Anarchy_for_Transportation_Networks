@@ -9,7 +9,10 @@ from parameters_julia import *
 
 with open(out_dir + 'instance_comm.txt') as ins_file:
     instance = file.read(ins_file)
-    
+
+od_nodesList_dict = zload(out_dir + 'od_nodesList_dict.pkz')
+
+
 # load logit_route_choice_probability_matrix
 P = zload( out_dir + 'od_pair_route_incidence_' + instance + files_ID + '.pkz' )
 P = np.matrix(P)

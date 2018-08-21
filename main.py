@@ -86,149 +86,15 @@ RUN JULIA: 04. sensitivity_analysis_Finite_Difference_Approximation
 
 parse_data_for_TAP(out_dir, files_ID, time_instances, month_w)
 
+'''
+RUN JULIA: 04.1 
+'''
 
 '''
 RUN JULIA:  05. TAP POA.jl
 '''
 
 InverseVI_uni_MA_with_base_trans_python(out_dir, files_ID, time_instances, month_w)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-calculate_testing_errors(out_dir, files_ID, month_w, instance, deg_grid, c_grid, lamb_grid):
-
-
-
-month_w = 'Apr'
-instance = 'AM'
-
-import json
-with open(out_dir + "/data_traffic_assignment_uni-class/" + files_ID + '_net_' + month_w + '_' + instance + '.txt') as MA_flow:
-    MA_flow_lines = MA_flow.readlines()
-MA_links = []
-i = -9
-for line in MA_flow_lines:
-    
-    i += 1
-    if i > 0:
-        MA_links.append(line.split()[1:3])
-numLinks = i
-
-link_list_js = [str(int(MA_links[i][0])) + ',' + str(int(float(MA_links[i][1]))) for \
-             i in range(len(MA_links))]
-
-link_list_pk = [str(int(MA_links[i][0])) + '->' + str(int(float(MA_links[i][1]))) for \
-             i in range(len(MA_links))]
-
-zdump(link_list_js, out_dir +  files_ID '_link_list_js.pkz')
-zdump(link_list_pk, out_dir +  files_ID '_link_list_pk.pkz')
-numNodes = max([int(float(MA_links[i][1])) for i in range(numLinks)])
-
-
-
-#Compute Jacobian
-import json
-with open(out_dir + "/data_traffic_assignment_uni-class/" + files_ID + '_net_' + month_w + '_' + instance + '.txt') as MA_flow:
-    MA_flow_lines = MA_flow.readlines()
-MA_links = []
-i = -9
-for line in MA_flow_lines:
-    i += 1
-    if i > 0:
-        MA_links.append(line.split('  ')[1:3])
-numLinks = i
-
-link_list_js = [str(int(MA_links[i][0])) + ',' + str(int(MA_links[i][1])) for \
-                i in range(len(MA_links))]
-
-link_list_pk = [str(int(MA_links[i][0])) + '->' + str(int(MA_links[i][1])) for \
-                i in range(len(MA_links))]
-
-numNodes = max([int(MA_links[i][1]) for i in range(numLinks)])
-
-from collections import defaultdict
-
-node_neighbors_dict = defaultdict(list)
-
-for node in range(numNodes):
-    for link in MA_links:
-        if node == int(link[0]):
-            node_neighbors_dict[str(node)].append(int(link[1]))
-
-with open(out_dir + "/data_traffic_assignment_uni-class/" + files_ID + '_trips_' + month_w + '_' + instance + '.txt') as MA_trips:
-    MA_trips_lines = MA_trips.readlines()
-
-numZones = int(MA_trips_lines[0].split(' ')[3])
-
-od_pairs = zload(out_dir + 'od_pairs' + files_ID + '.pkz')
-
-
-
-
-
-
-
-
-
-
-
-
-
-import json
-
-os.chdir(jing_folders[0])
-
-link_label_dict_ = zload('link_label_dict_.pkz')
-
-with open(out_dir + 'coeffs_dict_Apr_AM.json', 'r') as json_file:
-    coeffs_dict_Apr_AM= json.load(json_file)
-
-
-with open(out_dir + 'coeffs_dict_Apr_MD.json', 'r') as json_file:
-    coeffs_dict_Apr_MD= json.load(json_file)
-
-
-with open(out_dir + 'coeffs_dict_Apr_PM.json', 'r') as json_file:
-    coeffs_dict_Apr_PM= json.load(json_file)
-
-
-with open(out_dir + 'coeffs_dict_Apr_NT.json', 'r') as json_file:
-    coeffs_dict_Apr_NT= json.load(json_file)
-
-
-uni-class_traffic_assignment_MSA_flows_Apr_PM
-
-
-
-with open(out_dir + 'uni-class_traffic_assignment_MSA_flows_Apr_PM.json', 'r') as json_file:
-    uni_class_traffic_assignment_MSA_flows_Apr_PM = json.load(json_file)
-
-
-
-
-
-
-
-
-
-
-
 
 
 

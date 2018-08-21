@@ -1,4 +1,8 @@
 using JSON
+@pyimport parameters_julia
+out_dir = parameters_julia.out_dir
+files_ID = parameters_julia.files_ID
+month_w = parameters_julia.month_w
 
 instance1 = readstring(out_dir * "instance_comm.txt")
 
