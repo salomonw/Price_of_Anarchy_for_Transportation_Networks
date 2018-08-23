@@ -82,7 +82,7 @@ week_day_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 2
 train_idx = range(1, 4)
 
 #Machine learning parameters
-deg_grid = range(4, 9)
+deg_grid = range(4, 7)
 c_grid = list(np.arange(.5, 3, .5))
 lamb_grid = [10. ** m for m in range(-3, 4)]
 

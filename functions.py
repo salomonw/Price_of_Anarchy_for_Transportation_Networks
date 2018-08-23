@@ -95,7 +95,7 @@ def flow_conservation_adjustment(G,y):
     res = {}
     for v in model.getVars():
         # print('%s %g' % (v.varName, v.x))
-        #u.append(v.x)
+        #u.append(v.x)S
         res[v.VarName] = v.x
      #print('Obj: %g' % obj.getValue())
     return res
@@ -116,6 +116,8 @@ def filter_TMC_mult_files(dir_data, files_ID, confidence_score_min, c_value_min,
                 analized_mem = 0 
                 iter_csv = pd.read_csv(root + '/' +  file, iterator=True, chunksize=200000)
                 for chunk in iter_csv:
+                    #chunk = chunk.reset_index()
+                    #chunk.columns = ['tmc_code', '']
                     chunk['measurement_tstamp']=pd.to_datetime(chunk['measurement_tstamp'], format='%Y-%m-%d %H:%M:%S')
                     chunk = chunk.set_index('measurement_tstamp')
                     df2 = filter_tmc(chunk,tmc_net_list,confidence_score_min,c_value_min)   
@@ -240,6 +242,7 @@ def filter_time_instances(out_dir, files_ID, time_instances, data_granularity):
     for index, row in time_instances.iterrows():
         df = pd.DataFrame()
         cnt = 0
+        cnt_1 = 0
         iter_csv = pd.read_csv(out_dir + 'filtered_tmc_date' + files_ID + '.csv', iterator=True, chunksize=200000)
         for chunk in iter_csv:
             df2 = filter_time(chunk, row['start_time'], row['end_time'])  
@@ -286,8 +289,11 @@ def filter_time_instances(out_dir, files_ID, time_instances, data_granularity):
             speed = row2['speed']
             avg_speed = row2['avg_speed_day']
             if np.isnan(speed)  == True:
-                speed = ref_speed_collection[row2['tmc_code']].iloc[row2['min']-1, row2['dayWeek']-1]
-                #speed = 0.0000001 
+                try:
+                    speed = ref_speed_collection[row2['tmc_code']].iloc[row2['min']-1, row2['dayWeek']-1]
+                except:
+                    speed = 0.0000001 
+                    cnt_1 += 1
                 df.set_value(idx,'speed', speed)
             x_flow = greenshield(min(speed,free_flow_sp) , capacity , free_flow_sp)
             avg_flow = greenshield(min(avg_speed,free_flow_sp) , capacity , free_flow_sp) # check avg_speed for 2015 dataset
@@ -307,6 +313,7 @@ def filter_time_instances(out_dir, files_ID, time_instances, data_granularity):
     
         pd.to_pickle(df, out_dir + 'filtered_tmc_date_time_flow' + files_ID + '_' + row['id'] +'.pkz')   
         pd.to_pickle(result2, out_dir + 'result_2' + files_ID + '_' + row['id'] +'.pkz') #!!!!!!!!!!!!!!! RENAME !!!!!!!!!!!
+        print('there are: ' + str(cnt_1) + 'missing values')
         
 def calculate_data_flows(out_dir, files_ID, time_instances, days_of_week):
     import json

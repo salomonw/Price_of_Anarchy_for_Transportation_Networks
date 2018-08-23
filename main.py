@@ -33,7 +33,7 @@ G = import_jing_net(dir_shpfile, files_ID, out_dir)
 
 #G = zload(out_dir + 'G' + files_ID + '.pkz')
 
-extract_2012_INRIX_data(dir_data , out_dir, filtered_data_dir, files_ID , confidence_score_min, c_value_min)
+extract_2012_INRIX_data(dir_data , out_dir, filtered_data_dir, files_ID , confidence_score_min, c_value_min, year)
 
 #filter_TMC_mult_files(dir_data, files_ID, confidence_score_min, c_value_min, out_dir)
 
@@ -55,7 +55,7 @@ od_pair_definition(out_dir, files_ID )
 
 path_incidence_matrix(out_dir, files_ID, time_instances, number_of_routes_per_od, theta, lower_bound_route )
 
-runGLS(out_dir, files_ID, time_instances, 'Apr') 
+runGLS(out_dir, files_ID, time_instances, 'May') 
 
 # ------------------------------ Inverse Optimization -------------------------
 
@@ -95,9 +95,5 @@ RUN JULIA:  05. TAP POA.jl
 '''
 
 InverseVI_uni_MA_with_base_trans_python(out_dir, files_ID, time_instances, month_w)
-
-
-
-
 
 

@@ -10,8 +10,8 @@ import os
 
 'Parameters'
 dir_shpfile = 'G:/My Drive/GitHub/PoA/shp/Jing/journal.shp'
-dir_data = 'G:/Team Drives/MPO 2012/raw/Apr' # Will take all of the csv files contained in folders and subfolders
-files_ID = '_cdc_all_comp_apr_2012'
+dir_data = 'G:/Team Drives/MPO 2012/raw/May' # Will take all of the csv files contained in folders and subfolders
+files_ID = '_cdc_may_2012'
 dir_capacity_data = 'G:/Team Drives/MPO 2012/capacity data/'
 
 out_dir = '../results/' + files_ID + '/' 
@@ -23,7 +23,7 @@ if os.path.isdir(out_dir) == False:
 # Filtering by date range and tmc
 dates_input = [#{'id':'Jan','start_date': '2015-01-01' , 'end_date':'2015-01-10'}, 
                #{'id':'Feb','start_date': '2015-02-01' , 'end_date':'2015-02-15'}] 
-               {'id':'Apr','start_date': '2012-04-01' , 'end_date':'2012-05-01'}] 
+               {'id':'May','start_date': '2012-05-01' , 'end_date':'2012-06-01'}] 
                #{'id':'Aug','start_date': '2015-08-01' , 'end_date':'2015-08-10'}, 
                #{'id':'Nov','start_date': '2015-11-01' , 'end_date':'2015-11-10'}]
  
@@ -34,7 +34,7 @@ dates_input = [#{'id':'Jan','start_date': '2015-01-01' , 'end_date':'2015-01-10'
 days_of_week = 'weekdays'
 
 dates = pd.DataFrame(dates_input)
-percentile_free_flow = 95
+percentile_free_flow = 85
 
 # Time instances
 time_instances_input = [{'id':'AM','start_time':'7:00', 'end_time':'9:00'}, 
@@ -69,20 +69,20 @@ lower_bound_route = 0.02
 
 
 #Inverse optimization
-month_w = 'Apr'
+month_w = 'May'
 month = 4
 year = 2012
 n_zones = 8
 
-week_day_list_1 = [20, 23, 24, 25, 26, 27, 30] # train_idx = 1
-week_day_list_2 = [11, 12, 13, 16, 17, 18, 19] # train_idx = 2
-week_day_list_3 = [2, 3, 4, 5, 6, 9, 10] # train_idx = 3
-week_day_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30]
+week_day_list_1 = [1,2,3,4,7,8,9] # train_idx = 1
+week_day_list_2 = [10,11,14,15,16,17,18] # train_idx = 2
+week_day_list_3 = [21,22,23,24,25,28,29] # train_idx = 3
+week_day_list = [1,2,3,4,7,8,9,10,11,14,15,16,17,18,21,22,23,24,25,28,29,30,31]
 
 train_idx = range(1, 4)
 
 #Machine learning parameters
-deg_grid = range(4, 9)
+deg_grid = range(4, 7)
 c_grid = list(np.arange(.5, 3, .5))
 lamb_grid = [10. ** m for m in range(-3, 4)]
 

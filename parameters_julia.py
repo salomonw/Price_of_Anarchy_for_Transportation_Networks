@@ -43,7 +43,6 @@ time_instances_input = [{'id':'AM','start_time':'7:00', 'end_time':'9:00'},
                         {'id':'NT','start_time':'21:00', 'end_time':'23:00'}]
 
 instances_ID = ["AM", "MD", "PM", "NT"]
-
 time_instances = pd.DataFrame(time_instances_input)
 
 data_granularity = '1min'
@@ -74,16 +73,23 @@ month_w = 'Apr'
 month = 4
 year = 2012
 n_zones = 8
-week_day_list_1 = [20, 23, 24, 25, 26, 27, 30]
-week_day_list_2 = [11, 12, 13, 16, 17, 18, 19] 
-week_day_list_3 = [2, 3, 4, 5, 6, 9, 10]
+
+week_day_list_1 = [20, 23, 24, 25, 26, 27, 30] # train_idx = 1
+week_day_list_2 = [11, 12, 13, 16, 17, 18, 19] # train_idx = 2
+week_day_list_3 = [2, 3, 4, 5, 6, 9, 10] # train_idx = 3
 week_day_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30]
 
+train_idx = range(1, 4)
+
 #Machine learning parameters
-deg_grid = range(4, 7)
+deg_grid = range(4, 9)
 c_grid = list(np.arange(.5, 3, .5))
 lamb_grid = [10. ** m for m in range(-3, 4)]
-train_idx = range(1, 4)
+
+
+
+
+
 
 
 

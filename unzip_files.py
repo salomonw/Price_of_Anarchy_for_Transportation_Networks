@@ -35,7 +35,7 @@ def extract_2012_INRIX_data(files_dir, tmc_net_dir, out_dir, files_ID, confidenc
 
 
 
-def extract_2012_INRIX_data(files_dir, tmc_net_dir, out_dir, files_ID, confidence_score_min,c_value_min):
+def extract_2012_INRIX_data(files_dir, tmc_net_dir, out_dir, files_ID, confidence_score_min,c_value_mi,year):
 	#tmc_net_list = zload(tmc_net_dir + 'tmc_net_list' + files_ID + '.pkz')
     road_seg_inr_capac = zload('G:/My Drive/Github/InverseVIsTraffic/temp_files/road_seg_inr_capac.pkz')
     tmc_net_list = road_seg_inr_capac.tmc
@@ -57,7 +57,7 @@ def extract_2012_INRIX_data(files_dir, tmc_net_dir, out_dir, files_ID, confidenc
                df = pd.read_csv(root + '/' +  file)
                col_names = ['tmc_code', 'month', 'day', 'dow', 'hour', 'minute', 'speed', 'avg_speed', 'ref_speed', 'travel_time', 'confidence_score', 'c_value']
                df.columns = col_names
-               df['year'] = (len(df))*[2012]
+               df['year'] = (len(df))*[year]
                df['measurement_tstamp'] = pd.to_datetime(df[['year', 'month', 'day', 'hour', 'minute']])
                df = df.drop(columns=['year', 'month', 'day', 'hour', 'minute'])
                df = df.rename(columns={'tmc': 'tmc_code', 'c_value': 'cvalue'})
