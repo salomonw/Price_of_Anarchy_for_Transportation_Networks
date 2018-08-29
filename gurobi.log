@@ -142,3 +142,1472 @@ Freed default Gurobi environment
 Gurobi 8.0.0 (win64, Python) logging started 08/22/18 16:09:03
 
 Academic license - for non-commercial use only
+Freed default Gurobi environment
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 15:30:43
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 15:31:50
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 15:40:27
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 15:42:34
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 15:56:03
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 15:56:58
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 16:00:54
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 16:23:13
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 16:37:10
+
+Academic license - for non-commercial use only
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [3e-01, 2e+01]
+  QObjective range [3e-07, 7e-02]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Presolve removed 56 rows and 0 columns
+Presolve time: 0.00s
+Presolved: 0 rows, 56 columns, 0 nonzeros
+Presolved model has 1596 quadratic objective terms
+Ordering time: 0.00s
+
+Barrier statistics:
+ Free vars  : 20
+ AA' NZ     : 1.900e+02
+ Factor NZ  : 2.100e+02
+ Factor Ops : 2.870e+03 (less than 1 second per iteration)
+ Threads    : 1
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -1.74191927e+06  0.00000000e+00  7.92e+03 1.43e+02  9.51e+05     0s
+   1   2.36554289e+06 -2.97492908e+06  6.52e+02 7.82e+01  1.71e+05     0s
+   2   5.60089861e+05 -8.16613271e+05  6.52e-04 1.14e-13  2.46e+04     0s
+   3   3.04973372e+04 -1.66048968e+05  6.52e-10 2.84e-14  3.51e+03     0s
+   4  -3.56742045e+04 -6.15798192e+04  1.43e-11 2.84e-14  4.63e+02     0s
+   5  -4.30300584e+04 -4.79380001e+04  2.39e-12 2.80e-14  8.76e+01     0s
+   6  -4.42211885e+04 -4.46283277e+04  4.41e-13 5.33e-14  7.27e+00     0s
+   7  -4.43396168e+04 -4.43707351e+04  6.96e-12 6.40e-14  5.56e-01     0s
+   8  -4.43527932e+04 -4.43559966e+04  1.21e-11 6.06e-14  5.72e-02     0s
+   9  -4.43548886e+04 -4.43552037e+04  5.58e-11 2.38e-14  5.63e-03     0s
+  10  -4.43551645e+04 -4.43551692e+04  2.32e-11 2.03e-14  8.38e-05     0s
+  11  -4.43551690e+04 -4.43551690e+04  1.44e-10 4.77e-14  8.36e-08     0s
+  12  -4.43551690e+04 -4.43551690e+04  1.62e-11 1.42e-13  1.75e-10     0s
+
+Barrier solved model in 12 iterations and 0.01 seconds
+Optimal objective -4.43551690e+04
+
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 16:43:10
+
+Academic license - for non-commercial use only
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 3e+01]
+  QObjective range [2e-06, 1e-01]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Presolve removed 56 rows and 0 columns
+Presolve time: 0.00s
+Presolved: 0 rows, 56 columns, 0 nonzeros
+Presolved model has 1596 quadratic objective terms
+Ordering time: 0.00s
+
+Barrier statistics:
+ Free vars  : 22
+ AA' NZ     : 2.310e+02
+ Factor NZ  : 2.530e+02
+ Factor Ops : 3.795e+03 (less than 1 second per iteration)
+ Threads    : 1
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -2.65990600e+06  0.00000000e+00  1.46e+04 2.23e+02  9.38e+05     0s
+   1   2.92924324e+06 -3.45931154e+06  1.46e-02 1.14e-13  1.14e+05     0s
+   2   3.50612768e+05 -5.79309201e+05  1.46e-08 1.14e-13  1.66e+04     0s
+   3   6.15857655e+03 -1.24097812e+05  3.41e-13 1.49e-13  2.33e+03     0s
+   4  -3.42533630e+04 -5.64168143e+04  4.55e-13 4.97e-14  3.96e+02     0s
+   5  -4.23640530e+04 -4.71256539e+04  4.71e-12 6.04e-14  8.50e+01     0s
+   6  -4.46250084e+04 -4.53827851e+04  3.13e-12 3.13e-14  1.35e+01     0s
+   7  -4.50625081e+04 -4.50997593e+04  1.82e-12 3.91e-14  6.65e-01     0s
+   8  -4.50931857e+04 -4.50942571e+04  2.41e-11 2.84e-14  1.91e-02     0s
+   9  -4.50938862e+04 -4.50939426e+04  3.01e-10 4.57e-14  1.01e-03     0s
+  10  -4.50938937e+04 -4.50938959e+04  3.59e-09 2.98e-14  3.91e-05     0s
+  11  -4.50938938e+04 -4.50938938e+04  2.16e-09 4.12e-14  3.87e-08     0s
+  12  -4.50938938e+04 -4.50938938e+04  1.35e-09 2.65e-13  8.03e-11     0s
+
+Barrier solved model in 12 iterations and 0.01 seconds
+Optimal objective -4.50938938e+04
+
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 16:46:12
+
+Academic license - for non-commercial use only
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [3e-01, 2e+01]
+  QObjective range [3e-07, 7e-02]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Presolve removed 56 rows and 0 columns
+Presolve time: 0.01s
+Presolved: 0 rows, 56 columns, 0 nonzeros
+Presolved model has 1596 quadratic objective terms
+Ordering time: 0.00s
+
+Barrier statistics:
+ Free vars  : 20
+ AA' NZ     : 1.900e+02
+ Factor NZ  : 2.100e+02
+ Factor Ops : 2.870e+03 (less than 1 second per iteration)
+ Threads    : 1
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -1.74191927e+06  0.00000000e+00  7.92e+03 1.43e+02  9.51e+05     0s
+   1   2.36554289e+06 -2.97492908e+06  6.52e+02 7.82e+01  1.71e+05     0s
+   2   5.60089861e+05 -8.16613271e+05  6.52e-04 1.14e-13  2.46e+04     0s
+   3   3.04973372e+04 -1.66048968e+05  6.52e-10 2.84e-14  3.51e+03     0s
+   4  -3.56742045e+04 -6.15798192e+04  1.43e-11 2.84e-14  4.63e+02     0s
+   5  -4.30300584e+04 -4.79380001e+04  2.39e-12 2.80e-14  8.76e+01     0s
+   6  -4.42211885e+04 -4.46283277e+04  4.41e-13 5.33e-14  7.27e+00     0s
+   7  -4.43396168e+04 -4.43707351e+04  6.96e-12 6.40e-14  5.56e-01     0s
+   8  -4.43527932e+04 -4.43559966e+04  1.21e-11 6.06e-14  5.72e-02     0s
+   9  -4.43548886e+04 -4.43552037e+04  5.58e-11 2.38e-14  5.63e-03     0s
+  10  -4.43551645e+04 -4.43551692e+04  2.32e-11 2.03e-14  8.38e-05     0s
+  11  -4.43551690e+04 -4.43551690e+04  1.44e-10 4.77e-14  8.36e-08     0s
+  12  -4.43551690e+04 -4.43551690e+04  1.62e-11 1.42e-13  1.75e-10     0s
+
+Barrier solved model in 12 iterations and 0.01 seconds
+Optimal objective -4.43551690e+04
+
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 16:48:35
+
+Academic license - for non-commercial use only
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [3e-01, 2e+01]
+  QObjective range [3e-07, 7e-02]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Presolve removed 56 rows and 0 columns
+Presolve time: 0.00s
+Presolved: 0 rows, 56 columns, 0 nonzeros
+Presolved model has 1596 quadratic objective terms
+Ordering time: 0.00s
+
+Barrier statistics:
+ Free vars  : 20
+ AA' NZ     : 1.900e+02
+ Factor NZ  : 2.100e+02
+ Factor Ops : 2.870e+03 (less than 1 second per iteration)
+ Threads    : 1
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -1.74191927e+06  0.00000000e+00  7.92e+03 1.43e+02  9.51e+05     0s
+   1   2.36554289e+06 -2.97492908e+06  6.52e+02 7.82e+01  1.71e+05     0s
+   2   5.60089861e+05 -8.16613271e+05  6.52e-04 1.14e-13  2.46e+04     0s
+   3   3.04973372e+04 -1.66048968e+05  6.52e-10 2.84e-14  3.51e+03     0s
+   4  -3.56742045e+04 -6.15798192e+04  1.43e-11 2.84e-14  4.63e+02     0s
+   5  -4.30300584e+04 -4.79380001e+04  2.39e-12 2.80e-14  8.76e+01     0s
+   6  -4.42211885e+04 -4.46283277e+04  4.41e-13 5.33e-14  7.27e+00     0s
+   7  -4.43396168e+04 -4.43707351e+04  6.96e-12 6.40e-14  5.56e-01     0s
+   8  -4.43527932e+04 -4.43559966e+04  1.21e-11 6.06e-14  5.72e-02     0s
+   9  -4.43548886e+04 -4.43552037e+04  5.58e-11 2.38e-14  5.63e-03     0s
+  10  -4.43551645e+04 -4.43551692e+04  2.32e-11 2.03e-14  8.38e-05     0s
+  11  -4.43551690e+04 -4.43551690e+04  1.44e-10 4.77e-14  8.36e-08     0s
+  12  -4.43551690e+04 -4.43551690e+04  1.62e-11 1.42e-13  1.75e-10     0s
+
+Barrier solved model in 12 iterations and 0.01 seconds
+Optimal objective -4.43551690e+04
+
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 16:51:28
+
+Academic license - for non-commercial use only
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [3e-01, 2e+01]
+  QObjective range [3e-07, 7e-02]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Presolve removed 56 rows and 0 columns
+Presolve time: 0.00s
+Presolved: 0 rows, 56 columns, 0 nonzeros
+Presolved model has 1596 quadratic objective terms
+Ordering time: 0.00s
+
+Barrier statistics:
+ Free vars  : 20
+ AA' NZ     : 1.900e+02
+ Factor NZ  : 2.100e+02
+ Factor Ops : 2.870e+03 (less than 1 second per iteration)
+ Threads    : 1
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -1.74191927e+06  0.00000000e+00  7.92e+03 1.43e+02  9.51e+05     0s
+   1   2.36554289e+06 -2.97492908e+06  6.52e+02 7.82e+01  1.71e+05     0s
+   2   5.60089861e+05 -8.16613271e+05  6.52e-04 1.14e-13  2.46e+04     0s
+   3   3.04973372e+04 -1.66048968e+05  6.52e-10 2.84e-14  3.51e+03     0s
+   4  -3.56742045e+04 -6.15798192e+04  1.43e-11 2.84e-14  4.63e+02     0s
+   5  -4.30300584e+04 -4.79380001e+04  2.39e-12 2.80e-14  8.76e+01     0s
+   6  -4.42211885e+04 -4.46283277e+04  4.41e-13 5.33e-14  7.27e+00     0s
+   7  -4.43396168e+04 -4.43707351e+04  6.96e-12 6.40e-14  5.56e-01     0s
+   8  -4.43527932e+04 -4.43559966e+04  1.21e-11 6.06e-14  5.72e-02     0s
+   9  -4.43548886e+04 -4.43552037e+04  5.58e-11 2.38e-14  5.63e-03     0s
+  10  -4.43551645e+04 -4.43551692e+04  2.32e-11 2.03e-14  8.38e-05     0s
+  11  -4.43551690e+04 -4.43551690e+04  1.44e-10 4.77e-14  8.36e-08     0s
+  12  -4.43551690e+04 -4.43551690e+04  1.62e-11 1.42e-13  1.75e-10     0s
+
+Barrier solved model in 12 iterations and 0.01 seconds
+Optimal objective -4.43551690e+04
+
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 16:54:19
+
+Academic license - for non-commercial use only
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [3e-01, 2e+01]
+  QObjective range [3e-07, 7e-02]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Presolve removed 56 rows and 0 columns
+Presolve time: 0.00s
+Presolved: 0 rows, 56 columns, 0 nonzeros
+Presolved model has 1596 quadratic objective terms
+Ordering time: 0.00s
+
+Barrier statistics:
+ Free vars  : 20
+ AA' NZ     : 1.900e+02
+ Factor NZ  : 2.100e+02
+ Factor Ops : 2.870e+03 (less than 1 second per iteration)
+ Threads    : 1
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -1.74191927e+06  0.00000000e+00  7.92e+03 1.43e+02  9.51e+05     0s
+   1   2.36554289e+06 -2.97492908e+06  6.52e+02 7.82e+01  1.71e+05     0s
+   2   5.60089861e+05 -8.16613271e+05  6.52e-04 1.14e-13  2.46e+04     0s
+   3   3.04973372e+04 -1.66048968e+05  6.52e-10 2.84e-14  3.51e+03     0s
+   4  -3.56742045e+04 -6.15798192e+04  1.43e-11 2.84e-14  4.63e+02     0s
+   5  -4.30300584e+04 -4.79380001e+04  2.39e-12 2.80e-14  8.76e+01     0s
+   6  -4.42211885e+04 -4.46283277e+04  4.41e-13 5.33e-14  7.27e+00     0s
+   7  -4.43396168e+04 -4.43707351e+04  6.96e-12 6.40e-14  5.56e-01     0s
+   8  -4.43527932e+04 -4.43559966e+04  1.21e-11 6.06e-14  5.72e-02     0s
+   9  -4.43548886e+04 -4.43552037e+04  5.58e-11 2.38e-14  5.63e-03     0s
+  10  -4.43551645e+04 -4.43551692e+04  2.32e-11 2.03e-14  8.38e-05     0s
+  11  -4.43551690e+04 -4.43551690e+04  1.44e-10 4.77e-14  8.36e-08     0s
+  12  -4.43551690e+04 -4.43551690e+04  1.62e-11 1.42e-13  1.75e-10     0s
+
+Barrier solved model in 12 iterations and 0.01 seconds
+Optimal objective -4.43551690e+04
+
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 17:07:57
+
+Academic license - for non-commercial use only
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [8e-01, 4e+01]
+  QObjective range [3e-06, 1e-01]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Presolve removed 56 rows and 0 columns
+Presolve time: 0.00s
+Presolved: 0 rows, 56 columns, 0 nonzeros
+Presolved model has 1596 quadratic objective terms
+Ordering time: 0.00s
+
+Barrier statistics:
+ Free vars  : 20
+ AA' NZ     : 1.900e+02
+ Factor NZ  : 2.100e+02
+ Factor Ops : 2.870e+03 (less than 1 second per iteration)
+ Threads    : 1
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -2.87421758e+06  0.00000000e+00  8.56e+03 2.25e+02  9.23e+05     0s
+   1   1.80305711e+06 -2.84652465e+06  1.07e+03 1.15e+02  1.98e+05     0s
+   2   5.78330409e+05 -1.00553367e+06  1.07e-03 5.68e-14  2.83e+04     0s
+   3  -3.54287064e+03 -2.26617024e+05  1.06e-09 4.26e-14  3.98e+03     0s
+   4  -7.17522741e+04 -1.02653782e+05  1.90e-12 6.14e-14  5.52e+02     0s
+   5  -7.88650730e+04 -8.23547102e+04  5.14e-12 8.44e-14  6.23e+01     0s
+   6  -7.95212748e+04 -7.97192965e+04  1.59e-12 4.53e-14  3.54e+00     0s
+   7  -7.95579046e+04 -7.95731658e+04  7.84e-11 4.22e-14  2.73e-01     0s
+   8  -7.95610847e+04 -7.95621243e+04  2.38e-10 8.01e-14  1.86e-02     0s
+   9  -7.95615081e+04 -7.95616512e+04  1.12e-09 3.13e-14  2.56e-03     0s
+  10  -7.95615723e+04 -7.95615922e+04  9.34e-10 8.66e-14  3.55e-04     0s
+  11  -7.95615830e+04 -7.95615855e+04  4.49e-09 7.13e-14  4.42e-05     0s
+  12  -7.95615849e+04 -7.95615850e+04  1.76e-09 7.68e-14  2.71e-06     0s
+  13  -7.95615850e+04 -7.95615850e+04  4.63e-10 5.11e-14  4.88e-09     0s
+
+Barrier solved model in 13 iterations and 0.01 seconds
+Optimal objective -7.95615850e+04
+
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 17:09:18
+
+Academic license - for non-commercial use only
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [2e-01, 4e+01]
+  QObjective range [5e-06, 1e-01]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Presolve removed 56 rows and 0 columns
+Presolve time: 0.00s
+Presolved: 0 rows, 56 columns, 0 nonzeros
+Presolved model has 1596 quadratic objective terms
+Ordering time: 0.00s
+
+Barrier statistics:
+ Free vars  : 20
+ AA' NZ     : 1.900e+02
+ Factor NZ  : 2.100e+02
+ Factor Ops : 2.870e+03 (less than 1 second per iteration)
+ Threads    : 1
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -2.94627403e+06  0.00000000e+00  7.13e+03 2.01e+02  9.25e+05     0s
+   1   2.64901838e+06 -3.74641907e+06  1.44e+02 1.91e+01  1.32e+05     0s
+   2   2.76097730e+05 -7.90848506e+05  1.44e-04 5.68e-14  1.91e+04     0s
+   3  -7.82079467e+04 -2.23389054e+05  1.44e-10 2.84e-14  2.59e+03     0s
+   4  -1.11653737e+05 -1.29010641e+05  8.81e-13 5.68e-14  3.10e+02     0s
+   5  -1.13512702e+05 -1.14579925e+05  1.99e-12 4.53e-14  1.91e+01     0s
+   6  -1.13528667e+05 -1.13530674e+05  2.47e-12 4.13e-14  3.58e-02     0s
+   7  -1.13528667e+05 -1.13528669e+05  2.96e-12 6.98e-14  3.59e-05     0s
+   8  -1.13528667e+05 -1.13528667e+05  3.98e-12 6.60e-14  3.59e-08     0s
+   9  -1.13528667e+05 -1.13528667e+05  3.69e-13 5.31e-14  5.19e-11     0s
+
+Barrier solved model in 9 iterations and 0.01 seconds
+Optimal objective -1.13528667e+05
+
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 17:10:25
+
+Academic license - for non-commercial use only
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [4e-01, 4e+01]
+  QObjective range [5e-06, 8e-02]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Presolve removed 56 rows and 0 columns
+Presolve time: 0.00s
+Presolved: 0 rows, 56 columns, 0 nonzeros
+Presolved model has 1596 quadratic objective terms
+Ordering time: 0.00s
+
+Barrier statistics:
+ Free vars  : 20
+ AA' NZ     : 1.900e+02
+ Factor NZ  : 2.100e+02
+ Factor Ops : 2.870e+03 (less than 1 second per iteration)
+ Threads    : 1
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -5.22555646e+06  0.00000000e+00  7.41e+03 2.84e+02  8.81e+05     0s
+   1   1.14176583e+06 -2.79160182e+06  8.11e+02 9.58e+01  1.69e+05     0s
+   2   3.50614854e+05 -1.01245769e+06  8.11e-04 5.68e-14  2.43e+04     0s
+   3  -8.40000054e+04 -2.67560508e+05  8.11e-10 5.68e-14  3.28e+03     0s
+   4  -1.21041399e+05 -1.36430712e+05  1.42e-12 1.15e-13  2.75e+02     0s
+   5  -1.22110464e+05 -1.22681672e+05  7.64e-13 5.51e-14  1.02e+01     0s
+   6  -1.22117831e+05 -1.22119372e+05  3.50e-12 1.06e-13  2.75e-02     0s
+   7  -1.22117831e+05 -1.22117833e+05  4.09e-12 6.74e-14  2.75e-05     0s
+   8  -1.22117831e+05 -1.22117831e+05  5.20e-12 2.67e-13  2.79e-08     0s
+   9  -1.22117831e+05 -1.22117831e+05  7.39e-13 3.30e-13  7.31e-11     0s
+
+Barrier solved model in 9 iterations and 0.01 seconds
+Optimal objective -1.22117831e+05
+
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 17:16:17
+
+Academic license - for non-commercial use only
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [8e-01, 4e+01]
+  QObjective range [3e-06, 1e-01]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Presolve removed 56 rows and 0 columns
+Presolve time: 0.00s
+Presolved: 0 rows, 56 columns, 0 nonzeros
+Presolved model has 1596 quadratic objective terms
+Ordering time: 0.00s
+
+Barrier statistics:
+ Free vars  : 20
+ AA' NZ     : 1.900e+02
+ Factor NZ  : 2.100e+02
+ Factor Ops : 2.870e+03 (less than 1 second per iteration)
+ Threads    : 1
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -2.87421758e+06  0.00000000e+00  8.56e+03 2.25e+02  9.23e+05     0s
+   1   1.80305711e+06 -2.84652465e+06  1.07e+03 1.15e+02  1.98e+05     0s
+   2   5.78330409e+05 -1.00553367e+06  1.07e-03 5.68e-14  2.83e+04     0s
+   3  -3.54287064e+03 -2.26617024e+05  1.06e-09 4.26e-14  3.98e+03     0s
+   4  -7.17522741e+04 -1.02653782e+05  1.90e-12 6.14e-14  5.52e+02     0s
+   5  -7.88650730e+04 -8.23547102e+04  5.14e-12 8.44e-14  6.23e+01     0s
+   6  -7.95212748e+04 -7.97192965e+04  1.59e-12 4.53e-14  3.54e+00     0s
+   7  -7.95579046e+04 -7.95731658e+04  7.84e-11 4.22e-14  2.73e-01     0s
+   8  -7.95610847e+04 -7.95621243e+04  2.38e-10 8.01e-14  1.86e-02     0s
+   9  -7.95615081e+04 -7.95616512e+04  1.12e-09 3.13e-14  2.56e-03     0s
+  10  -7.95615723e+04 -7.95615922e+04  9.34e-10 8.66e-14  3.55e-04     0s
+  11  -7.95615830e+04 -7.95615855e+04  4.49e-09 7.13e-14  4.42e-05     0s
+  12  -7.95615849e+04 -7.95615850e+04  1.76e-09 7.68e-14  2.71e-06     0s
+  13  -7.95615850e+04 -7.95615850e+04  4.63e-10 5.11e-14  4.88e-09     0s
+
+Barrier solved model in 13 iterations and 0.01 seconds
+Optimal objective -7.95615850e+04
+
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 17:23:08
+
+Academic license - for non-commercial use only
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [8e-01, 4e+01]
+  QObjective range [3e-06, 1e-01]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Presolve removed 56 rows and 0 columns
+Presolve time: 0.00s
+Presolved: 0 rows, 56 columns, 0 nonzeros
+Presolved model has 1596 quadratic objective terms
+Ordering time: 0.00s
+
+Barrier statistics:
+ Free vars  : 20
+ AA' NZ     : 1.900e+02
+ Factor NZ  : 2.100e+02
+ Factor Ops : 2.870e+03 (less than 1 second per iteration)
+ Threads    : 1
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -2.87421758e+06  0.00000000e+00  8.56e+03 2.25e+02  9.23e+05     0s
+   1   1.80305711e+06 -2.84652465e+06  1.07e+03 1.15e+02  1.98e+05     0s
+   2   5.78330409e+05 -1.00553367e+06  1.07e-03 5.68e-14  2.83e+04     0s
+   3  -3.54287064e+03 -2.26617024e+05  1.06e-09 4.26e-14  3.98e+03     0s
+   4  -7.17522741e+04 -1.02653782e+05  1.90e-12 6.14e-14  5.52e+02     0s
+   5  -7.88650730e+04 -8.23547102e+04  5.14e-12 8.44e-14  6.23e+01     0s
+   6  -7.95212748e+04 -7.97192965e+04  1.59e-12 4.53e-14  3.54e+00     0s
+   7  -7.95579046e+04 -7.95731658e+04  7.84e-11 4.22e-14  2.73e-01     0s
+   8  -7.95610847e+04 -7.95621243e+04  2.38e-10 8.01e-14  1.86e-02     0s
+   9  -7.95615081e+04 -7.95616512e+04  1.12e-09 3.13e-14  2.56e-03     0s
+  10  -7.95615723e+04 -7.95615922e+04  9.34e-10 8.66e-14  3.55e-04     0s
+  11  -7.95615830e+04 -7.95615855e+04  4.49e-09 7.13e-14  4.42e-05     0s
+  12  -7.95615849e+04 -7.95615850e+04  1.76e-09 7.68e-14  2.71e-06     0s
+  13  -7.95615850e+04 -7.95615850e+04  4.63e-10 5.11e-14  4.88e-09     0s
+
+Barrier solved model in 13 iterations and 0.01 seconds
+Optimal objective -7.95615850e+04
+
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 17:24:14
+
+Academic license - for non-commercial use only
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [2e-01, 4e+01]
+  QObjective range [5e-06, 1e-01]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Presolve removed 56 rows and 0 columns
+Presolve time: 0.00s
+Presolved: 0 rows, 56 columns, 0 nonzeros
+Presolved model has 1596 quadratic objective terms
+Ordering time: 0.00s
+
+Barrier statistics:
+ Free vars  : 20
+ AA' NZ     : 1.900e+02
+ Factor NZ  : 2.100e+02
+ Factor Ops : 2.870e+03 (less than 1 second per iteration)
+ Threads    : 1
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -2.94627403e+06  0.00000000e+00  7.13e+03 2.01e+02  9.25e+05     0s
+   1   2.64901838e+06 -3.74641907e+06  1.44e+02 1.91e+01  1.32e+05     0s
+   2   2.76097730e+05 -7.90848506e+05  1.44e-04 5.68e-14  1.91e+04     0s
+   3  -7.82079467e+04 -2.23389054e+05  1.44e-10 2.84e-14  2.59e+03     0s
+   4  -1.11653737e+05 -1.29010641e+05  8.81e-13 5.68e-14  3.10e+02     0s
+   5  -1.13512702e+05 -1.14579925e+05  1.99e-12 4.53e-14  1.91e+01     0s
+   6  -1.13528667e+05 -1.13530674e+05  2.47e-12 4.13e-14  3.58e-02     0s
+   7  -1.13528667e+05 -1.13528669e+05  2.96e-12 6.98e-14  3.59e-05     0s
+   8  -1.13528667e+05 -1.13528667e+05  3.98e-12 6.60e-14  3.59e-08     0s
+   9  -1.13528667e+05 -1.13528667e+05  3.69e-13 5.31e-14  5.19e-11     0s
+
+Barrier solved model in 9 iterations and 0.01 seconds
+Optimal objective -1.13528667e+05
+
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 17:33:45
+
+Academic license - for non-commercial use only
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [3e-01, 2e+01]
+  QObjective range [3e-07, 7e-02]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Presolve removed 56 rows and 0 columns
+Presolve time: 0.00s
+Presolved: 0 rows, 56 columns, 0 nonzeros
+Presolved model has 1596 quadratic objective terms
+Ordering time: 0.00s
+
+Barrier statistics:
+ Free vars  : 20
+ AA' NZ     : 1.900e+02
+ Factor NZ  : 2.100e+02
+ Factor Ops : 2.870e+03 (less than 1 second per iteration)
+ Threads    : 1
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -1.74191927e+06  0.00000000e+00  7.92e+03 1.43e+02  9.51e+05     0s
+   1   2.36554289e+06 -2.97492908e+06  6.52e+02 7.82e+01  1.71e+05     0s
+   2   5.60089861e+05 -8.16613271e+05  6.52e-04 1.14e-13  2.46e+04     0s
+   3   3.04973372e+04 -1.66048968e+05  6.52e-10 2.84e-14  3.51e+03     0s
+   4  -3.56742045e+04 -6.15798192e+04  1.43e-11 2.84e-14  4.63e+02     0s
+   5  -4.30300584e+04 -4.79380001e+04  2.39e-12 2.80e-14  8.76e+01     0s
+   6  -4.42211885e+04 -4.46283277e+04  4.41e-13 5.33e-14  7.27e+00     0s
+   7  -4.43396168e+04 -4.43707351e+04  6.96e-12 6.40e-14  5.56e-01     0s
+   8  -4.43527932e+04 -4.43559966e+04  1.21e-11 6.06e-14  5.72e-02     0s
+   9  -4.43548886e+04 -4.43552037e+04  5.58e-11 2.38e-14  5.63e-03     0s
+  10  -4.43551645e+04 -4.43551692e+04  2.32e-11 2.03e-14  8.38e-05     0s
+  11  -4.43551690e+04 -4.43551690e+04  1.44e-10 4.77e-14  8.36e-08     0s
+  12  -4.43551690e+04 -4.43551690e+04  1.62e-11 1.42e-13  1.75e-10     0s
+
+Barrier solved model in 12 iterations and 0.01 seconds
+Optimal objective -4.43551690e+04
+
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 17:35:43
+
+Academic license - for non-commercial use only
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [3e-01, 2e+01]
+  QObjective range [3e-07, 7e-02]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Presolve removed 56 rows and 0 columns
+Presolve time: 0.00s
+Presolved: 0 rows, 56 columns, 0 nonzeros
+Presolved model has 1596 quadratic objective terms
+Ordering time: 0.00s
+
+Barrier statistics:
+ Free vars  : 20
+ AA' NZ     : 1.900e+02
+ Factor NZ  : 2.100e+02
+ Factor Ops : 2.870e+03 (less than 1 second per iteration)
+ Threads    : 1
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -1.74191927e+06  0.00000000e+00  7.92e+03 1.43e+02  9.51e+05     0s
+   1   2.36554289e+06 -2.97492908e+06  6.52e+02 7.82e+01  1.71e+05     0s
+   2   5.60089861e+05 -8.16613271e+05  6.52e-04 1.14e-13  2.46e+04     0s
+   3   3.04973372e+04 -1.66048968e+05  6.52e-10 2.84e-14  3.51e+03     0s
+   4  -3.56742045e+04 -6.15798192e+04  1.43e-11 2.84e-14  4.63e+02     0s
+   5  -4.30300584e+04 -4.79380001e+04  2.39e-12 2.80e-14  8.76e+01     0s
+   6  -4.42211885e+04 -4.46283277e+04  4.41e-13 5.33e-14  7.27e+00     0s
+   7  -4.43396168e+04 -4.43707351e+04  6.96e-12 6.40e-14  5.56e-01     0s
+   8  -4.43527932e+04 -4.43559966e+04  1.21e-11 6.06e-14  5.72e-02     0s
+   9  -4.43548886e+04 -4.43552037e+04  5.58e-11 2.38e-14  5.63e-03     0s
+  10  -4.43551645e+04 -4.43551692e+04  2.32e-11 2.03e-14  8.38e-05     0s
+  11  -4.43551690e+04 -4.43551690e+04  1.44e-10 4.77e-14  8.36e-08     0s
+  12  -4.43551690e+04 -4.43551690e+04  1.62e-11 1.42e-13  1.75e-10     0s
+
+Barrier solved model in 12 iterations and 0.01 seconds
+Optimal objective -4.43551690e+04
+
+
+Gurobi 8.0.0 (win64, Python) logging started 08/24/18 17:37:25
+
+Academic license - for non-commercial use only
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [4e-01, 4e+01]
+  QObjective range [5e-06, 8e-02]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Presolve removed 56 rows and 0 columns
+Presolve time: 0.00s
+Presolved: 0 rows, 56 columns, 0 nonzeros
+Presolved model has 1596 quadratic objective terms
+Ordering time: 0.00s
+
+Barrier statistics:
+ Free vars  : 20
+ AA' NZ     : 1.900e+02
+ Factor NZ  : 2.100e+02
+ Factor Ops : 2.870e+03 (less than 1 second per iteration)
+ Threads    : 1
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -5.22555646e+06  0.00000000e+00  7.41e+03 2.84e+02  8.81e+05     0s
+   1   1.14176583e+06 -2.79160182e+06  8.11e+02 9.58e+01  1.69e+05     0s
+   2   3.50614854e+05 -1.01245769e+06  8.11e-04 5.68e-14  2.43e+04     0s
+   3  -8.40000054e+04 -2.67560508e+05  8.11e-10 5.68e-14  3.28e+03     0s
+   4  -1.21041399e+05 -1.36430712e+05  1.42e-12 1.15e-13  2.75e+02     0s
+   5  -1.22110464e+05 -1.22681672e+05  7.64e-13 5.51e-14  1.02e+01     0s
+   6  -1.22117831e+05 -1.22119372e+05  3.50e-12 1.06e-13  2.75e-02     0s
+   7  -1.22117831e+05 -1.22117833e+05  4.09e-12 6.74e-14  2.75e-05     0s
+   8  -1.22117831e+05 -1.22117831e+05  5.20e-12 2.67e-13  2.79e-08     0s
+   9  -1.22117831e+05 -1.22117831e+05  7.39e-13 3.30e-13  7.31e-11     0s
+
+Barrier solved model in 9 iterations and 0.01 seconds
+Optimal objective -1.22117831e+05
+
+
+Gurobi 8.0.0 (win64, Python) logging started 08/27/18 14:08:59
+
+Academic license - for non-commercial use only
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [4e-01, 4e+01]
+  QObjective range [5e-06, 8e-02]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Presolve removed 56 rows and 0 columns
+Presolve time: 0.01s
+Presolved: 0 rows, 56 columns, 0 nonzeros
+Presolved model has 1596 quadratic objective terms
+Ordering time: 0.00s
+
+Barrier statistics:
+ Free vars  : 20
+ AA' NZ     : 1.900e+02
+ Factor NZ  : 2.100e+02
+ Factor Ops : 2.870e+03 (less than 1 second per iteration)
+ Threads    : 1
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -5.22555646e+06  0.00000000e+00  7.41e+03 2.84e+02  8.81e+05     0s
+   1   1.14176583e+06 -2.79160182e+06  8.11e+02 9.58e+01  1.69e+05     0s
+   2   3.50614854e+05 -1.01245769e+06  8.11e-04 5.68e-14  2.43e+04     0s
+   3  -8.40000054e+04 -2.67560508e+05  8.11e-10 5.68e-14  3.28e+03     0s
+   4  -1.21041399e+05 -1.36430712e+05  1.42e-12 1.15e-13  2.75e+02     0s
+   5  -1.22110464e+05 -1.22681672e+05  7.64e-13 5.51e-14  1.02e+01     0s
+   6  -1.22117831e+05 -1.22119372e+05  3.50e-12 1.06e-13  2.75e-02     0s
+   7  -1.22117831e+05 -1.22117833e+05  4.09e-12 6.74e-14  2.75e-05     0s
+   8  -1.22117831e+05 -1.22117831e+05  5.20e-12 2.67e-13  2.79e-08     0s
+   9  -1.22117831e+05 -1.22117831e+05  7.39e-13 3.30e-13  7.31e-11     0s
+
+Barrier solved model in 9 iterations and 0.02 seconds
+Optimal objective -1.22117831e+05
+
+
+Gurobi 8.0.0 (win64, Python) logging started 08/27/18 14:14:42
+
+Academic license - for non-commercial use only
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [4e-01, 4e+01]
+  QObjective range [5e-06, 8e-02]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Presolve removed 56 rows and 0 columns
+Presolve time: 0.00s
+Presolved: 0 rows, 56 columns, 0 nonzeros
+Presolved model has 1596 quadratic objective terms
+Ordering time: 0.00s
+
+Barrier statistics:
+ Free vars  : 20
+ AA' NZ     : 1.900e+02
+ Factor NZ  : 2.100e+02
+ Factor Ops : 2.870e+03 (less than 1 second per iteration)
+ Threads    : 1
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -5.22555646e+06  0.00000000e+00  7.41e+03 2.84e+02  8.81e+05     0s
+   1   1.14176583e+06 -2.79160182e+06  8.11e+02 9.58e+01  1.69e+05     0s
+   2   3.50614854e+05 -1.01245769e+06  8.11e-04 5.68e-14  2.43e+04     0s
+   3  -8.40000054e+04 -2.67560508e+05  8.11e-10 5.68e-14  3.28e+03     0s
+   4  -1.21041399e+05 -1.36430712e+05  1.42e-12 1.15e-13  2.75e+02     0s
+   5  -1.22110464e+05 -1.22681672e+05  7.64e-13 5.51e-14  1.02e+01     0s
+   6  -1.22117831e+05 -1.22119372e+05  3.50e-12 1.06e-13  2.75e-02     0s
+   7  -1.22117831e+05 -1.22117833e+05  4.09e-12 6.74e-14  2.75e-05     0s
+   8  -1.22117831e+05 -1.22117831e+05  5.20e-12 2.67e-13  2.79e-08     0s
+   9  -1.22117831e+05 -1.22117831e+05  7.39e-13 3.30e-13  7.31e-11     0s
+
+Barrier solved model in 9 iterations and 0.01 seconds
+Optimal objective -1.22117831e+05
+
+
+Gurobi 8.0.0 (win64, Python) logging started 08/27/18 14:25:44
+
+Academic license - for non-commercial use only
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [4e-01, 4e+01]
+  QObjective range [5e-06, 8e-02]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Presolve removed 56 rows and 0 columns
+Presolve time: 0.00s
+Presolved: 0 rows, 56 columns, 0 nonzeros
+Presolved model has 1596 quadratic objective terms
+Ordering time: 0.00s
+
+Barrier statistics:
+ Free vars  : 20
+ AA' NZ     : 1.900e+02
+ Factor NZ  : 2.100e+02
+ Factor Ops : 2.870e+03 (less than 1 second per iteration)
+ Threads    : 1
+
+                  Objective                Residual
+Iter       Primal          Dual         Primal    Dual     Compl     Time
+   0  -5.22555646e+06  0.00000000e+00  7.41e+03 2.84e+02  8.81e+05     0s
+   1   1.14176583e+06 -2.79160182e+06  8.11e+02 9.58e+01  1.69e+05     0s
+   2   3.50614854e+05 -1.01245769e+06  8.11e-04 5.68e-14  2.43e+04     0s
+   3  -8.40000054e+04 -2.67560508e+05  8.11e-10 5.68e-14  3.28e+03     0s
+   4  -1.21041399e+05 -1.36430712e+05  1.42e-12 1.15e-13  2.75e+02     0s
+   5  -1.22110464e+05 -1.22681672e+05  7.64e-13 5.51e-14  1.02e+01     0s
+   6  -1.22117831e+05 -1.22119372e+05  3.50e-12 1.06e-13  2.75e-02     0s
+   7  -1.22117831e+05 -1.22117833e+05  4.09e-12 6.74e-14  2.75e-05     0s
+   8  -1.22117831e+05 -1.22117831e+05  5.20e-12 2.67e-13  2.79e-08     0s
+   9  -1.22117831e+05 -1.22117831e+05  7.39e-13 3.30e-13  7.31e-11     0s
+
+Barrier solved model in 9 iterations and 0.01 seconds
+Optimal objective -1.22117831e+05
+
+
+Gurobi 8.0.0 (win64, Python) logging started 08/28/18 11:17:10
+
+Academic license - for non-commercial use only
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [4e-01, 3e+14]
+  QObjective range [1e+09, 4e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [6e+01, 3e+15]
+  QObjective range [1e+10, 1e+14]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [2e+00, 3e+14]
+  QObjective range [1e+09, 1e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e-02, 7e+14]
+  QObjective range [2e+09, 2e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [2e+01, 2e+15]
+  QObjective range [1e+09, 3e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+02, 5e+17]
+  QObjective range [3e+11, 5e+15]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 2e+15]
+  QObjective range [2e+10, 9e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [3e+01, 1e+15]
+  QObjective range [2e+09, 3e+14]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [2e-01, 5e+01]
+  QObjective range [4e+07, 1e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [2e+00, 1e+15]
+  QObjective range [3e+08, 1e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [5e-01, 6e+01]
+  QObjective range [4e+08, 2e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [8e-02, 1e+15]
+  QObjective range [3e+09, 2e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [2e+00, 4e+14]
+  QObjective range [6e+09, 2e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+01, 4e+16]
+  QObjective range [2e+10, 1e+14]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [2e+01, 1e+15]
+  QObjective range [7e+09, 1e+14]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [2e-01, 4e+14]
+  QObjective range [8e+07, 1e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [3e-01, 4e+02]
+  QObjective range [1e+10, 1e+14]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [2e+00, 6e+15]
+  QObjective range [3e+09, 3e+14]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [4e-01, 2e+15]
+  QObjective range [2e+09, 2e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 6e+14]
+  QObjective range [3e+08, 9e+12]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [8e-01, 5e+14]
+  QObjective range [6e+07, 2e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [3e-01, 2e+15]
+  QObjective range [2e+08, 1e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+15]
+  QObjective range [6e+09, 3e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [2e+00, 7e+14]
+  QObjective range [1e+09, 1e+14]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 9e+14]
+  QObjective range [2e+09, 3e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [4e-01, 9e+14]
+  QObjective range [7e+08, 2e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [5e-01, 9e+14]
+  QObjective range [2e+08, 1e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [2e-01, 1e+15]
+  QObjective range [9e+09, 4e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [6e-01, 5e+14]
+  QObjective range [1e+09, 1e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [2e-01, 1e+15]
+  QObjective range [8e+09, 1e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [5e-01, 8e+14]
+  QObjective range [4e+09, 9e+12]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [6e-01, 8e+14]
+  QObjective range [3e+09, 5e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [3e+00, 4e+14]
+  QObjective range [3e+10, 7e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e-01, 6e+14]
+  QObjective range [3e+09, 1e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 2e+15]
+  QObjective range [9e+07, 3e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e-01, 3e+01]
+  QObjective range [3e+09, 2e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [9e-01, 1e+14]
+  QObjective range [1e+09, 1e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [6e+00, 2e+16]
+  QObjective range [2e+10, 1e+14]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [2e-01, 2e+15]
+  QObjective range [6e+09, 7e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [2e+01, 2e+16]
+  QObjective range [3e+10, 2e+15]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e-01, 2e+14]
+  QObjective range [5e+09, 1e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [2e+00, 1e+15]
+  QObjective range [1e+10, 1e+14]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [8e-01, 4e+14]
+  QObjective range [1e+09, 2e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [3e+00, 2e+14]
+  QObjective range [3e+09, 1e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [2e-01, 7e+01]
+  QObjective range [3e+09, 1e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+Optimize a model with 56 rows, 56 columns and 56 nonzeros
+Model has 1596 quadratic objective terms
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [8e-01, 7e+14]
+  QObjective range [2e+09, 4e+13]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [0e+00, 0e+00]
+Warning: Model contains large objective coefficients
+Warning: Model contains large quadratic objective coefficients
+         Consider reformulating model or setting NumericFocus parameter
+         to avoid numerical issues.
+Presolve removed 56 rows and 0 columns
+
+Gurobi 8.0.0 (win64, Python) logging started 08/28/18 16:18:25
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/29/18 12:24:01
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/29/18 12:30:17
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/29/18 13:38:00
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/29/18 13:43:24
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/29/18 13:45:43
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/29/18 13:48:18
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/29/18 13:51:15
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/29/18 13:54:23
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/29/18 13:58:39
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/29/18 14:02:57
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/29/18 14:18:34
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/29/18 14:19:24
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/29/18 14:21:12
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/29/18 14:24:08
+
+Academic license - for non-commercial use only
+
+Gurobi 8.0.0 (win64, Python) logging started 08/29/18 14:36:12
+
+Academic license - for non-commercial use only
+Freed default Gurobi environment

@@ -65,6 +65,7 @@ def routes(G, out_dir, files_ID, od_pairs, number_of_routes_per_od, instance):
     length_of_route_dict = {}
     for i in routes:
         length_of_route_dict[i[2]]=i[1][0] 
+        
     # calculate route choice probability matrix P
     # logit choice parameter
     theta = 0.8 #send as parameter !
@@ -79,15 +80,24 @@ def routes(G, out_dir, files_ID, od_pairs, number_of_routes_per_od, instance):
             sum([exp(- theta * length_of_route_dict[j]) \
                              for j in OD_pair_route_dict[i]])
     zdump(P, out_dir + 'OD_pair_route_incidence_'+ instance + files_ID + '.pkz')     
-      
+    zdump(routes, out_dir + 'routes_info'+ instance + '.pkz')
     #return routes, A, P
 
 #number_of_routes_per_od = 3
 #routes = routes(G, od_pairs, number_of_routes_per_od)
 
 def filter_routes(out_dir, instance, files_ID, lower_bound_route):
+    
+    
     A = zload(out_dir + 'path-link_incidence_matrix_'+ instance + files_ID + '.pkz')
     P = zload(out_dir + 'OD_pair_route_incidence_'+ instance + files_ID + '.pkz')
+    routes =  zload(out_dir + 'routes_info'+ instance + '.pkz')
+    
+    routes = np.c_[np.sum(P,axis=0),routes]
+    routes = pd.DataFrame(routes)
+    routes = routes [ routes[0] > lower_bound_route ]
+    
+    
     P_t = np.transpose(P)
     A_t = np.transpose(A)
     
@@ -100,11 +110,20 @@ def filter_routes(out_dir, instance, files_ID, lower_bound_route):
     A = np.transpose(A_t)
     
     P = [[float(i)/sum(P[j]) for i in P[j]] for j in range(len(P))]
+    
     P = np.asmatrix(P)
+    
+    idx2 = np.where(P>0)
+    
+   # routes = np.c_[np.sum(P,axis=0),routes]
+    #routes = pd.DataFrame(routes)
+    #routes = routes [ routes[0] > lower_bound_route ]
+    #P[idx2] = 1
    
+
     zdump(A, out_dir + 'path-link_incidence_matrix_'+ instance + files_ID + '.pkz')
     zdump(P, out_dir + 'OD_pair_route_incidence_'+ instance + files_ID + '.pkz') 
-    
+    zdump(routes, out_dir + 'routes_info'+ instance + '.pkz')
     
 def path_incidence_matrix(out_dir, files_ID, time_instances, number_of_routes_per_od, theta, lower_bound_route ):
     G_ = zload( out_dir + 'G_' + files_ID + '.pkz' )
@@ -374,7 +393,7 @@ def runGLS(out_dir, files_ID, time_instances, month_id):
             pass
         
         cnt_ = 0
-        while xi_list == None:
+        while lam_list == None:
             try:
                 len_x = np.size(x,1)
                 sample_size = np.random.randint(.5*len_x ,len_x)

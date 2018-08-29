@@ -11,21 +11,23 @@ import os
 
 os.chdir('G:/My Drive/Github/PoA/Price_of_Anarchy_for_Transportation_Networks')
 
-get_ipython().magic(u'run utils.py')
+execfile('utils.py')
 
-get_ipython().magic(u'run parameters.py')
+execfile('parameters.py')
 
-get_ipython().magic(u'run import_jing_net.py')
+execfile('import_jing_net.py')
 
-get_ipython().magic(u'run functions.py')
+execfile('functions.py')
 
-get_ipython().magic(u'run OD_functions.py')
+execfile('OD_functions.py')
 
-get_ipython().magic(u'run python_to_julia_fctn.py')
+execfile('python_to_julia_fctn.py')
 
-get_ipython().magic(u'run POA.py')
+execfile('POA.py')
 
-get_ipython().magic(u'run unzip_files.py')
+execfile('runGLS.py')
+
+execfile('unzip_files.py')
 
 # ---------------------------- Preprocessing ----------------------------------
 
@@ -55,7 +57,7 @@ od_pair_definition(out_dir, files_ID )
 
 path_incidence_matrix(out_dir, files_ID, time_instances, number_of_routes_per_od, theta, lower_bound_route )
 
-runGLS(out_dir, files_ID, time_instances, 'May') 
+runGLS_f(out_dir, files_ID, time_instances, month_w, week_day_list, average_over_time)
 
 # ------------------------------ Inverse Optimization -------------------------
 

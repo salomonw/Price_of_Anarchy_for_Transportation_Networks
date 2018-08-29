@@ -26,6 +26,7 @@ from math import exp
 from utils import *
 
 from numpy import linalg as LA
+
 def adj_PSD(Sigma):
     # Ensure Sigma to be symmetric
     Sigma = (1.0 / 2) * (Sigma + np.transpose(Sigma))
@@ -39,6 +40,13 @@ def adj_PSD(Sigma):
             D[i, i] = 1e-5
     Sigma = np.dot(np.dot(Q, D), LA.inv(Q))
     return Sigma
+
+
+def add_const_diag(X, lam):
+    X = np.matrix(X)
+    len_x = len(X)
+    Y = X + np.eye(len_x) * lam 
+    return Y
 
 
 def isPSD(A, tol=1e-8):

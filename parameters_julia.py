@@ -66,6 +66,7 @@ number_of_routes_per_od = 6
 theta = 0.8
 lower_bound_route = 0.02
 
+average_over_time_p = 5 # averaging the samples to find OD Demand *min
 
 
 #Inverse optimization
@@ -82,7 +83,7 @@ week_day_list = [2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 2
 train_idx = range(1, 4)
 
 #Machine learning parameters
-deg_grid = range(4, 9)
+deg_grid = range(4, 8)
 c_grid = list(np.arange(.5, 3, .5))
 lamb_grid = [10. ** m for m in range(-3, 4)]
 
