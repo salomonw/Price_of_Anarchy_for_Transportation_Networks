@@ -238,36 +238,38 @@ def calculate_testing_errors(out_dir, files_ID, month_w, instance, deg_grid, c_g
         json.dump(best_key, json_file)
         
         
-def create_East_Massachusetts_trips(out_dir, files_ID, month_w, time_instances, n_zones):
+def create_East_Massachusetts_trips(out_dir, files_ID, month_w, time_instances, n_zones, week_day_list):
     if not os.path.exists(out_dir + 'data_traffic_assignment_uni-class'):
             os.mkdir(out_dir + 'data_traffic_assignment_uni-class')
             
     for instance in time_instances['id']: 
-        list_of_lists = []
-        with open(out_dir  + 'OD_demand_matrix_' + month_w + '_weekday_' + instance + files_ID +'.txt', 'r') as the_file:
-            idx = 0
-            for line in the_file:
-                inner_list = [elt.strip() for elt in line.split(',')]
-                list_of_lists.append(inner_list)
-        
-        zero_value = 0.0
-        with open(out_dir + 'data_traffic_assignment_uni-class/'+ files_ID + '_trips_' + month_w + '_' + instance +".txt", "w") as text_file:
-            text_file.write("<NUMBER OF ZONES> "+ str(n_zones) +"\n")
-            text_file.write("<TOTAL OD FLOW> 0.0\n")
-            text_file.write("<END OF METADATA>\n\n\n")
+        #list_of_lists = []
+        for day in week_day_list:
+            list_of_lists = []
+            with open(out_dir  + 'OD_demands/OD_demand_matrix_' + month_w + '_' + str(day) + '_weekday_' + instance + files_ID +'.txt', 'r') as the_file:
+                idx = 0
+                for line in the_file:
+                    inner_list = [elt.strip() for elt in line.split(',')]
+                    list_of_lists.append(inner_list)
             
-            for n in range(n_zones):
-                text_file.write("Origin  %d  \n" %(n+1))
-                text_file.write("%d :      0.0;    " %(n+1))
-                for idx in range(n*(n_zones-1), (n+1)*(n_zones-1)):
-                    text_file.write("%d :      %f;    " \
-                                    %(int(list_of_lists[idx][1]), float(list_of_lists[idx][2])))
-                    if idx % 3 == 0:
-                        text_file.write("\n")
-                text_file.write("\n\n")
+            zero_value = 0.0
+            with open(out_dir + 'data_traffic_assignment_uni-class/'+ files_ID + '_trips_' + month_w + '_' + str(day) + '_' + instance +".txt", "w") as text_file:
+                text_file.write("<NUMBER OF ZONES> "+ str(n_zones) +"\n")
+                text_file.write("<TOTAL OD FLOW> 0.0\n")
+                text_file.write("<END OF METADATA>\n\n\n")
+                
+                for n in range(n_zones):
+                    text_file.write("Origin  %d  \n" %(n+1))
+                    text_file.write("%d :      0.0;    " %(n+1))
+                    for idx in range(n*(n_zones-1), (n+1)*(n_zones-1)):
+                        text_file.write("%d :      %f;    " \
+                                        %(int(list_of_lists[idx][1]), float(list_of_lists[idx][2])))
+                        if idx % 3 == 0:
+                            text_file.write("\n")
+                    text_file.write("\n\n")
+        
     
-    
-def create_East_Massachusetts_net(out_dir, files_ID, month_w, month, year, time_instances, n_zones):
+def create_East_Massachusetts_net(out_dir, files_ID, month_w, month, year, time_instances, n_zones, week_day_list):
     
     with open(out_dir + 'link_min_dict'+ files_ID + '.json', 'r') as json_file:
         link_day_minute_Apr_dict_JSON_ = json.load(json_file)
@@ -280,24 +282,25 @@ def create_East_Massachusetts_net(out_dir, files_ID, month_w, month, year, time_
         edges = list(G.edges())
         n_links = len(edges)
         
-        with open(out_dir + 'data_traffic_assignment_uni-class/'+ files_ID + '_net_' + month_w + '_' + instance +".txt", "w") as text_file:
-            text_file.write("<NUMBER OF ZONES> "+ str(n_zones) +"\n")
-            text_file.write("<NUMBER OF ZONES> "+ str(n_zones) +"\n")
-            text_file.write("<FIRST THRU NODE> 1\n")
-            text_file.write("<NUMBER OF LINKS> "+ str(n_links) +"\n")
-            text_file.write("<NUMBER OF ZONES> "+ str(n_zones) +"\n")
-            text_file.write("<END OF METADATA>\n\n\n")
-            text_file.write("~  Init node  Term node  Capacity  Length  Free Flow Time  B  Power  Speed limit  Toll  Type  ;\n")
-            for idx in edges:
-                 text_file.write("  %d  %d  %f  %f  %f  %f  %f  %f  %f  %f  ;\n" \
-                                 %(link_day_minute_Apr_dict_JSON_['link_' + str(idx) + '_' + str(year) + '_' + str(month) + '_' + str(feas_day)]['init_node'], \
-                                   link_day_minute_Apr_dict_JSON_['link_' + str(idx) + '_' + str(year) + '_' + str(month) + '_' + str(feas_day)]['term_node'], \
-                                   link_day_minute_Apr_dict_JSON_['link_' + str(idx) + '_' + str(year) + '_' + str(month) + '_' + str(feas_day)]['capac_' + instance], \
-                                   zero_value, \
-                                   link_day_minute_Apr_dict_JSON_['link_' + str(idx) + '_' + str(year) + '_' + str(month) + '_' + str(feas_day)]['free_flow_time'], \
-                                   zero_value, zero_value, zero_value, zero_value, zero_value))
+        for day in week_day_list:
+            with open(out_dir + 'data_traffic_assignment_uni-class/'+ files_ID + '_net_' + month_w + '_' + str(day) + '_' +  instance +".txt", "w") as text_file:
+                text_file.write("<NUMBER OF ZONES> "+ str(n_zones) +"\n")
+                text_file.write("<NUMBER OF ZONES> "+ str(n_zones) +"\n")
+                text_file.write("<FIRST THRU NODE> 1\n")
+                text_file.write("<NUMBER OF LINKS> "+ str(n_links) +"\n")
+                text_file.write("<NUMBER OF ZONES> "+ str(n_zones) +"\n")
+                text_file.write("<END OF METADATA>\n\n\n")
+                text_file.write("~  Init node  Term node  Capacity  Length  Free Flow Time  B  Power  Speed limit  Toll  Type  ;\n")
+                for idx in edges:
+                     text_file.write("  %d  %d  %f  %f  %f  %f  %f  %f  %f  %f  ;\n" \
+                                     %(link_day_minute_Apr_dict_JSON_['link_' + str(idx) + '_' + str(year) + '_' + str(month) + '_' + str(feas_day)]['init_node'], \
+                                       link_day_minute_Apr_dict_JSON_['link_' + str(idx) + '_' + str(year) + '_' + str(month) + '_' + str(feas_day)]['term_node'], \
+                                       link_day_minute_Apr_dict_JSON_['link_' + str(idx) + '_' + str(year) + '_' + str(month) + '_' + str(feas_day)]['capac_' + instance], \
+                                       zero_value, \
+                                       link_day_minute_Apr_dict_JSON_['link_' + str(idx) + '_' + str(year) + '_' + str(month) + '_' + str(feas_day)]['free_flow_time'], \
+                                       zero_value, zero_value, zero_value, zero_value, zero_value))
+            
+            
+            
+    #def calculating_testing_errors(out_dir, files_ID, month_w, month, year, time_instances, n_zones):
         
-        
-        
-#def calculating_testing_errors(out_dir, files_ID, month_w, month, year, time_instances, n_zones):
-    

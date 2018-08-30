@@ -35,32 +35,17 @@ def GLS(x, A, L):
     K = np.size(x, 1)
     S = samp_cov(x)
     
-    #print("rank of S is: \n")
-    #print(matrix_rank(S))
-    #print("sizes of S are: \n")
-    #print(np.size(S, 0))
-    #print(np.size(S, 1))
-
     inv_S = inv(S).real
     
     A_t = np.transpose(A)
 
     Q_ = np.dot(np.dot(A_t, inv_S), A)
-    #Q_ = adj_PSD(Q_).real  # Ensure Q to be PSD
-    #Q_ = add_const_diag(X, 1e-7)
+
     Q = Q_
-    #print(isPSD(Q, tol=1e-8))
-    #print("rank of Q is: \n")
-    #print(matrix_rank(Q))
-    #print("sizes of Q are: \n")
-    #print(np.size(Q, 0))
-    #print(np.size(Q, 1))
+
     T = [np.dot(np.dot(A_t, inv_S), x[:, k]) for k in range(K)]
     b = [sum(i) for i in zip(*T)]
-    #b = sum([np.dot(np.dot(A_t, inv_S), x[:, k]) for k in range(K)])
-    
-    # print(b[0])
-    # assert(1==2)
+
 
     model = Model("OD_matrix_estimation")
 
@@ -82,9 +67,7 @@ def GLS(x, A, L):
     # Add constraint: xi >= 0
     for l in range(L):
         model.addConstr(xi[l] >= 0)
-        #model.addConstr(xi[l] <= 5000)
-    #fictitious_OD_list = zload('../temp_files/fictitious_OD_list')
-    #for l in fictitious_OD_list:
+
         #model.addConstr(xi[l] == 0)
     model.update() 
 
@@ -93,11 +76,10 @@ def GLS(x, A, L):
 
     xi_list = []
     for v in model.getVars():
-        # print('%s %g' % (v.varName, v.x))
-        xi_list.append(v.x)
-    # print('Obj: %g' % obj.getValue())
-    return xi_list
 
+        xi_list.append(v.x)
+
+    return xi_list
 
 def saveDemandVec(edges, out_dir, instance, files_ID, lam_list, month_id, day ):
     lam_dict = {}
@@ -112,13 +94,11 @@ def saveDemandVec(edges, out_dir, instance, files_ID, lam_list, month_id, day ):
                     the_file.write("%d,%d,%f\n" %(i, j, lam_list[idx]))
                     idx += 1
 
-#G = zload(out_dir + 'G' + files_ID + '.pkz')
-    
-#N = nx.incidence_matrix(G,oriented=True)
-#N = N.todense()
 def runGLS_f(out_dir, files_ID, time_instances, month_w, week_day_list, average_over_time):
+
     time_window = average_over_time
     edges = zload(out_dir + 'link_length_dict.pkz')
+    node_link_inc = zload(out_dir + 'node_link_incidence.pkz')    
     numEdges = len(edges)
     numNodes = len(node_link_inc)
     
@@ -126,7 +106,7 @@ def runGLS_f(out_dir, files_ID, time_instances, month_w, week_day_list, average_
     week_day_Apr_list = week_day_list
     
     for instance in time_instances['id']:
-    
+        x_ins = np.zeros(numEdges)
         #flow_after_conservation = pd.read_pickle(out_dir + 'flows_after_QP' + files_ID + '_' + instance + '.pkz')
         flow_after_conservation = pd.read_pickle(out_dir + 'flows_before_QP_2_' + files_ID + '_' + instance +'.pkz')
         
@@ -157,6 +137,7 @@ def runGLS_f(out_dir, files_ID, time_instances, month_w, week_day_list, average_
                     
                     a = np.array(list(flow_after_conservation[ts].values()))
                     x = np.c_[x,a]
+                    x_ins = np.c_[x_ins,a]
             
             x = np.delete(x,0,1)
             x = np.asmatrix(x)
@@ -221,10 +202,69 @@ def runGLS_f(out_dir, files_ID, time_instances, month_w, week_day_list, average_
                     pass 
                 
             saveDemandVec(numNodes, out_dir, instance, files_ID, lam_list, month_w, str(day_) )
-        '''
-        '''
-        #P = np.transpose(P)
+
+
+        # Calculating the aggregated OD Demand for each instance, used to estimate cost function coefficients
         
-      #  return [xi_list , P , L, edges]
+        x_ins = np.delete(x_ins,0,1)
+        x_ins = np.asmatrix(x_ins)
+        
 
+        
+        x_ins = np.nan_to_num(x_ins)
+        y = np.array(np.transpose(x_ins))
+        y = y[np.all(y != 0, axis=1)]
+        x_ins = np.transpose(y)
+        x_ins = np.matrix(x_ins)
 
+        xi_list = None
+        try:
+            xi_list = GLS(x_ins, A, L)
+        except:
+            pass
+           
+        cnt_ = 0
+        while xi_list == None:
+            try:
+                len_x = np.size(x_ins,1)
+                sample_size = np.random.randint(.5*len_x ,len_x)
+                col_idx = np.random.choice(range(len_x), sample_size, replace=False)
+                x1 = x_ins[:,col_idx]
+                cnt_ += 1
+                print(cnt_)
+                if cnt_ >= 45:
+                    xi_list = 1
+                    print('error, no PSD Q was found')
+                xi_list = GLS(x1, A, L)
+        
+            except:
+                pass
+        
+        
+        
+        lam_list = None
+        try:
+            lam_list = GLS2(x_ins, A, P, L)
+        except:
+            pass
+        
+        cnt_ = 0
+        
+        
+        while lam_list == None:
+            try:
+                len_x = np.size(x_ins,1)
+                sample_size = np.random.randint(.5*len_x ,len_x)
+                col_idx = np.random.choice(range(len_x), sample_size, replace=False)
+                x1 = x_ins[:,col_idx]
+                cnt_ += 1
+                print(cnt_)
+                if cnt_ >= 45:
+                    lam_list = 1
+                    print('error, no PSD Q was found')
+                lam_list = GLS2(x1, A, P, L)
+        
+            except:
+                pass 
+
+        saveDemandVec(numNodes, out_dir, instance, files_ID, lam_list, month_w, 'full' )

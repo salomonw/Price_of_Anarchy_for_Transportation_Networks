@@ -37,11 +37,11 @@ end
 
 
 
-function load_ta_network_(out_dir, files_ID, month_w, instan)
+function load_ta_network_(out_dir, files_ID, month_w, day,  instan)
     toll_factor = 0
     distance_factor = 0
-    network_data_file = files_ID * "_net_" * month_w * "_" * instan * ".txt"
-    trip_table_file = files_ID * "_trips_" * month_w * "_" * instan * ".txt"
+    network_data_file = files_ID * "_net_" * month_w * "_" * string(day) * '_' * instan * ".txt"
+    trip_table_file = files_ID * "_trips_" * month_w * "_" * string(day) * '_' * instan * ".txt"
     best_objective = 0
 
     network_name = files_ID

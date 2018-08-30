@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 """
 Created on Mon Jun 11 14:00:57 2018
@@ -10,8 +11,8 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 os.chdir('G:/My Drive/Github/InverseVIsTraffic/Python_files/') # CHANGES 
-get_ipython().magic(u'run util_data_storage_and_load.py')
-get_ipython().magic(u'run util.py')
+execfile('util_data_storage_and_load.py')
+execfile('util.py')
 
 from util import *   
 from util_data_storage_and_load import * 

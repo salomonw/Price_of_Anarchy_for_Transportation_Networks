@@ -69,9 +69,9 @@ RUN JULIA: 01. InvOpt_salo_f.jl  JULIA 0.6.4
 
 create_testing_set(week_day_list_1, week_day_list_2, week_day_list_3, year, month, time_instances, month_w, out_dir, files_ID)
 
-create_East_Massachusetts_trips(out_dir, files_ID, month_w, time_instances, n_zones)
+create_East_Massachusetts_trips(out_dir, files_ID, month_w, time_instances, n_zones, week_day_list)
 
-create_East_Massachusetts_net(out_dir, files_ID, month_w, month, year, time_instances, n_zones )
+create_East_Massachusetts_net(out_dir, files_ID, month_w, month, year, time_instances, n_zones, week_day_list )
 
 
 
@@ -86,7 +86,7 @@ RUN JULIA: 03. Plot_comparison_results_Apr.ipynb
 RUN JULIA: 04. sensitivity_analysis_Finite_Difference_Approximation
 '''
 
-parse_data_for_TAP(out_dir, files_ID, time_instances, month_w)
+parse_data_for_TAP(out_dir, files_ID, time_instances, month_w, week_day_list)
 
 '''
 RUN JULIA: 04.1 
