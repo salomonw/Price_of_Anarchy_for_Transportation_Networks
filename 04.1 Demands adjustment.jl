@@ -30,10 +30,10 @@ include("prepare_data.jl");
 include("Julia_files/inverseVI.jl");
 include("Julia_files/demands_adjustment_gradi.jl");
 
-function demandsDictFixed(graph, ta_data, link_dic, day, gamma1, gamma2, out_dir, files_ID, month_w, instance, key_, free_flow_time, capacity, start_node, en_node)
+function demandsDictFixed(graph, ta_data, link_dic, day, gamma1, gamma2, out_dir, files_ID, month_w, instance, key_, free_flow_time, capacity, start_node, en_node, numZones, cnt)
     #day = 4  # day of April
     # observed flow vector
-    xl = flow_observ[:, day]
+    xl = flow_observ[:, cnt]
     
     tapFlows = Dict()
     for i = 1:length(ta_data.start_node)
@@ -61,10 +61,10 @@ function demandsDictFixed(graph, ta_data, link_dic, day, gamma1, gamma2, out_dir
     #println(demandsVecDict[1])
     
     
-    objFunDict[1] = objF(graph, ta_data, link_dic, gamma1, gamma2, demandsVecDict[1], demandsVecDict[1], fcoeffs, free_flow_time, capacity, start_node, en_node);
+    objFunDict[1] = objF(graph, ta_data, link_dic, gamma1, gamma2, demandsVecDict[1], demandsVecDict[1], fcoeffs, free_flow_time, capacity, start_node, en_node, numZones);
 
     # get initial flow vector (corresponding to initial demands)
-    tapFlowDicDict[1], tapFlowVecDict[1] = tapMSA(graph, ta_data, link_dic, demandsDict[1], fcoeffs, free_flow_time, capacity, start_node, en_node,  numIter=500, tol=1e-6)
+    tapFlowDicDict[1], tapFlowVecDict[1] = tapMSA(graph, ta_data, link_dic, demandsDict[1], fcoeffs, free_flow_time, capacity, start_node, en_node, numZones)
     #tapMSA(graph, ta_data, link_dic, demandsDict[1], fcoeffs, free_flow_time, capacity, start_node, en_node,  numIter=500, tol=1e-6);       
 
     demandsVecDict[0] = demandsDicToVec(demandsDict[0]);
@@ -73,7 +73,7 @@ function demandsDictFixed(graph, ta_data, link_dic, day, gamma1, gamma2, out_dir
     network_data_file = files_ID * "_net_" * month_w * "_full_" * instance * ".txt"
     arcsDict[1] = observFlow(out_dir  * "data_traffic_assignment_uni-class/" * network_data_file, tapFlowDicDict[1]);
 
-    linkCostDicDict[1] = tapFlowVecToLinkCostDict(tapFlowVecDict[1], fcoeffs);
+    linkCostDicDict[1] = tapFlowVecToLinkCostDict(tapFlowVecDict[1], fcoeffs, free_flow_time, capacity);
 
     linkCostDicDict[1]["0"], link_length_list[1]
 
@@ -108,16 +108,16 @@ function demandsDictFixed(graph, ta_data, link_dic, day, gamma1, gamma2, out_dir
 
         demandsVecDict[l+1] = similar(demandsVecDict[0]);
 
-        demandsVecDict[l+1], objFunDict[l+1] = armijo(gamma1, gamma2, objFunDict[l], demandsVecDict[l], 
-            demandsVecDict[0], fcoeffs, searchDirecDict[l], thetaMaxDict[l], rho, M);
+        demandsVecDict[l+1], objFunDict[l+1] = armijo(gamma1, gamma2, objFunDict[l], demandsVecDict[l], demandsVecDict[0], fcoeffs, 
+        	searchDirecDict[l], thetaMaxDict[l], rho, M, graph, ta_data, link_dic, free_flow_time, capacity, start_node, en_node, numZones);
 
         demandsDict[l+1] = demandsVecToDic(demandsVecDict[l+1]);
 
-        tapFlowDicDict[l+1], tapFlowVecDict[l+1] = tapMSA(demandsDict[l+1], fcoeffs);
+        tapFlowDicDict[l+1], tapFlowVecDict[l+1] = tapMSA(graph, ta_data, link_dic, demandsDict[l+1], fcoeffs, free_flow_time, capacity, start_node, en_node, numZones);
 
         arcsDict[l+1] = observFlow(out_dir  * "data_traffic_assignment_uni-class/" * network_data_file, tapFlowDicDict[l+1]);
 
-        linkCostDicDict[l+1] = tapFlowVecToLinkCostDict(tapFlowVecDict[l+1], fcoeffs);
+        linkCostDicDict[l+1] = tapFlowVecToLinkCostDict(tapFlowVecDict[l+1], fcoeffs, free_flow_time, capacity);
 
         jacobiSpiessDict[l+1] = Compute_Jacobian.jacobianSpiess(numNodes, numLinks, numODpairs, od_pairs,
                                                   link_list_js, [linkCostDicDict[l+1]["$(i)"] for i=0:numLinks-1]);
@@ -178,7 +178,7 @@ function demandsDictFixed(graph, ta_data, link_dic, day, gamma1, gamma2, out_dir
     close(outfile)
 end
 
-function socialObj(linkFlowVec, free_flow_time)
+function socialObj(linkFlowVec, free_flow_time, polyDeg, fcoeffs, capacity, numLinks)
     objVal = sum([sum([free_flow_time[a] * fcoeffs[i] * linkFlowVec[a]^i / capacity[a]^(i-1) for i=1:polyDeg]) 
         for a = 1:numLinks])
     return objVal
@@ -214,16 +214,21 @@ include("extract_data.jl");
 include("Julia_files/tap_MSA.jl");
 include("Julia_files/demands_adjustment_gradi.jl");
 
+cnt = 0 
+PoA_dict = Dict();
+tapSocialFlowDicDict = Dict();
+tapSocialFlowVecDict = Dict();
 
 for day in week_day_Apr_list
+	cnt = cnt + 1
 #day = 9
 	demandsDict = extract_demandDict(day)
-	numNodes, numLinks, numODpairs, capacity, free_flow_time, ta_data_Apr_PM, start_node, end_node = extract_dataf(day)
+	numNodes, numLinks, numODpairs, capacity, free_flow_time, ta_data_Apr_PM, start_node, en_node = extract_dataf(day)
 
 	
 	# preparing a graph
-	graph = create_graph(start_node, end_node);
-	link_dic = sparse(start_node, end_node, 1:numLinks);
+	graph = create_graph(start_node, en_node);
+	link_dic = sparse(start_node, en_node, 1:numLinks);
 	
 
 	demandsVecDict[0] = demandsDicToVec(demandsDict[0]);
@@ -241,9 +246,9 @@ for day in week_day_Apr_list
 	#for day = 1:size(flow_observ,2)
     ta_data = load_ta_network_(out_dir, files_ID, month_w, day, instance1);
 
-    demandsDictFixed(graph, ta_data, link_dic, day, gamma1, gamma2, out_dir, files_ID, month_w, instance, key_, free_flow_time, capacity, start_node, end_node)
+    demandsDictFixed(graph, ta_data, link_dic, day, gamma1, gamma2, out_dir, files_ID, month_w, instance, key_, free_flow_time, capacity, start_node, en_node, numZones, cnt)
 
-    println("day $(day) finished...")
+    
 	#end
 
 	coeffs_dict_ = readstring(out_dir * "coeffs_dict_" * month_w * "_" * instance1 *".json")
@@ -251,9 +256,7 @@ for day in week_day_Apr_list
 	fcoeffs = coeffs_dict_[key_]
 	polyDeg = length(fcoeffs)
 
-	PoA_dict = Dict();
-	tapSocialFlowDicDict = Dict();
-	tapSocialFlowVecDict = Dict();
+
 
 
 
@@ -276,17 +279,17 @@ for day in week_day_Apr_list
 
 	#     tapFlowVecDict[day]
 
-	    tapSocialFlowDicDict[day], tapSocialFlowVecDict[day] = tapMSASocial(demandsDict_, fcoeffs);
-
+	    tapSocialFlowDicDict[day], tapSocialFlowVecDict[day] = tapMSASocial(demandsDict_, fcoeffs, ta_data, graph, link_dic, start_node, en_node, free_flow_time, capacity, numLinks, numZones);
+#demands, fcoeffs, graph, ta_data, link_dic, start_node, en_node, free_flow_time, capacity, numLinks, numIter=1000, tol=1e-6
 	#     tapSocialFlowVecDict[day]
 
 	#     flow_observ[:, day]
 
 	    # PoA_dict[day] = socialObj(tapFlowVecDict[day]) / socialObj(tapSocialFlowVecDict[day])
 
-	    PoA_dict[day] = socialObj(flow_observ[:, day], free_flow_time) / socialObj(tapSocialFlowVecDict[day], free_flow_time);
+	    PoA_dict[day] = socialObj(flow_observ[:, cnt], free_flow_time, polyDeg, fcoeffs, capacity, numLinks) / socialObj(tapSocialFlowVecDict[day], free_flow_time, polyDeg, fcoeffs, capacity, numLinks);
 	#end
-
+	println("day $(day) finished...")
 end
 
 

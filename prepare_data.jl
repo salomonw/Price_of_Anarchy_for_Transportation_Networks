@@ -100,8 +100,8 @@ function paraNetwork(out_dir, files_ID, month_w, day, instance1)
     return numNodes, numLinks, numODpairs, capacity, free_flow_time, ta_data
 end
 
-function tapFlowVecToLinkCostDict(tapFlowVec, fcoeffsInvVI)
-    linkCostVec = BPR(tapFlowVec, fcoeffsInvVI)
+function tapFlowVecToLinkCostDict(tapFlowVec, fcoeffsInvVI, free_flow_time, capacity)
+    linkCostVec = BPR(tapFlowVec, fcoeffsInvVI, free_flow_time, capacity)
     temp_dict = Dict{}()
     for i in 1:length(linkCostVec)
         temp_dict["$(i-1)"] = linkCostVec[i]

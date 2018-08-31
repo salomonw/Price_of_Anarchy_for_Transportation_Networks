@@ -41,7 +41,7 @@ function BPR(flowVec, fcoeffs, free_flow_time, capacity)
     return bpr
 end
 
-function BPRSocial(flowVec, fcoeffs)
+function BPRSocial(flowVec, fcoeffs, free_flow_time, capacity)
     bpr = similar(flowVec)
     # refer to [Page 50; Patriksson 1994, 2015]
     for a = 1:length(bpr)
@@ -53,7 +53,7 @@ function BPRSocial(flowVec, fcoeffs)
     return bpr
 end
 
-function all_or_nothing(graph, link_dic, travel_time, demands, start_node)
+function all_or_nothing(graph, link_dic, travel_time, demands, start_node, numZones)
     state = []
     path = []
     x = zeros(size(start_node))
@@ -72,10 +72,10 @@ function all_or_nothing(graph, link_dic, travel_time, demands, start_node)
     return x
 end
 
-function tapMSA(graph, ta_data, link_dic, demands, fcoeffs, free_flow_time, capacity, start_node, en_node,  numIter=500, tol=1e-6)
+function tapMSA(graph, ta_data, link_dic, demands, fcoeffs, free_flow_time, capacity, start_node, en_node, numZones, numIter=500, tol=1e-6)
     # Finding a starting feasible solution
     travel_time = BPR(zeros(numLinks), fcoeffs, free_flow_time, capacity)
-    xl = all_or_nothing(graph, link_dic, travel_time, demands, start_node)
+    xl = all_or_nothing(graph, link_dic, travel_time, demands, start_node, numZones)
 
     l = 1
 
@@ -87,7 +87,7 @@ function tapMSA(graph, ta_data, link_dic, demands, fcoeffs, free_flow_time, capa
         # Finding yl
         travel_time = BPR(xl, fcoeffs, free_flow_time, capacity )
 
-        yl = all_or_nothing(graph, link_dic, travel_time, demands, start_node)
+        yl = all_or_nothing(graph, link_dic, travel_time, demands, start_node, numZones)
 
         # assert(yl != xl)
 
@@ -115,10 +115,10 @@ function tapMSA(graph, ta_data, link_dic, demands, fcoeffs, free_flow_time, capa
     return tapFlows, tapFlowVect
 end
 
-function tapMSASocial(demands, fcoeffs, numIter=1000, tol=1e-6)
+function tapMSASocial(demands, fcoeffs, ta_data, graph, link_dic, start_node, en_node, free_flow_time, capacity, numLinks, numZones, numIter=1000, tol=1e-6)
     # Finding a starting feasible solution
-    travel_time = BPRSocial(zeros(numLinks), fcoeffs)
-    xl = all_or_nothing(travel_time, demands)
+    travel_time = BPRSocial(zeros(numLinks), fcoeffs, free_flow_time, capacity)
+    xl = all_or_nothing(graph, link_dic, travel_time, demands, start_node, numZones)
 
     l = 1
 
@@ -128,9 +128,9 @@ function tapMSASocial(demands, fcoeffs, numIter=1000, tol=1e-6)
         xl_old = xl
 
         # Finding yl
-        travel_time = BPRSocial(xl, fcoeffs)
+        travel_time = BPRSocial(xl, fcoeffs, free_flow_time, capacity)
 
-        yl = all_or_nothing(travel_time, demands)
+        yl = all_or_nothing(graph, link_dic, travel_time, demands, start_node, numZones)
 
         # assert(yl != xl)
 
@@ -148,8 +148,8 @@ function tapMSASocial(demands, fcoeffs, numIter=1000, tol=1e-6)
 
     tapFlows = Dict()
 
-    for i = 1:length(ta_data.start_node)
-        key = (ta_data.start_node[i], ta_data.end_node[i])
+    for i = 1:length(start_node)
+        key = (start_node[i], en_node[i])
         tapFlows[key] = xl[i]
     end
 
