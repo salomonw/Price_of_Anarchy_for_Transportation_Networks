@@ -239,6 +239,8 @@ def calculate_testing_errors(out_dir, files_ID, month_w, instance, deg_grid, c_g
         
         
 def create_East_Massachusetts_trips(out_dir, files_ID, month_w, time_instances, n_zones, week_day_list):
+    week_day_list.append("full")
+
     if not os.path.exists(out_dir + 'data_traffic_assignment_uni-class'):
             os.mkdir(out_dir + 'data_traffic_assignment_uni-class')
             
@@ -271,6 +273,8 @@ def create_East_Massachusetts_trips(out_dir, files_ID, month_w, time_instances, 
     
 def create_East_Massachusetts_net(out_dir, files_ID, month_w, month, year, time_instances, n_zones, week_day_list):
     
+    week_day_list.append("full")
+
     with open(out_dir + 'link_min_dict'+ files_ID + '.json', 'r') as json_file:
         link_day_minute_Apr_dict_JSON_ = json.load(json_file)
     zero_value = 0.0

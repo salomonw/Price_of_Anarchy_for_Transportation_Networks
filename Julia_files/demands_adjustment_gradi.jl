@@ -131,9 +131,9 @@ function thetaMax(demandsVec, searchDirect)
 end
 
 # Armijo line search and update
-function objF(gamma1, gamma2, demandsVec, demandsVec0, fcoeffs)
+function objF(graph, ta_data, link_dic, gamma1, gamma2, demandsVec, demandsVec0, fcoeffs, free_flow_time, capacity, start_node, en_node)
     demandsDic = demandsVecToDic(demandsVec)
-    tapFlowVec = tapMSA(demandsDic, fcoeffs)[2]
+    tapFlowVec = tapMSA(graph, ta_data, link_dic, demandsDic, fcoeffs, free_flow_time, capacity, start_node, en_node)[2]
     return gamma1 * sum([(demandsVec[i] - demandsVec0[i])^2 for i = 1:length(demandsVec)]) + gamma2 * sum([(tapFlowVec[a] - tapFlowVecDict[0][a])^2 for a = 1:length(tapFlowVec)])
 end     
 

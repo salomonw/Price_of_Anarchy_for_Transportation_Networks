@@ -32,7 +32,7 @@ function setUpFitting(deg::Int64, c::Float64)
 end
 
 function addResid(m, coeffs, ys, demands, arcs, scaling)
-    	@variable(m, resid)
+	@variable(m, resid)
 	@variable(m, dual_cost)
 	@variable(m, primal_cost)
 

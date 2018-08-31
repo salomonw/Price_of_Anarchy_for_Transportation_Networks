@@ -89,8 +89,8 @@ end
 
 include("Julia_files/load_network_uni_class.jl")
 
-function paraNetwork(out_dir, files_ID, month_w, instance1)
-    ta_data = load_ta_network_(out_dir, files_ID, month_w, instance1)
+function paraNetwork(out_dir, files_ID, month_w, day, instance1)
+    ta_data = load_ta_network_(out_dir, files_ID, month_w, day, instance1)
     numNodes = maximum(map(pair->pair[1], keys(demandsDict[0])))
     start_node = ta_data.start_node
     capacity = ta_data.capacity

@@ -12,7 +12,7 @@ with open(out_dir + 'instance_comm.txt') as ins_file:
     instance = file.read(ins_file)
 
 
-with open(out_dir + "/data_traffic_assignment_uni-class/" + files_ID + '_net_' + month_w + '_' + instance + '.txt') as MA_journal_flow:
+with open(out_dir + "/data_traffic_assignment_uni-class/" + files_ID + '_net_' + month_w + '_full_' + instance + '.txt') as MA_journal_flow:
     MA_journal_flow_lines = MA_journal_flow.readlines()
 MA_journal_links = []
 i = -9
@@ -39,7 +39,7 @@ for node in range(numNodes):
         if node == int(link[0]):
             node_neighbors_dict[str(node)].append(int(link[1]))
 
-with open(out_dir + "/data_traffic_assignment_uni-class/" + files_ID + '_trips_' + month_w + '_' + instance + '.txt') as MA_journal_trips:
+with open(out_dir + "/data_traffic_assignment_uni-class/" + files_ID + '_trips_' + month_w + '_full_' + instance + '.txt') as MA_journal_trips:
     MA_journal_trips_lines = MA_journal_trips.readlines()
 
 numZones = int(MA_journal_trips_lines[0].split(' ')[3])
@@ -126,7 +126,7 @@ zdump(link_label_dict, out_dir + 'link_label_dict_network.pkz')
 zdump(link_label_dict_, out_dir +  'link_label_dict_network_.pkz')
 
 link_length_list = []
-with open( out_dir + 'data_traffic_assignment_uni-class/'+ files_ID + '_net_' + month_w + '_' + instance + '.txt', 'r') as f:
+with open( out_dir + 'data_traffic_assignment_uni-class/'+ files_ID + '_net_' + month_w + '_full_' + instance + '.txt', 'r') as f:
     read_data = f.readlines()
     flag = 0
     for row in read_data:

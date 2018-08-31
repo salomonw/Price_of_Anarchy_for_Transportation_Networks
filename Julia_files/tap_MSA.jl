@@ -1,14 +1,14 @@
 using Graphs
 
-function create_graph(start_node, end_node)
-    @assert Base.length(start_node)==Base.length(end_node)
+function create_graph(start_node, en_node)
+    @assert Base.length(start_node)==Base.length(en_node)
 
-    no_node = max(maximum(start_node), maximum(end_node))
+    no_node = max(maximum(start_node), maximum(en_node))
     no_arc = Base.length(start_node)
 
     graph = simple_inclist(no_node)
     for i=1:no_arc
-        add_edge!(graph, start_node[i], end_node[i])
+        add_edge!(graph, start_node[i], en_node[i])
     end
     return graph
 end
@@ -30,10 +30,10 @@ function get_vector(state, origin, destination, link_dic)
 end
 
 # preparing a graph
-graph = create_graph(start_node, end_node)
-link_dic = sparse(start_node, end_node, 1:numLinks)
+#graph = create_graph(start_node, end_node)
+#link_dic = sparse(start_node, end_node, 1:numLinks)
 
-function BPR(flowVec, fcoeffs)
+function BPR(flowVec, fcoeffs, free_flow_time, capacity)
     bpr = similar(flowVec)
     for a = 1:length(bpr)
         bpr[a] = free_flow_time[a] * sum([fcoeffs[i] * (flowVec[a]/capacity[a])^(i-1) for i = 1:length(fcoeffs)])
@@ -53,7 +53,7 @@ function BPRSocial(flowVec, fcoeffs)
     return bpr
 end
 
-function all_or_nothing(travel_time, demands)
+function all_or_nothing(graph, link_dic, travel_time, demands, start_node)
     state = []
     path = []
     x = zeros(size(start_node))
@@ -72,10 +72,10 @@ function all_or_nothing(travel_time, demands)
     return x
 end
 
-function tapMSA(demands, fcoeffs, numIter=500, tol=1e-6)
+function tapMSA(graph, ta_data, link_dic, demands, fcoeffs, free_flow_time, capacity, start_node, en_node,  numIter=500, tol=1e-6)
     # Finding a starting feasible solution
-    travel_time = BPR(zeros(numLinks), fcoeffs)
-    xl = all_or_nothing(travel_time, demands)
+    travel_time = BPR(zeros(numLinks), fcoeffs, free_flow_time, capacity)
+    xl = all_or_nothing(graph, link_dic, travel_time, demands, start_node)
 
     l = 1
 
@@ -85,9 +85,9 @@ function tapMSA(demands, fcoeffs, numIter=500, tol=1e-6)
         xl_old = xl
 
         # Finding yl
-        travel_time = BPR(xl, fcoeffs)
+        travel_time = BPR(xl, fcoeffs, free_flow_time, capacity )
 
-        yl = all_or_nothing(travel_time, demands)
+        yl = all_or_nothing(graph, link_dic, travel_time, demands, start_node)
 
         # assert(yl != xl)
 

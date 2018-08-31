@@ -4,15 +4,15 @@ include("Julia_files/load_network_uni_class.jl")
 
 using Graphs
 
-function create_graph(start_node, end_node)
-    @assert Base.length(start_node)==Base.length(end_node)
+function create_graph(start_node, en_node)
+    @assert Base.length(start_node)==Base.length(en_node)
 
-    no_node = max(maximum(start_node), maximum(end_node))
+    no_node = max(maximum(start_node), maximum(en_node))
     no_arc = Base.length(start_node)
 
     graph = simple_inclist(no_node)
     for i=1:no_arc
-        add_edge!(graph, start_node[i], end_node[i])
+        add_edge!(graph, start_node[i], en_node[i])
     end
     return graph
 end
@@ -46,6 +46,7 @@ function salo(out_dir, files_ID, month_w, week_day_list, instance, deg_grid, c_g
     instance1 = instance
 
     for day in week_day_list
+
         ta_data = load_ta_network_(out_dir, files_ID, month_w, day, instance1)
 
         # unpacking data from ta_data
@@ -86,7 +87,7 @@ function salo(out_dir, files_ID, month_w, week_day_list, instance, deg_grid, c_g
         function MSA(coeffs) 
             polyEval(coeffs, pt) = sum([coeffs[i] * pt^(i-1) for i = 1:length(coeffs)]) 
 
-            function BPR(x)
+            function BPR(x, free_flow_time)
                 bpr = similar(x)
                 for i=1:length(bpr)
                     bpr[i] = free_flow_time[i] * polyEval( coeffs, (x[i]/capacity[i]) ) 
@@ -94,7 +95,7 @@ function salo(out_dir, files_ID, month_w, week_day_list, instance, deg_grid, c_g
                 return bpr
             end
 
-            function all_or_nothing(travel_time)
+            function all_or_nothing(travel_time, demands, start_node)
                 state = []
                 path = []
                 x = zeros(size(start_node))
@@ -199,4 +200,8 @@ week_day_list = parameters_julia.week_day_list
 
 for ins in instances_1
     salo(out_dir, files_ID, month_w, week_day_list, ins, deg_grid, c_grid, lamb_grid) #idx in length(instances_1)
+end
+
+for ins in instances_1
+    salo(out_dir, files_ID, month_w, ["full"], ins, deg_grid, c_grid, lamb_grid) #idx in length(instances_1)
 end
