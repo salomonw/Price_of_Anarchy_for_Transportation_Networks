@@ -302,15 +302,10 @@ outfile = open(out_dir * "tapSocialFlowVecDict_" * month_w * "_" * instance1 * "
 JSON.print(outfile, tapSocialFlowVecDict)
 close(outfile)
 
+
+
+
 #=
-
-
-
-
-PoA_dict = Dict();
-tapSocialFlowDicDict = Dict();
-tapSocialFlowVecDict = Dict();
-
 
 #for day = 1: length(week_day_Apr_list)
 
@@ -345,6 +340,5 @@ tapSocialFlowVecDict = Dict();
 
 #PoA_dict
 
-
-
 =#
+

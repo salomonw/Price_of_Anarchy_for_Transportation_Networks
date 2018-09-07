@@ -87,7 +87,7 @@ function salo(out_dir, files_ID, month_w, week_day_list, instance, deg_grid, c_g
         function MSA(coeffs) 
             polyEval(coeffs, pt) = sum([coeffs[i] * pt^(i-1) for i = 1:length(coeffs)]) 
 
-            function BPR(x, free_flow_time)
+            function BPR(x)
                 bpr = similar(x)
                 for i=1:length(bpr)
                     bpr[i] = free_flow_time[i] * polyEval( coeffs, (x[i]/capacity[i]) ) 
@@ -95,7 +95,7 @@ function salo(out_dir, files_ID, month_w, week_day_list, instance, deg_grid, c_g
                 return bpr
             end
 
-            function all_or_nothing(travel_time, demands, start_node)
+            function all_or_nothing(travel_time)
                 state = []
                 path = []
                 x = zeros(size(start_node))
@@ -197,6 +197,7 @@ deg_grid = parameters_julia.deg_grid
 c_grid = parameters_julia.c_grid
 lamb_grid = parameters_julia.lamb_grid
 week_day_list = parameters_julia.week_day_list
+
 
 for ins in instances_1
     salo(out_dir, files_ID, month_w, week_day_list, ins, deg_grid, c_grid, lamb_grid) #idx in length(instances_1)

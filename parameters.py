@@ -15,7 +15,7 @@ files_ID = '_cdc_all_comp_apr_2012'
 dir_capacity_data = 'G:/Team Drives/MPO 2012/capacity data/'
 
 out_dir = '../results/' + files_ID + '/' 
-filtered_data_dir =  out_dir + 'filtered_tmc_data' 	+ '/'
+filtered_data_dir =  out_dir + 'filtered_tmc_data'  + '/'
 
 if os.path.isdir(out_dir) == False:
     os.mkdir(out_dir)

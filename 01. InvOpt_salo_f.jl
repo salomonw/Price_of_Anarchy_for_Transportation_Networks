@@ -234,7 +234,7 @@ year = parameters_julia.year
 
 using Graphs
 #for inst in insts
-    inst = "NT"
+    inst = "PM"
 	# Assing file names 
 	link_day_min_path = out_dir * "link_min_dict" * files_ID * ".json"
     flow_path =  out_dir * "flows_after_QP" * files_ID * "_" * inst * ".json"

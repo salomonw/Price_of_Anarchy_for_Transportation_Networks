@@ -114,7 +114,7 @@ for day in week_day_Apr_list
 
 	coeffs_dict_Apr_PM_ = readstring(out_dir * "coeffs_dict_" * month_w *  "_" * instance1 * ".json")
 	coeffs_dict_Apr_PM_ = JSON.parse(coeffs_dict_Apr_PM_)
-	fcoeffs = coeffs_dict_Apr_PM_["(7, 0.5, 1000.0, 1)"]
+	fcoeffs = coeffs_dict_Apr_PM_["(6, 0.5, 1.0, 1)"]
 	polyDeg = length(fcoeffs)
 
 	
@@ -167,15 +167,15 @@ for day in week_day_Apr_list
 	#@expression(m, f, sum{free_flow_time[a]*linkFlow[a] + .03*free_flow_time[a]*((linkFlow[a])^5)/((capacity[a])^4), a = 1:numLinks} )
 
 
-	#@NLexpression(m, f, sum{ free_flow_time[a] * fcoeffs[i]  *linkFlow[a]^i / capacity[a]^(i-1) , i = 1:polyDeg , a = 1:numLinks }) ;
+	@NLexpression(m, f, sum{ free_flow_time[a] * fcoeffs[i]  *linkFlow[a]^i / capacity[a]^(i-1) , i = 1:polyDeg , a = 1:numLinks }) ;
 
-	@NLexpression(m, f, sum{free_flow_time[a] * fcoeffs[1] * linkFlow[a] +
-	        free_flow_time[a] * fcoeffs[2] * linkFlow[a]^2 / capacity[a] +
-	        free_flow_time[a] * fcoeffs[3] * linkFlow[a]^3 / capacity[a]^2 +
-	        free_flow_time[a] * fcoeffs[4] * linkFlow[a]^4 / capacity[a]^3 +
-	        free_flow_time[a] * fcoeffs[5] * linkFlow[a]^5 / capacity[a]^4 +
-	        free_flow_time[a] * fcoeffs[6] * linkFlow[a]^6 / capacity[a]^5 +
-			free_flow_time[a] * fcoeffs[7] * linkFlow[a]^7 / capacity[a]^6 , a = 1:numLinks})
+	#@NLexpression(m, f, sum{free_flow_time[a] * fcoeffs[1] * linkFlow[a] +
+	#        free_flow_time[a] * fcoeffs[2] * linkFlow[a]^2 / capacity[a] +
+	#        free_flow_time[a] * fcoeffs[3] * linkFlow[a]^3 / capacity[a]^2 +
+	#        free_flow_time[a] * fcoeffs[4] * linkFlow[a]^4 / capacity[a]^3 +
+	#        free_flow_time[a] * fcoeffs[5] * linkFlow[a]^5 / capacity[a]^4 +
+	#        free_flow_time[a] * fcoeffs[6] * linkFlow[a]^6 / capacity[a]^5 +
+#			free_flow_time[a] * fcoeffs[7] * linkFlow[a]^7 / capacity[a]^6 , a = 1:numLinks})
 
 	@NLobjective(m, Min, f);
 	#print(m) 
@@ -213,17 +213,29 @@ for day in week_day_Apr_list
 	#println(socialObj(flow_user[:, cnt]))
 	cnt +=1
 	
-	social[cnt] = getobjectivevalue(m)
-	user[cnt] = socialObj(flow_user[:,cnt])
-	poaDict[cnt] = user[cnt]/social[cnt]
+	social[day] = getobjectivevalue(m)
+	user[day] = socialObj(flow_user[:,cnt])
+	poaDict[day] = user[day]/social[day]
 
 end
+
+
+outfile =  open(out_dir * "cong_" * month_w * "_" * instance1 * ".json", "w")
+JSON.print(outfile, user)
+close(outfile)
+
+
+
+outfile =  open(out_dir * "PoA_dict_noAdj_" * month_w * "_" * instance1 * ".json", "w")
+JSON.print(outfile, poaDict)
+close(outfile)
 
 
 user
 social
 
 poaDict
+
 #=
 
 =#

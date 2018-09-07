@@ -98,4 +98,26 @@ RUN JULIA:  05. TAP POA.jl
 
 InverseVI_uni_MA_with_base_trans_python(out_dir, files_ID, time_instances, month_w)
 
+def plot_POA(time_instances, out_dir, month_w):
+	from utils import *
+	import json
+	import numpy as np
+	iport os 
+	import matplotlib.pyplot as plt
+	for instance in time_instances['id']:
+		with open(out_dir + "PoA_dict_noAdj_" + month_w + '_' + instance + '.json', 'r') as json_file:
+			PoA_dict_noAdj = json.load(json_file)
+
+		with open(out_dir + "PoA_dict_" + month_w + '_' + instance + '.json', 'r') as json_file:
+			PoA_dict_ = json.load(json_file)
+
+		  
+		plt.legend([PoA_dict_, PoA_dict_noAdj], ["PoA", "PoA demand adj"], loc=0)
+		plt.xlabel('Days of ' + month_w)
+		plt.ylabel('PoA')
+		#pylab.xlim(-0.1, 1.6)
+		#pylab.ylim(0.9, 2.0)
+		grid("on")
+		savefig(out_dir + 'PoA'+'_' + instance + '_' + month_w +'.eps')
+
 

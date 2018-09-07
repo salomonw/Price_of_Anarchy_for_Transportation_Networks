@@ -15,7 +15,7 @@ files_ID = '_cdc_may_2012'
 dir_capacity_data = 'G:/Team Drives/MPO 2012/capacity data/'
 
 out_dir = '../results/' + files_ID + '/' 
-filtered_data_dir =  out_dir + 'filtered_tmc_data' 	+ '/'
+filtered_data_dir =  out_dir + 'filtered_tmc_data'  + '/'
 
 if os.path.isdir(out_dir) == False:
     os.mkdir(out_dir)
@@ -66,11 +66,12 @@ number_of_routes_per_od = 6
 theta = 0.8
 lower_bound_route = 0.02
 
+average_over_time_p = 5 # averaging the samples to find OD Demand *min
 
 
 #Inverse optimization
 month_w = 'May'
-month = 4
+month = 5
 year = 2012
 n_zones = 8
 

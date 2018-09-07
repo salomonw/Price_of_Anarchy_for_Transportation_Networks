@@ -79,7 +79,7 @@ def GLS(x, A, L):
 
         xi_list.append(v.x)
 
-    return xi_list
+    return xi_list, model.objVal
 
 def saveDemandVec(edges, out_dir, instance, files_ID, lam_list, month_id, day ):
     lam_dict = {}
@@ -106,18 +106,12 @@ def runGLS_f(out_dir, files_ID, time_instances, month_w, week_day_list, average_
     week_day_Apr_list = week_day_list
     
     for instance in time_instances['id']:
+        gls_cost_ = {}
         x_ins = np.zeros(numEdges)
         #flow_after_conservation = pd.read_pickle(out_dir + 'flows_after_QP' + files_ID + '_' + instance + '.pkz')
         flow_after_conservation = pd.read_pickle(out_dir + 'flows_before_QP_2_' + files_ID + '_' + instance +'.pkz')
         
         flow_after_conservation = collections.OrderedDict(sorted(flow_after_conservation.items()))
-        
-        
-        
-        with open(out_dir + 'day_comm.txt') as day_file:
-            day_ = file.read(day_file)
-        
-        day_ = int(day_ )
         
         a = []
         #x = []
@@ -152,7 +146,7 @@ def runGLS_f(out_dir, files_ID, time_instances, month_w, week_day_list, average_
             
             xi_list = None
             try:
-                xi_list = GLS(x, A, L)
+                xi_list, gls_cost = GLS(x, A, L)
             except:
                 pass
                
@@ -168,7 +162,7 @@ def runGLS_f(out_dir, files_ID, time_instances, month_w, week_day_list, average_
                     if cnt_ >= 45:
                         xi_list = 1
                         print('error, no PSD Q was found')
-                    xi_list = GLS(x1, A, L)
+                    xi_list, gls_cost = GLS(x1, A, L)
             
                 except:
                     pass
@@ -203,13 +197,18 @@ def runGLS_f(out_dir, files_ID, time_instances, month_w, week_day_list, average_
                 
             saveDemandVec(numNodes, out_dir, instance, files_ID, lam_list, month_w, str(day_) )
 
+            gls_cost_[day_] = gls_cost
+
 
         # Calculating the aggregated OD Demand for each instance, used to estimate cost function coefficients
         
+
         x_ins = np.delete(x_ins,0,1)
         x_ins = np.asmatrix(x_ins)
         
 
+        with open(out_dir + 'OD_demands/gls_cost_vec_'+ month_w + '_weekday_'+ instance + files_ID + '.json', 'w') as json_file:
+            json.dump(gls_cost_, json_file)
         
         x_ins = np.nan_to_num(x_ins)
         y = np.array(np.transpose(x_ins))
@@ -235,7 +234,7 @@ def runGLS_f(out_dir, files_ID, time_instances, month_w, week_day_list, average_
                 if cnt_ >= 45:
                     xi_list = 1
                     print('error, no PSD Q was found')
-                xi_list = GLS(x1, A, L)
+                xi_list, gls_cost = GLS(x1, A, L)
         
             except:
                 pass

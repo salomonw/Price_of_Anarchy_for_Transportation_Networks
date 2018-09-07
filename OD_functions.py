@@ -193,7 +193,7 @@ def GLS(xa, A, L):
     for v in model.getVars():
         xi_list.append(v.x)
  
-    return xi_list
+    return xi_list, model.objVal
 
 
 def GLS2(x, A, P, L):
@@ -363,7 +363,7 @@ def runGLS(out_dir, files_ID, time_instances, month_id):
         
         xi_list = None
         try:
-            xi_list = GLS(x, A, L)
+            xi_list, gls_cost = GLS(x, A, L)
         except:
             pass
         
