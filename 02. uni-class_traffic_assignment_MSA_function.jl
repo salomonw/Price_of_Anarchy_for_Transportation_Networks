@@ -206,3 +206,6 @@ end
 for ins in instances_1
     salo(out_dir, files_ID, month_w, ["full"], ins, deg_grid, c_grid, lamb_grid) #idx in length(instances_1)
 end
+#=#
+#ins = "full"
+#salo(out_dir, files_ID, month_w, week_day_list, ins, deg_grid, c_grid, lamb_grid) 

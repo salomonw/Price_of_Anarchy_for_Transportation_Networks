@@ -39,7 +39,7 @@ end
 
 # read in initial demand data
 srand(1617)
-function iniDemand(trip_file, flag=0)
+function iniDemand(trip_file, numZones, flag=0)
     file = open(trip_file)
     demands = Dict{}()
     for s=1:numZones
@@ -89,7 +89,7 @@ end
 
 include("Julia_files/load_network_uni_class.jl")
 
-function paraNetwork(out_dir, files_ID, month_w, day, instance1)
+function paraNetwork(out_dir, files_ID, month_w, day, instance1, demandsDict)
     ta_data = load_ta_network_(out_dir, files_ID, month_w, day, instance1)
     numNodes = maximum(map(pair->pair[1], keys(demandsDict[0])))
     start_node = ta_data.start_node

@@ -1,6 +1,6 @@
 # Price_of_Anarchy_for_Transportation_Networks
-This repository contains the scripts for estimating the Price of Anarchy on Transportation Networks by using data. Specifically, we are working with INRIX traffic data for the Eastern Massachussets road network. This work is based on Dr. Zhang work available at [InverseVIsTraffic](https://github.com/jingzbu/InverseVIsTraffic).
-For a deepear understanding, please read the related publications
+This repository contains the scripts for estimating the Price of Anarchy on Transportation Networks by using real-data. Specifically, we are working with INRIX traffic data for the Eastern Massachussets road network. This research is based on Dr. Zhang work available at [InverseVIsTraffic](https://github.com/jingzbu/InverseVIsTraffic).
+For a deepear understanding, please read the related publications.
 
 ## Related Publications
 Jing Zhang, Sepideh Pourazarm, Christos G. Cassandras, and Ioannis Ch. Paschalidis, "***The Price of Anarchy in Transportation Networks by Estimating User Cost Functions from Actual Traffic Data***," Proceedings of the 55th IEEE Conference on Decision and Control, pp. 789-794, December 12-14, 2016, Las Vegas, NV, USA, Invited Session Paper.

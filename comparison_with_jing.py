@@ -3,7 +3,7 @@ import matplotlib.patches as mpatches
 os.chdir('G:/My Drive/Github/InverseVIsTraffic/Python_files')
 import util
 from util import *
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 os.chdir('G:/My Drive/Github/PoA/Price_of_Anarchy_for_Transportation_Networks')
 

@@ -432,8 +432,13 @@ def InverseVI_uni_MA_with_base_trans_python(out_dir, files_ID, time_instances, m
         grid("on")
         savefig('fittedCostFunc_'+'_' + instance + '_' + month_w +'.eps')
 
+
+import numpy as np
+from numpy.linalg import inv
+from numpy import linalg as LA
 from numpy import arange
-def calc_testing_errors(out_dir, files_ID, time_instances, month_w, deg_grid, c_grid, lamb_grid, train_idx):
+import operator
+def calc_testing_errors(out_dir, files_ID, time_instances, month_w, week_day_list, deg_grid, c_grid, lamb_grid, train_idx):
     testing_set = {}
     for instance in time_instances['id']:
         testing_set_1, testing_set_2, testing_set_3 = zload(out_dir + 'testing_sets_' + month_w +'_' + instance + '.pkz')
@@ -444,49 +449,61 @@ def calc_testing_errors(out_dir, files_ID, time_instances, month_w, deg_grid, c_
         testing_sets[2] = testing_set_2
         testing_sets[3] = testing_set_3
         
-        with open(out_dir + '/uni-class_traffic_assignment_MSA_flows_' + month_w + '_' + instance + '.json', 'r') as json_file:
-            xl = json.load(json_file)
-        testing_errors_dict = {}
+        iter_week = week_day_list
+        iter_week.append('full')
 
-        for deg in deg_grid:
-            for c in c_grid:
-                for lam in lamb_grid:
-                    for idx in train_idx:
-                        key_ = "'(" + str(deg) + ', ' + str(c) + ', ' + str(lam) + ', ' + str(idx) + ")'"
+        for day in iter_week:
+
+           # with open(out_dir + 'uni-class_traffic_assignment/MSA_flows_' + month_w + '_' + 'full' + '_' + instance + '.json', 'r') as json_file:
+            with open(out_dir + 'uni-class_traffic_assignment/MSA_flows_' + month_w + '_' + str(day) + '_' + instance + '.json', 'r') as json_file:
+                xl = json.load(json_file)
+            testing_errors_dict = {}
+
+            for deg in deg_grid:
+                for c in c_grid:
+                    for lam in lamb_grid:
+                        for idx in train_idx:
+                            key_ = "'(" + str(deg) + ', ' + str(c) + ', ' + str(lam) + ', ' + str(idx) + ")'"
+                            #if lam == 1e-5:
+                            #    key_ = "'(" + str(deg) + ',' + str(c) + ',' + '1.0e-5' + ',' + str(idx) + ")'"
+                            key_ = key_[1:-1]
+                            testing_errors_dict[key_] = np.mean([LA.norm(np.array(xl[key_]) - \
+                                                                         np.array(testing_sets[idx])[:, j]) \
+                                                                 for j in range(np.size(testing_sets[idx], 1))])
+            testing_mean_errors_dict = {}
+            
+            for deg in deg_grid:
+                for c in c_grid:
+                    for lam in lamb_grid:
+                        key_ = {}
+                        for idx in train_idx:
+                            key_[idx] = "'(" + str(deg) + ', ' + str(c) + ', ' + str(lam) + ', ' + str(idx) + ")'"
+                            #if lam == 1e-5:
+                            #    key_[idx] = "'(" + str(deg) + ',' + str(c) + ',' + '1.0e-5' + ',' + str(idx) + ")'"
+                            key_[idx] = key_[idx][1:-1]
+                        key__ = "'(" + str(deg) + ',' + str(c) + ',' + str(lam) + ")'"
                         #if lam == 1e-5:
-                        #    key_ = "'(" + str(deg) + ',' + str(c) + ',' + '1.0e-5' + ',' + str(idx) + ")'"
-                        key_ = key_[1:-1]
-                        testing_errors_dict[key_] = np.mean([LA.norm(np.array(xl[key_]) - \
-                                                                     np.array(testing_sets[idx])[:, j]) \
-                                                             for j in range(np.size(testing_sets[idx], 1))])
-        testing_mean_errors_dict = {}
-        
-        for deg in deg_grid:
-            for c in c_grid:
-                for lam in lamb_grid:
-                    key_ = {}
-                    for idx in train_idx:
-                        key_[idx] = "'(" + str(deg) + ', ' + str(c) + ', ' + str(lam) + ', ' + str(idx) + ")'"
-                        #if lam == 1e-5:
-                        #    key_[idx] = "'(" + str(deg) + ',' + str(c) + ',' + '1.0e-5' + ',' + str(idx) + ")'"
-                        key_[idx] = key_[idx][1:-1]
-                    key__ = "'(" + str(deg) + ',' + str(c) + ',' + str(lam) + ")'"
-                    #if lam == 1e-5:
-                    #    key__ = "'(" + str(deg) + ',' + str(c) + ',' + '1.0e-5' + ")'"
-                    key__ = key__[1:-1]
-                    
-                    testing_mean_errors_dict[key__] = np.mean([testing_errors_dict[key_[idx]] for idx in train_idx])
+                        #    key__ = "'(" + str(deg) + ',' + str(c) + ',' + '1.0e-5' + ")'"
+                        key__ = key__[1:-1]
                         
-                
-        testing_mean_errors_switch_dict = {}
-        for _key_ in testing_mean_errors_dict.keys():
-            testing_mean_errors_switch_dict[testing_mean_errors_dict[_key_]] = _key_
+                        testing_mean_errors_dict[key__] = np.mean([testing_errors_dict[key_[idx]] for idx in train_idx])
+                            
                     
-        best_key = '(8,0.5,10000.0,1)'
+            testing_mean_errors_switch_dict = {}
+            for _key_ in testing_mean_errors_dict.keys():
+                testing_mean_errors_switch_dict[testing_mean_errors_dict[_key_]] = _key_
+                        
+            
+            #testing_errors_dict = sorted(testing_errors_dict.items(), key=operator.itemgetter(1))
 
-        # Writing JSON data
-        with open(out_dir + 'cross_validation_best_key_' + month_w + '_' + instance + '.json', 'w') as json_file:
-            json.dump(best_key, json_file)
-                    
-        #print(testing_mean_errors_switch_dict)
+            best_key = min(testing_errors_dict, key=testing_errors_dict.get)
+
+            # Writing JSON data
+            if not os.path.exists(out_dir + 'cross_validation_best_key'):
+                os.makedirs(out_dir + 'cross_validation_best_key')
+
+            with open(out_dir + 'cross_validation_best_key/cross_validation_best_key_' + month_w + '_' + str(day) + '_' + instance + '.json', 'w') as json_file:
+                json.dump(best_key, json_file)
+                        
+            #print(testing_mean_errors_switch_dict)
                     

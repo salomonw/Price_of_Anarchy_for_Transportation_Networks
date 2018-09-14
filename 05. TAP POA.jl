@@ -114,7 +114,7 @@ for day in week_day_Apr_list
 
 	coeffs_dict_Apr_PM_ = readstring(out_dir * "coeffs_dict_" * month_w *  "_" * instance1 * ".json")
 	coeffs_dict_Apr_PM_ = JSON.parse(coeffs_dict_Apr_PM_)
-	fcoeffs = coeffs_dict_Apr_PM_["(6, 0.5, 1.0, 1)"]
+	fcoeffs = coeffs_dict_Apr_PM_["(6, 1.5, 0.1, 1)"]
 	polyDeg = length(fcoeffs)
 
 	

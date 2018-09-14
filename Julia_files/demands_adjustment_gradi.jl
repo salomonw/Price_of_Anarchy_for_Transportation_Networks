@@ -131,13 +131,13 @@ function thetaMax(demandsVec, searchDirect)
 end
 
 # Armijo line search and update
-function objF(graph, ta_data, link_dic, gamma1, gamma2, demandsVec, demandsVec0, fcoeffs, free_flow_time, capacity, start_node, en_node, numZones)
+function objF(graph, ta_data, link_dic, gamma1, gamma2, demandsVec, demandsVec0, tapFlowVecDict, fcoeffs, free_flow_time, capacity, start_node, en_node, numZones)
     demandsDic = demandsVecToDic(demandsVec)
     tapFlowVec = tapMSA(graph, ta_data, link_dic, demandsDic, fcoeffs, free_flow_time, capacity, start_node, en_node, numZones)[2]
     return gamma1 * sum([(demandsVec[i] - demandsVec0[i])^2 for i = 1:length(demandsVec)]) + gamma2 * sum([(tapFlowVec[a] - tapFlowVecDict[0][a])^2 for a = 1:length(tapFlowVec)])
 end     
 
-function armijo(gamma1, gamma2, objFunOld, demandsVecOld, demandsVec0, fcoeffs, searchDirec, thetaMax, Theta, N, graph, ta_data, link_dic, free_flow_time, capacity, start_node, en_node, numZones)
+function armijo(gamma1, gamma2, objFunOld, demandsVecOld, demandsVec0, tapFlowVecDict, fcoeffs, searchDirec, thetaMax, Theta, N, graph, ta_data, link_dic, free_flow_time, capacity, start_node, en_node, numZones)
     demandsVecList = Array{Float64}[]
     objFunList = Float64[]
     push!(demandsVecList, demandsVecOld)
@@ -148,7 +148,7 @@ function armijo(gamma1, gamma2, objFunOld, demandsVecOld, demandsVec0, fcoeffs, 
             demandsVecNew[i] = demandsVecOld[i] + (thetaMax/(Theta^n)) * searchDirec[i] 
         end
     	push!(demandsVecList, demandsVecNew)
-    	push!(objFunList, objF(graph, ta_data, link_dic,gamma1, gamma2, demandsVecNew, demandsVec0, fcoeffs, free_flow_time, capacity, start_node, en_node, numZones))
+    	push!(objFunList, objF(graph, ta_data, link_dic,gamma1, gamma2, demandsVecNew, demandsVec0, tapFlowVecDict, fcoeffs, free_flow_time, capacity, start_node, en_node, numZones))
     end
     idx = indmin(objFunList)
     objFunNew = objFunList[idx]
