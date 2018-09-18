@@ -45,6 +45,8 @@ function salo(out_dir, files_ID, month_w, week_day_list, instance, deg_grid, c_g
 
     instance1 = instance
 
+    #coeffs_1 = 
+
     for day in week_day_list
 
         ta_data = load_ta_network_(out_dir, files_ID, month_w, day, instance1)
@@ -84,10 +86,10 @@ function salo(out_dir, files_ID, month_w, week_day_list, instance, deg_grid, c_g
 
         link_dic = sparse(start_node, end_node, 1:number_of_links);
 
-        function MSA(coeffs) 
+        function MSA(coeffs, free_flow_time, capacity, start_node, travel_demand, graph, link_dic) 
             polyEval(coeffs, pt) = sum([coeffs[i] * pt^(i-1) for i = 1:length(coeffs)]) 
 
-            function BPR(x)
+            function BPR(x, free_flow_time, capacity)
                 bpr = similar(x)
                 for i=1:length(bpr)
                     bpr[i] = free_flow_time[i] * polyEval( coeffs, (x[i]/capacity[i]) ) 
@@ -95,7 +97,7 @@ function salo(out_dir, files_ID, month_w, week_day_list, instance, deg_grid, c_g
                 return bpr
             end
 
-            function all_or_nothing(travel_time)
+            function all_or_nothing(travel_time, start_node, travel_demand, graph, link_dic)
                 state = []
                 path = []
                 x = zeros(size(start_node))
@@ -115,8 +117,8 @@ function salo(out_dir, files_ID, month_w, week_day_list, instance, deg_grid, c_g
             end
 
             # Finding a starting feasible solution
-            travel_time = BPR(zeros(number_of_links))
-            xl = all_or_nothing(travel_time)
+            travel_time = BPR(zeros(number_of_links), free_flow_time, capacity)
+            xl = all_or_nothing(travel_time, start_node, travel_demand, graph, link_dic)
 
             max_iter_no = 1e3
             l = 1
@@ -129,9 +131,9 @@ function salo(out_dir, files_ID, month_w, week_day_list, instance, deg_grid, c_g
                 xl_old = xl
 
                 # Finding yl
-                travel_time = BPR(xl)
+                travel_time = BPR(xl, free_flow_time, capacity)
 
-                yl = all_or_nothing(travel_time)
+                yl = all_or_nothing(travel_time, start_node, travel_demand, graph, link_dic)
 
                 xl = xl + (yl - xl)/l
 
@@ -153,33 +155,32 @@ function salo(out_dir, files_ID, month_w, week_day_list, instance, deg_grid, c_g
         coeffs_dict_Apr_AM = readstring(out_dir * "coeffs_dict_" * month_w * "_" * instance1 * ".json")
         coeffs_dict_Apr_AM = JSON.parse(coeffs_dict_Apr_AM)
 
+        coeffs_keys = readstring(out_dir * "coeffs_keys_" * month_w * "_" * instance1 * ".json")
+        coeffs_keys = JSON.parse(coeffs_keys)
+
         di = Dict()
 
         lenDeg = length(deg_grid)
         cnt = 0
-        for deg in deg_grid
-            for c in c_grid
-                for lam in lamb_grid
+        for key in coeffs_keys
                    # print("($(deg),$(c),$(lam),1)")
-                    coeffs_1 = coeffs_dict_Apr_AM["($(deg), $(c), $(lam), 1)"]
-                    coeffs_2 = coeffs_dict_Apr_AM["($(deg), $(c), $(lam), 2)"]
-                    coeffs_3 = coeffs_dict_Apr_AM["($(deg), $(c), $(lam), 3)"]
-                    ala = "($(deg), $(c), $(lam), $(1))"
-                    apa = coeffs_3
-                    #println(string(ala, apa))
-                    di[(deg, c, lam, 1)]  = MSA(coeffs_1)
-                    di[(deg, c, lam, 2)]  = MSA(coeffs_2)
-                    di[(deg, c, lam, 3)]  = MSA(coeffs_3)
-                end
-            end
-            cnt = cnt + 1 
-            println("processed $(cnt) out of $(lenDeg)")
+                    coeffs_1 = coeffs_dict_Apr_AM[key]
+                    #ala = "($(deg), $(c), $(lam), $(1))"
+                    #apa = coeffs_1
+                    #println(string(key,coeffs_1))
+                    di[key]  = MSA(coeffs_1, free_flow_time, capacity, start_node, travel_demand, graph, link_dic) 
+                  #  di[(deg, c, lam, 2)]  = MSA(coeffs_2, free_flow_time, capacity, start_node, travel_demand, graph, link_dic) 
+                   # di[(deg, c, lam, 3)]  = MSA(coeffs_3, free_flow_time, capacity, start_node, travel_demand, graph, link_dic) 
+             #   end
+            #end
+            cnt = cnt + 1 ;
+            println("processed $(cnt) out of "* string(length(coeffs_keys)) * "for " * instance1);
         end
         
-        outfile = 0
-        outfile = open(out_dir * "uni-class_traffic_assignment/MSA_flows_" * month_w * "_" * string(day) * '_' * instance1 * ".json", "w")
-        JSON.print(outfile, di)
-        close(outfile)
+        outfile = 0;
+        outfile = open(out_dir * "uni-class_traffic_assignment/MSA_flows_" * month_w * "_" * string(day) * '_' * instance1 * ".json", "w");
+        JSON.print(outfile, di);
+        close(outfile);
     end
 end
 
@@ -198,13 +199,14 @@ c_grid = parameters_julia.c_grid
 lamb_grid = parameters_julia.lamb_grid
 week_day_list = parameters_julia.week_day_list
 
-
+#=
 for ins in instances_1
     salo(out_dir, files_ID, month_w, week_day_list, ins, deg_grid, c_grid, lamb_grid) #idx in length(instances_1)
+    println("------- finish instance " * ins * "-------------")
 end
-
+=#
 for ins in instances_1
-    salo(out_dir, files_ID, month_w, ["full"], ins, deg_grid, c_grid, lamb_grid) #idx in length(instances_1)
+    salo(out_dir, files_ID, month_w, ["full"], ins, deg_grid, c_grid, lamb_grid); #idx in length(instances_1)
 end
 #=#
 #ins = "full"

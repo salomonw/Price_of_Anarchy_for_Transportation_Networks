@@ -269,9 +269,10 @@ def parse_data_for_TAP(out_dir, files_ID, time_instances, month_w, week_day_list
 
 ####### -------------- 08_InverseVI_uni_MA_with_base_trans_python -----------------
 
-def InverseVI_uni_MA_with_base_trans_python(out_dir, files_ID, time_instances, month_w):
+def InverseVI_uni_MA_with_base_trans_python(out_dir, files_ID, time_instances, month_w, week_day_list):
     
     for instance in list(time_instances['id']):
+       # for day in week_day_list
 
         N = zload(out_dir + 'node_link_incidence.pkz')
         def g_true(t):
@@ -285,7 +286,7 @@ def InverseVI_uni_MA_with_base_trans_python(out_dir, files_ID, time_instances, m
         capac_dict = {}
         free_flow_time_dict = {}
         
-        with open(out_dir + 'data_traffic_assignment_uni-class/'+ files_ID + '_net_' + month_w + '_' + instance + '.txt', 'r') as f:
+        with open(out_dir + 'data_traffic_assignment_uni-class/'+ files_ID + '_net_' + month_w + '_full_' + instance + '.txt', 'r') as f:
             read_data = f.readlines()
         
         for row in read_data:
@@ -452,42 +453,52 @@ def calc_testing_errors(out_dir, files_ID, time_instances, month_w, week_day_lis
         iter_week = week_day_list
         iter_week.append('full')
 
+        with open(out_dir + "coeffs_keys_"+ month_w + "_" + instance +'.json', 'r') as json_file:
+            coeffs_keys = json.load(json_file)
+
         for day in iter_week:
 
            # with open(out_dir + 'uni-class_traffic_assignment/MSA_flows_' + month_w + '_' + 'full' + '_' + instance + '.json', 'r') as json_file:
             with open(out_dir + 'uni-class_traffic_assignment/MSA_flows_' + month_w + '_' + str(day) + '_' + instance + '.json', 'r') as json_file:
                 xl = json.load(json_file)
             testing_errors_dict = {}
+            testing_idx = {}
+            for key in coeffs_keys:
+                idx = int(key[-2])
+                #print(idx)
+                #if lam == 1e-5:
+                #    key_ = "'(" + str(deg) + ',' + str(c) + ',' + '1.0e-5' + ',' + str(idx) + ")'"
+                #key_ = key_[1:-1]
+                try:
+                    testing_errors_dict[key] = np.mean([LA.norm(np.array(xl[key]) - \
+                                                                 np.array(testing_sets[idx])[:, j]) \
+                                                         for j in range(np.size(testing_sets[idx], 1))])
 
-            for deg in deg_grid:
-                for c in c_grid:
-                    for lam in lamb_grid:
-                        for idx in train_idx:
-                            key_ = "'(" + str(deg) + ', ' + str(c) + ', ' + str(lam) + ', ' + str(idx) + ")'"
-                            #if lam == 1e-5:
-                            #    key_ = "'(" + str(deg) + ',' + str(c) + ',' + '1.0e-5' + ',' + str(idx) + ")'"
-                            key_ = key_[1:-1]
-                            testing_errors_dict[key_] = np.mean([LA.norm(np.array(xl[key_]) - \
-                                                                         np.array(testing_sets[idx])[:, j]) \
-                                                                 for j in range(np.size(testing_sets[idx], 1))])
+                    testing_idx[key] = idx
+                except:
+                    pass
+
             testing_mean_errors_dict = {}
             
-            for deg in deg_grid:
-                for c in c_grid:
-                    for lam in lamb_grid:
-                        key_ = {}
-                        for idx in train_idx:
-                            key_[idx] = "'(" + str(deg) + ', ' + str(c) + ', ' + str(lam) + ', ' + str(idx) + ")'"
-                            #if lam == 1e-5:
-                            #    key_[idx] = "'(" + str(deg) + ',' + str(c) + ',' + '1.0e-5' + ',' + str(idx) + ")'"
-                            key_[idx] = key_[idx][1:-1]
-                        key__ = "'(" + str(deg) + ',' + str(c) + ',' + str(lam) + ")'"
-                        #if lam == 1e-5:
-                        #    key__ = "'(" + str(deg) + ',' + str(c) + ',' + '1.0e-5' + ")'"
-                        key__ = key__[1:-1]
-                        
-                        testing_mean_errors_dict[key__] = np.mean([testing_errors_dict[key_[idx]] for idx in train_idx])
-                            
+            for key in coeffs_keys:
+                key_ = key[:-3]
+               # print(key_)
+                #if lam == 1e-5:
+                #    key_[idx] = "'(" + str(deg) + ',' + str(c) + ',' + '1.0e-5' + ',' + str(idx) + ")'"
+              #  key_[idx] = key_[idx][1:-1]
+               # key__ = "'(" + str(deg) + ',' + str(c) + ',' + str(lam) + ")'"
+                #if lam == 1e-5:
+                #    key__ = "'(" + str(deg) + ',' + str(c) + ',' + '1.0e-5' + ")'"
+                #key__ = key__[1:-1]
+                try:
+                    testing_mean_errors_dict[key_] = np.mean([testing_errors_dict[key_ + " " + str(idx) + ")"] for idx in train_idx])
+                except:
+                    pass
+                #else:
+                #    pass
+                #finally:
+                #    pass
+                    
                     
             testing_mean_errors_switch_dict = {}
             for _key_ in testing_mean_errors_dict.keys():

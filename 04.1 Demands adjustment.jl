@@ -242,7 +242,7 @@ for day in week_day_Apr_list
 	demandsDiffDict[1] = norm(demandsDicToVec(demandsDict[1]) - demandsDicToVec(demandsDict[0]))/
 	                     norm(demandsDicToVec(demandsDict[0]));
 	gamma1 = 0
-	gamma2 = 1000
+	gamma2 = 100
 
 	if isdir(out_dir * "demandsDict") == false
 	    mkdir(out_dir * "demandsDict")
@@ -252,7 +252,7 @@ for day in week_day_Apr_list
     
     key_ = readstring(out_dir * "cross_validation_best_key/cross_validation_best_key_" * month_w * "_" * string(day) * "_" * instance * ".json")
     key_ = JSON.parse(key_)
-
+    key_ = "(7, 0.5, 1000.0, 1)"
     obj_dict[day] = demandsDictFixed(demandsDict, flow_observ, graph, ta_data, link_dic, day, gamma1, gamma2, out_dir, files_ID, month_w, instance, key_, free_flow_time, capacity, start_node, en_node, numZones, cnt)
 
     
@@ -281,9 +281,9 @@ for day in week_day_Apr_list
 
 	#     demandsDict_
 
-	#     tapFlowDicDict = Dict()
-	#     tapFlowVecDict = Dict()
-	#     tapFlowDicDict[day], tapFlowVecDict[day] = tapMSA(demandsDict_, fcoeffs);
+	     tapFlowDicDict = Dict()
+	     tapFlowVecDict = Dict()
+	     tapFlowDicDict[day], tapFlowVecDict[day] = tapMSA(graph, ta_data, link_dic, demandsDict_, fcoeffs, free_flow_time, capacity, start_node, en_node, numZones)
 
 	#     tapFlowVecDict[day]
 
@@ -293,12 +293,18 @@ for day in week_day_Apr_list
 
 	#     flow_observ[:, day]
 
+       # tapFlowVecDict = readstring(out_dir * "demandsDict/tapFlowVecDict$(day)_" * month_w * "_" * instance * ".json") 
+        #tapFlowVecDict = JSON.parse(tapFlowVecDict)
+        #k_ = keys(tapFlowVecDict)
+        #max_k = maximum(map(x->parse(Int,x),k_))
+        #println(max_k)
 	    # PoA_dict[day] = socialObj(tapFlowVecDict[day]) / socialObj(tapSocialFlowVecDict[day])
-        user_sol_dict[day] = socialObj(flow_observ[:, cnt], free_flow_time, polyDeg, fcoeffs, capacity, numLinks) ;
+        user_sol_dict[day] = socialObj(tapFlowVecDict[day], free_flow_time, polyDeg, fcoeffs, capacity, numLinks) ;
         social_sol_dict[day] = socialObj(tapSocialFlowVecDict[day], free_flow_time, polyDeg, fcoeffs, capacity, numLinks);
 	    PoA_dict[day] = user_sol_dict[day] / social_sol_dict[day];
 	#end
 	println("day $(day) finished...")
+    println("PoA for day $(day) and instance " * instance1 * " is " * string(PoA_dict[day]))
 end
 
 

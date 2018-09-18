@@ -77,7 +77,7 @@ for day in week_day_Apr_list
 
 	capacity = ta_data.capacity;
 	free_flow_time = ta_data.free_flow_time;
-
+	#=
 	############
 	#Read in the demand file
 	file = open(out_dir * "data_traffic_assignment_uni-class/" * files_ID * "_trips_" * month_w * "_" * string(day) * "_" * instance1 * ".txt")
@@ -98,13 +98,23 @@ for day in week_day_Apr_list
 	    end
 	end                
 	close(file);
+	print(demands)
+	=#
+	demands = readstring(out_dir * "demandsDict/demandsDictFixed" * string(day) * "_" * month_w * "_"  * instance1 * ".json")
+	demands = JSON.parse(demands)
+	
+
+	#println(demands)
 
 	demandsVec = zeros(length(odPairLabel_))
 
-	for i = 1:length(demandsVec)
-	    demandsVec[i] = demands[odPairLabel_["$i"][1], odPairLabel_["$i"][2]]
-	end
+	println(demandsVec)
 
+	for i = 1:length(demandsVec)
+		#println( "(" * string(odPairLabel_["$i"][1]) * ", " * string(odPairLabel_["$i"][2]) * ")" )
+	    demandsVec[i] = demands["(" * string(odPairLabel_["$i"][1]) * ", " * string(odPairLabel_["$i"][2]) * ")"]
+	end
+	println(demandsVec)
 	for key=keys(odPairRoute)
 	    if contains(key, "56-")
 	        println(key)
@@ -114,7 +124,11 @@ for day in week_day_Apr_list
 
 	coeffs_dict_Apr_PM_ = readstring(out_dir * "coeffs_dict_" * month_w *  "_" * instance1 * ".json")
 	coeffs_dict_Apr_PM_ = JSON.parse(coeffs_dict_Apr_PM_)
-	fcoeffs = coeffs_dict_Apr_PM_["(6, 1.5, 0.1, 1)"]
+
+	best_key = readstring(out_dir * "cross_validation_best_key/cross_validation_best_key_" * month_w * "_" * string(day) * "_" * instance1 * ".json")
+	best_key = JSON.parse(best_key)
+	best_key = "(7, 0.5, 1000.0, 1)"
+	fcoeffs = coeffs_dict_Apr_PM_[best_key]
 	polyDeg = length(fcoeffs)
 
 	
@@ -167,15 +181,15 @@ for day in week_day_Apr_list
 	#@expression(m, f, sum{free_flow_time[a]*linkFlow[a] + .03*free_flow_time[a]*((linkFlow[a])^5)/((capacity[a])^4), a = 1:numLinks} )
 
 
-	@NLexpression(m, f, sum{ free_flow_time[a] * fcoeffs[i]  *linkFlow[a]^i / capacity[a]^(i-1) , i = 1:polyDeg , a = 1:numLinks }) ;
+	#@NLexpression(m, f, sum{ free_flow_time[a] * fcoeffs[i]  *linkFlow[a]^i / capacity[a]^(i-1) , i = 1:polyDeg , a = 1:numLinks }) ;
 
-	#@NLexpression(m, f, sum{free_flow_time[a] * fcoeffs[1] * linkFlow[a] +
-	#        free_flow_time[a] * fcoeffs[2] * linkFlow[a]^2 / capacity[a] +
-	#        free_flow_time[a] * fcoeffs[3] * linkFlow[a]^3 / capacity[a]^2 +
-	#        free_flow_time[a] * fcoeffs[4] * linkFlow[a]^4 / capacity[a]^3 +
-	#        free_flow_time[a] * fcoeffs[5] * linkFlow[a]^5 / capacity[a]^4 +
-	#        free_flow_time[a] * fcoeffs[6] * linkFlow[a]^6 / capacity[a]^5 +
-#			free_flow_time[a] * fcoeffs[7] * linkFlow[a]^7 / capacity[a]^6 , a = 1:numLinks})
+	@NLexpression(m, f, sum{free_flow_time[a] * fcoeffs[1] * linkFlow[a] +
+	        free_flow_time[a] * fcoeffs[2] * linkFlow[a]^2 / capacity[a] +
+	        free_flow_time[a] * fcoeffs[3] * linkFlow[a]^3 / capacity[a]^2 +
+	        free_flow_time[a] * fcoeffs[4] * linkFlow[a]^4 / capacity[a]^3 +
+	        free_flow_time[a] * fcoeffs[5] * linkFlow[a]^5 / capacity[a]^4 +
+	        free_flow_time[a] * fcoeffs[6] * linkFlow[a]^6 / capacity[a]^5 +
+			free_flow_time[a] * fcoeffs[7] * linkFlow[a]^7 / capacity[a]^6 , a = 1:numLinks})
 
 	@NLobjective(m, Min, f);
 	#print(m) 
@@ -203,19 +217,31 @@ for day in week_day_Apr_list
 	PoA_dict = Dict();
 	tapSocialFlowDicDict = Dict();
 	tapSocialFlowVecDict = Dict();
-
-
+	
 
 	
 	#cnt = 0
 	#for i = 1:length(week_day_Apr_list)
-	poaDictAprPM =  socialObj(flow_user[:,cnt+1])/getobjectivevalue(m)
+	#poaDictAprPM =  socialObj(flow_user[:,cnt+1])/getobjectivevalue(m)
 	#println(socialObj(flow_user[:, cnt]))
 	cnt +=1
 	
+	user_flow_tap_MSA = readstring(out_dir * "demandsDict/tapFlowDicDict" * string(day) * "_" * month_w * "_"  * instance1 * ".json")
+	user_flow_tap_MSA = JSON.parse(user_flow_tap_MSA)
+	
+	k = maximum(map(k->parse(Int,k),keys(user_flow_tap_MSA)))
+	user_flow_tap_MSA = user_flow_tap_MSA[string(k)]
+
+	user_flow = Dict();
+	for a = 1:length(linkLabel)
+		#println( "(" * string(odPairLabel_["$i"][1]) * ", " * string(odPairLabel_["$i"][2]) * ")" )
+	    user_flow[a] = user_flow_tap_MSA[ "(" * string(linkLabel[string(a-1)][1]) * ", " * string(linkLabel[string(a-1)][3]) * ")"]
+	    #demandsVec[i] = demands["(" * string(odPairLabel_["$i"][1]) * ", " * string(odPairLabel_["$i"][2]) * ")"]
+	end
+
 	social[day] = getobjectivevalue(m)
-	user[day] = socialObj(flow_user[:,cnt])
-	poaDict[day] = user[day]/social[day]
+	user[day] = socialObj(user_flow)
+	poaDict[day] = (user[day]/social[day])
 
 end
 
@@ -226,7 +252,7 @@ close(outfile)
 
 
 
-outfile =  open(out_dir * "PoA_dict_noAdj_" * month_w * "_" * instance1 * ".json", "w")
+outfile =  open(out_dir * "PoA_dict_" * month_w * "_" * instance1 * ".json", "w")
 JSON.print(outfile, poaDict)
 close(outfile)
 

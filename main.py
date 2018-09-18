@@ -99,3 +99,9 @@ def plot_POA(time_instances, out_dir, month_w):
 		savefig(out_dir + 'PoA'+'_' + instance + '_' + month_w +'.eps')
 
 
+
+    
+    with open(out_dir + "coeffs_dict_Apr_AM" +'.json', 'r') as json_file:
+        coeffs_dict_Apr_AM = json.load(json_file)
+        
+    

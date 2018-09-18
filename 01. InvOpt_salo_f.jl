@@ -35,7 +35,7 @@ bpacost(arc::Arc) = bpacost(arc.flow, arc)
 # --------------------  FUNCTIONS  -------------------
 
 function setUpFitting(deg::Int, c::Float64)
-    m = 0
+    m = 0 
 	m = Model(solver=GurobiSolver(OutputFlag=false))
 
 	@variable(m, coeffs[1:deg+1])
@@ -168,7 +168,7 @@ end
 #Fitting Funcs
 ##########
 
-function train(indices, lam::Float64, deg::Int, c::Float64, demand_data, flow_data, arcs; fcoeffs=nothing)
+function train(indices, lam::Float64, deg::Int, c::Float64, demand_data, flow_data, arcs, vArcs, demands; fcoeffs=nothing)
     numNodes = maximum(map(pair->pair[1], keys(arcs)))
     m, coeffs, reg_term = setUpFitting(deg, c)
 
@@ -234,7 +234,7 @@ year = parameters_julia.year
 
 using Graphs
 #for inst in insts
-    inst = "PM"
+    inst = "NT"
 	# Assing file names 
 	link_day_min_path = out_dir * "link_min_dict" * files_ID * ".json"
     flow_path =  out_dir * "flows_after_QP" * files_ID * "_" * inst * ".json"
@@ -330,13 +330,42 @@ using Graphs
 
     coeffs_dict_Apr_PM = Dict()
    # println(deg_grid)
+    coeffs_keys = Vector()
+   #coeffs_keys_2 = []
+   #coeffs_keys_3 = []
     for deg in deg_grid
         for c in c_grid
             for lam in lamb_grid
-                println(numData)
-                coeffs_dict_Apr_PM[(deg,c,lam,1)] = train(1:numData,lam,deg,c,demand_data,flow_data_1,arcs_1[1])
-                coeffs_dict_Apr_PM[(deg,c,lam,2)] = train(1:numData,lam,deg,c,demand_data,flow_data_2,arcs_2[1])
-                coeffs_dict_Apr_PM[(deg,c,lam,3)] = train(1:numData,lam,deg,c,demand_data,flow_data_3,arcs_3[1])
+                #println(numData)
+
+                coeffs_dict_Apr_1 = train(1:numData,lam,deg,c,demand_data,flow_data_1,arcs_1[1], vArcs, demands)
+                #println(coeffs_dict_Apr_1[1])
+                #println(isa(coeffs_dict_Apr_1[1], Number))
+                
+                if isnan(coeffs_dict_Apr_1[1]) == false
+                    coeffs_dict_Apr_PM[(deg,c,lam,1)] = coeffs_dict_Apr_1
+                    append!(coeffs_keys, ["(" * string(deg) * ", " *  string(c) * ", " * string(lam) * ", 1)"])
+                end
+                
+                coeffs_dict_Apr_2 = train(1:numData,lam,deg,c,demand_data,flow_data_1,arcs_2[1], vArcs, demands)
+                if isnan(coeffs_dict_Apr_2[1]) == false
+                    coeffs_dict_Apr_PM[(deg,c,lam,2)] = coeffs_dict_Apr_2
+                    append!(coeffs_keys, ["(" * string(deg) * ", " *  string(c) * ", " * string(lam) * ", 2)"])
+                end
+                
+                coeffs_dict_Apr_3 = train(1:numData,lam,deg,c,demand_data,flow_data_1,arcs_3[1], vArcs, demands)
+                if isnan(coeffs_dict_Apr_3[1]) == false
+                    coeffs_dict_Apr_PM[(deg,c,lam,3)] = coeffs_dict_Apr_3
+                    append!(coeffs_keys, ["(" * string(deg) * ", " *  string(c) * ", " * string(lam) * ", 3)"])    
+                end
+
+                #coeffs_dict_Apr_2 = train(1:numData,lam,deg,c,demand_data,flow_data_2,arcs_1[1], vArcs, demands)
+                #coeffs_dict_Apr_3 = train(1:numData,lam,deg,c,demand_data,flow_data_3,arcs_1[1], vArcs, demands)
+
+                #coeffs_dict_Apr_PM[(deg,c,lam,2)] = train(1:numData,lam,deg,c,demand_data,flow_data_2,arcs_2[1], vArcs, demands)
+                #coeffs_dict_Apr_PM[(deg,c,lam,3)] = train(1:numData,lam,deg,c,demand_data,flow_data_3,arcs_3[1], vArcs, demands)
+
+                
             end
         end
     end
@@ -345,4 +374,7 @@ using Graphs
     JSON.print(outfile, coeffs_dict_Apr_PM)
     close(outfile)
 
+    outfile = open(out_dir * "coeffs_keys_" * month_w * "_" * inst * ".json", "w")
+    JSON.print(outfile, coeffs_keys)
+    close(outfile)
 #end

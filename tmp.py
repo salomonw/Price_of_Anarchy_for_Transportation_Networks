@@ -31,7 +31,7 @@ def plot_POA(instance, out_dir, month_w):
 		PoA_dict2[int(x2[i])] = y2[i]
 	
 	plt.figure()
-	#PoA_dictP = plt.plot(PoA_dict.keys(), PoA_dict.values(), "bo-")
+	PoA_dictP = plt.plot(PoA_dict.keys(), PoA_dict.values(), "bo-")
 	PoA_dict_noAdj = plt.plot(PoA_dict2.keys(), PoA_dict2.values(), "rs-")
 	#plt.legend([PoA_dict, PoA_dict_noAdj], ["PoA", "PoA demand adj"], loc=0)
 	plt.xlabel('Days of ' + month_w)
@@ -226,16 +226,28 @@ def plt_obj_vs_all(time_instances, out_dir, month_w):
 		for i in range(len(x)):
 			PoA_dict2[int(x2[i])] = y2[i]
 
+		with open(out_dir + "cong_" + month_w + '_' + instance + '.json', 'r') as json_file:
+			cong_dict_ = json.load(json_file)
 
+		cong_dict_ = sorted(cong_dict_.items())
+		x2, y2 = zip(*cong_dict_)
+		cong_dict = {}
+		max_cong = max(y2)	
+		cong_dict_marker = {}
+		for i in range(len(cong_dict_)):
+			cong_dict[int(x2[i])] = y2[i]
+			cong_dict_marker[int(x2[i])] = y2[i]/max_cong
+		
 		#Dict relating cong and Poa
 		poa_cong_dict={}
 		for key in PoA_dict2.keys():
 			#print key
 			poa_cong_dict[PoA_dict2[key]] = obj_dict[key]
 
-		print(poa_cong_dict)
-	
-	
+		#print(poa_cong_dict)
+		#poa_cong_dict = sorted(poa_cong_dict.items())
+		#cong_dict = sorted(cong_dict.items())
+		
 		#	PoA_dict = plt.plot(x, y, "bo-")
 		PoA_dict_noAdj = plt.scatter(poa_cong_dict.values(),poa_cong_dict.keys(), alpha = 0.7, label= instance)
 		plt.legend(loc=0)
@@ -247,6 +259,78 @@ def plt_obj_vs_all(time_instances, out_dir, month_w):
 		grid("on")
 		savefig(out_dir + 'Obj_Diff_vs_PoA_all'+ '_' + month_w +'.pdf')
 		#plt.show()
+
+def plt_obj_vs_cong_all(time_instances, out_dir, month_w):
+	# Load congestion
+	poa_cong_dict = {}
+	plt.figure()
+	for instance in time_instances['id']:
+		with open(out_dir + "obj_dict" + month_w + '_' + instance + '.json', 'r') as json_file:
+			obj_dict = json.load(json_file)
+		obj_dict = sorted(obj_dict.items())
+		x2, y2 = zip(*obj_dict)
+		#print len(x2)
+		obj_dict = {}
+
+		for i in range(len(x2)):
+			obj_dict[int(x2[i])] = y2[i]
+
+		#print obj_dict
+		#Load PoA
+		with open(out_dir + "PoA_dict_noAdj_" + month_w + '_' + instance + '.json', 'r') as json_file:
+			PoA_dict_noAdj = json.load(json_file)
+		PoA_dict_noAdj = sorted(PoA_dict_noAdj.items())
+		x, y = zip(*PoA_dict_noAdj)
+
+		PoA_dict = {}
+
+		for i in range(len(x)):
+			PoA_dict[int(x[i])] = y[i]
+		
+
+		with open(out_dir + "PoA_dict_" + month_w + '_' + instance + '.json', 'r') as json_file:
+			PoA_dict_ = json.load(json_file)
+		PoA_dict_ = sorted(PoA_dict_.items())
+		x2, y2 = zip(*PoA_dict_)
+
+		PoA_dict2 = {}
+
+		for i in range(len(x)):
+			PoA_dict2[int(x2[i])] = y2[i]
+
+		with open(out_dir + "cong_" + month_w + '_' + instance + '.json', 'r') as json_file:
+			cong_dict_ = json.load(json_file)
+
+		cong_dict_ = sorted(cong_dict_.items())
+		x2, y2 = zip(*cong_dict_)
+		cong_dict = {}
+		max_cong = max(y2)	
+		cong_dict_marker = {}
+		for i in range(len(cong_dict_)):
+			cong_dict[int(x2[i])] = y2[i]
+			
+		#Dict relating cong and Poa
+		poa_cong_dict={}
+		for key in cong_dict.keys():
+			#print key
+			poa_cong_dict[cong_dict[key]] = obj_dict[key]
+
+		#print(poa_cong_dict)
+		#poa_cong_dict = sorted(poa_cong_dict.items())
+		#cong_dict = sorted(cong_dict.items())
+		
+		#	PoA_dict = plt.plot(x, y, "bo-")
+		PoA_dict_noAdj = plt.scatter(poa_cong_dict.values(),poa_cong_dict.keys(), alpha = 0.7, label= instance)
+		plt.legend(loc=0)
+		#plt.legend(PoA_dict_noAdj, instance, loc=0)
+		plt.xlabel('Obj diff ' + month_w)
+		plt.ylabel('Cong')
+		#pylab.xlim(-0.1, 1.6)
+		#pylab.ylim(0.9, 2.0)
+		grid("on")
+		savefig(out_dir + 'Obj_Diff_vs_Cong_all'+ '_' + month_w +'.pdf')
+		#plt.show()
+
 
 
 def heatmap_ODdemand(out_dir, files_ID,  month_id, instance, week_day_list):
@@ -382,7 +466,7 @@ def plot_cost_funct(out_dir, files_ID, link, month_w, key, time_instances):
 
 
 
-
+week_day_list = week_day_list[0:21]
 
 for instance in time_instances['id']:
 	plot_POA(instance, out_dir, month_w)
@@ -391,6 +475,7 @@ for instance in time_instances['id']:
 	heatmap_ODdemand(out_dir, files_ID,  month_w, instance, week_day_list)
 	heatmap_ODdemand_adj(out_dir, files_ID,  month_w, instance, week_day_list)
 
+plt_obj_vs_cong_all(time_instances, out_dir, month_w)
 plt_obj_vs_all(time_instances, out_dir, month_w)
 plt_cong_vs_all(time_instances, out_dir, month_w)
 ''' 
