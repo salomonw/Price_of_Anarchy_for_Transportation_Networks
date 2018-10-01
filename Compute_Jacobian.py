@@ -8,9 +8,10 @@ from utils_julia import *
 from parameters import *
 import json
 
-with open(out_dir + 'instance_comm.txt') as ins_file:
-    instance = file.read(ins_file)
+#with open(out_dir + 'instance_comm.txt') as ins_file:
+#    instance = file.read(ins_file)
 
+instance = time_instances['id'][0]
 
 with open(out_dir + "/data_traffic_assignment_uni-class/" + files_ID + '_net_' + month_w + '_full_' + instance + '.txt') as MA_journal_flow:
     MA_journal_flow_lines = MA_journal_flow.readlines()

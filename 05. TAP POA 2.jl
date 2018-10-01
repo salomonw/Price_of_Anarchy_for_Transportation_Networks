@@ -24,7 +24,6 @@ c_grid = parameters_julia.c_grid
 lamb_grid = parameters_julia.lamb_grid
 week_day_Apr_list = parameters_julia.week_day_list
 
-
 include("Julia_files/initia_data.jl");
 include("prepare_data.jl");
 #include("Julia_files/inverseVI.jl");
@@ -42,12 +41,7 @@ function demandsDictFixed(demandsDict, flow_observ, link_vector, graph, ta_data,
         tapFlows[key] = xl[i]
     end
     #println(tapFlows)
-   # tapFlowVect = xl;
-    tapFlowVect = []
-    for i = 1:length(start_node)
-        key = link_vector[i]
-        append!(tapFlowVect, tapFlows[key])
-    end
+    tapFlowVect = xl;
 
     # get observed flow vector (corresponding to ground truth demands and ground truth costs)
     tapFlowDicDict[0], tapFlowVecDict[0] = tapFlows, tapFlowVect;
@@ -204,143 +198,152 @@ function socialObj(linkFlowVec, free_flow_time, polyDeg, fcoeffs, capacity, numL
 end
 
 
-
 #key_ = "(6, 1.5, 0.1, 1)"
-instance = "AM"
-instance1 = instance
-open(out_dir * "instance_comm.txt", "w") do f
-    write(f, instance1)
-end
-
 using PyCall
-unshift!(PyVector(pyimport("sys")["path"]), "");
-@pyimport parameters_julia
-@pyimport GLS_julia
-@pyimport Compute_Jacobian
+function biblev(instance)
+	#instance = "AM"
+	instance1 = instance
+	open(out_dir * "instance_comm.txt", "w") do f
+	    write(f, instance1)
+	end
 
-numNodes = Compute_Jacobian.numNodes;
-numLinks = Compute_Jacobian.numLinks;
-numODpairs = Compute_Jacobian.numODpairs;
-numZones = Compute_Jacobian.numZones
-od_pairs = Compute_Jacobian.od_pairs;
-link_list_js = Compute_Jacobian.link_list_js;
-link_length_list = Compute_Jacobian.link_length_list;
-
-
-flow_observ, link_vector = GLS_julia.GLS_juliaf()
-
-include("extract_data.jl");
-include("Julia_files/tap_MSA.jl");
-include("Julia_files/demands_adjustment_gradi.jl");
-
-cnt = 0 
-PoA_dict = Dict();
-tapSocialFlowDicDict = Dict();
-tapSocialFlowVecDict = Dict();
-user_sol_dict = Dict();
-social_sol_dict = Dict();
-obj_dict = Dict();
-
-for day in week_day_Apr_list
-	cnt = cnt + 1
-#day = 9
-	demandsDict = extract_demandDict(out_dir, files_ID, month_w ,day, instance1, numZones)
-	numNodes, numLinks, numODpairs, capacity, free_flow_time, ta_data_Apr_PM, start_node, en_node = extract_dataf(out_dir, files_ID, month_w ,day, instance1, demandsDict)
-
-	# preparing a graph
-	graph = create_graph(start_node, en_node);
-	link_dic = sparse(start_node, en_node, 1:numLinks);
 	
-	demandsVecDict[0] = demandsDicToVec(demandsDict[0]);
-	demandsDiffDict[1] = norm(demandsDicToVec(demandsDict[1]) - demandsDicToVec(demandsDict[0]))/
-	                     norm(demandsDicToVec(demandsDict[0]));
-	gamma1 = 0
-	gamma2 = 100
+	unshift!(PyVector(pyimport("sys")["path"]), "");
+	@pyimport parameters_julia
+	@pyimport GLS_julia
+	@pyimport Compute_Jacobian
 
-	if isdir(out_dir * "demandsDict") == false
-	    mkdir(out_dir * "demandsDict")
+	numNodes = Compute_Jacobian.numNodes;
+	numLinks = Compute_Jacobian.numLinks;
+	numODpairs = Compute_Jacobian.numODpairs;
+	numZones = Compute_Jacobian.numZones
+	od_pairs = Compute_Jacobian.od_pairs;
+	link_list_js = Compute_Jacobian.link_list_js;
+	link_length_list = Compute_Jacobian.link_length_list;
+
+
+	flow_observ, link_vector = GLS_julia.GLS_juliaf()
+
+	include("extract_data.jl");
+	include("Julia_files/tap_MSA.jl");
+	include("Julia_files/demands_adjustment_gradi.jl");
+
+	cnt = 0 
+	PoA_dict = Dict();
+	tapSocialFlowDicDict = Dict();
+	tapSocialFlowVecDict = Dict();
+	user_sol_dict = Dict();
+	social_sol_dict = Dict();
+	obj_dict = Dict();
+
+	for day in week_day_Apr_list
+		cnt = cnt + 1
+	#day = 9
+		demandsDict = extract_demandDict(out_dir, files_ID, month_w ,day, instance1, numZones)
+		numNodes, numLinks, numODpairs, capacity, free_flow_time, ta_data_Apr_PM, start_node, en_node = extract_dataf(out_dir, files_ID, month_w ,day, instance1, demandsDict)
+
+		# preparing a graph
+		graph = create_graph(start_node, en_node);
+		link_dic = sparse(start_node, en_node, 1:numLinks);
+		
+		demandsVecDict[0] = demandsDicToVec(demandsDict[0]);
+		demandsDiffDict[1] = norm(demandsDicToVec(demandsDict[1]) - demandsDicToVec(demandsDict[0]))/
+		                     norm(demandsDicToVec(demandsDict[0]));
+		gamma1 = 0
+		gamma2 = 100
+
+		if isdir(out_dir * "demandsDict") == false
+		    mkdir(out_dir * "demandsDict")
+		end
+
+	    ta_data = load_ta_network_(out_dir, files_ID, month_w, day, instance1);
+	    
+	    key_ = readstring(out_dir * "cross_validation_best_key/cross_validation_best_key_" * month_w * "_" * string(day) * "_" * instance * ".json")
+	    key_ = JSON.parse(key_)
+	    #key_ = "(7, 0.5, 1000.0, 1)"
+	    obj_dict[day] = demandsDictFixed(demandsDict, flow_observ,link_vector, graph, ta_data, link_dic, day, gamma1, gamma2, 
+	                        out_dir, files_ID, month_w, instance, key_, free_flow_time, capacity, start_node, en_node, numZones, cnt)
+
+	    
+
+		#end
+
+		coeffs_dict_ = readstring(out_dir * "coeffs_dict_" * month_w * "_" * instance1 *".json")
+		coeffs_dict_ = JSON.parse(coeffs_dict_)
+		fcoeffs = coeffs_dict_[key_]
+		polyDeg = length(fcoeffs)
+
+
+
+
+
+		#for day in week_day_Apr_list
+
+		demandsDict = readstring(out_dir * "demandsDict/demandsDictFixed$(day)_" * month_w * "_" * instance1 * ".json");
+		demandsDict = JSON.parse(demandsDict)
+
+		demandsDict_ = Dict()
+		for key in keys(demandsDict)
+		    key_2 = (parse(Int, split(split(key, ',')[1], '(')[2]), parse(Int, split(split(key, ',')[2], ')')[1]))
+		    demandsDict_[key_2] = demandsDict[key]
+		end
+
+		#     demandsDict_
+
+		     tapFlowDicDictP = Dict()
+		     tapFlowVecDictP = Dict()
+		     #tapFlowDicDict[day], tapFlowVecDict[day] = tapMSA(graph, ta_data, link_dic, demandsDict_, fcoeffs, free_flow_time, capacity, start_node, en_node, numZones)
+
+		#     tapFlowVecDict[day]
+
+		    tapSocialFlowDicDict[day], tapSocialFlowVecDict[day] = tapMSASocial(demandsDict_, fcoeffs, ta_data, graph, link_dic, start_node, en_node, free_flow_time, capacity, numLinks, numZones);
+	#demands, fcoeffs, graph, ta_data, link_dic, start_node, en_node, free_flow_time, capacity, numLinks, numIter=1000, tol=1e-6
+		#     tapSocialFlowVecDict[day]
+
+		#     flow_observ[:, day]
+
+	        tapFlowVecDictP = readstring(out_dir * "demandsDict/tapFlowVecDict$(day)_" * month_w * "_" * instance * ".json") 
+	        tapFlowVecDictP = JSON.parse(tapFlowVecDictP)
+	        k_ = keys(tapFlowVecDictP)
+	        max_k = maximum(map(x->parse(Int,x),k_))
+	        #println(max_k)
+		    # PoA_dict[day] = socialObj(tapFlowVecDict[day]) / socialObj(tapSocialFlowVecDict[day])
+	        user_sol_dict[day] = socialObj(flow_observ[:, cnt], free_flow_time, polyDeg, fcoeffs, capacity, numLinks) ;
+	        #user_sol_dict[day] = socialObj(tapFlowVecDictP[string(max_k)], free_flow_time, polyDeg, fcoeffs, capacity, numLinks) ;
+	        social_sol_dict[day] = socialObj(tapSocialFlowVecDict[day], free_flow_time, polyDeg, fcoeffs, capacity, numLinks);
+		    PoA_dict[day] = user_sol_dict[day] / social_sol_dict[day];
+		#end
+		println("day $(day) finished...")
+	    println("PoA for day $(day) and instance " * instance1 * " is " * string(PoA_dict[day]))
 	end
 
-    ta_data = load_ta_network_(out_dir, files_ID, month_w, day, instance1);
-    
-    key_ = readstring(out_dir * "cross_validation_best_key/cross_validation_best_key_" * month_w * "_" * string(day) * "_" * instance * ".json")
-    key_ = JSON.parse(key_)
-    #key_ = "(7, 0.5, 1000.0, 1)"
-    obj_dict[day] = demandsDictFixed(demandsDict, flow_observ,link_vector, graph, ta_data, link_dic, day, gamma1, gamma2, 
-                        out_dir, files_ID, month_w, instance, key_, free_flow_time, capacity, start_node, en_node, numZones, cnt)
 
-    
+	outfile =  open(out_dir * "PoA_dict_" * month_w * "_" * instance1 * ".json", "w")
+	JSON.print(outfile, PoA_dict)
+	close(outfile)
 
-	#end
 
-	coeffs_dict_ = readstring(out_dir * "coeffs_dict_" * month_w * "_" * instance1 *".json")
-	coeffs_dict_ = JSON.parse(coeffs_dict_)
-	fcoeffs = coeffs_dict_[key_]
-	polyDeg = length(fcoeffs)
+	outfile = open(out_dir * "tapSocialFlowVecDict_" * month_w * "_" * instance1 * ".json", "w")
+	JSON.print(outfile, tapSocialFlowVecDict)
+	close(outfile)
 
 
 
+	outfile = open(out_dir * "cong_" * month_w * "_" * instance1 * ".json", "w")
+	JSON.print(outfile, user_sol_dict)
+	close(outfile)
 
-
-	#for day in week_day_Apr_list
-
-	demandsDict = readstring(out_dir * "demandsDict/demandsDictFixed$(day)_" * month_w * "_" * instance1 * ".json");
-	demandsDict = JSON.parse(demandsDict)
-
-	demandsDict_ = Dict()
-	for key in keys(demandsDict)
-	    key_2 = (parse(Int, split(split(key, ',')[1], '(')[2]), parse(Int, split(split(key, ',')[2], ')')[1]))
-	    demandsDict_[key_2] = demandsDict[key]
-	end
-
-	#     demandsDict_
-
-	     tapFlowDicDictP = Dict()
-	     tapFlowVecDictP = Dict()
-	     #tapFlowDicDict[day], tapFlowVecDict[day] = tapMSA(graph, ta_data, link_dic, demandsDict_, fcoeffs, free_flow_time, capacity, start_node, en_node, numZones)
-
-	#     tapFlowVecDict[day]
-
-	    tapSocialFlowDicDict[day], tapSocialFlowVecDict[day] = tapMSASocial(demandsDict_, fcoeffs, ta_data, graph, link_dic, start_node, en_node, free_flow_time, capacity, numLinks, numZones);
-#demands, fcoeffs, graph, ta_data, link_dic, start_node, en_node, free_flow_time, capacity, numLinks, numIter=1000, tol=1e-6
-	#     tapSocialFlowVecDict[day]
-
-	#     flow_observ[:, day]
-
-        tapFlowVecDictP = readstring(out_dir * "demandsDict/tapFlowVecDict$(day)_" * month_w * "_" * instance * ".json") 
-        tapFlowVecDictP = JSON.parse(tapFlowVecDictP)
-        k_ = keys(tapFlowVecDictP)
-        max_k = maximum(map(x->parse(Int,x),k_))
-        #println(max_k)
-	    # PoA_dict[day] = socialObj(tapFlowVecDict[day]) / socialObj(tapSocialFlowVecDict[day])
-        user_sol_dict[day] = socialObj(flow_observ[:, cnt], free_flow_time, polyDeg, fcoeffs, capacity, numLinks) ;
-        #user_sol_dict[day] = socialObj(tapFlowVecDictP[string(max_k)], free_flow_time, polyDeg, fcoeffs, capacity, numLinks) ;
-        social_sol_dict[day] = socialObj(tapSocialFlowVecDict[day], free_flow_time, polyDeg, fcoeffs, capacity, numLinks);
-	    PoA_dict[day] = user_sol_dict[day] / social_sol_dict[day];
-	#end
-	println("day $(day) finished...")
-    println("PoA for day $(day) and instance " * instance1 * " is " * string(PoA_dict[day]))
+	outfile = open(out_dir * "obj_dict" * month_w * "_" * instance1 * ".json", "w")
+	JSON.print(outfile, obj_dict)
+	close(outfile)
 end
 
 
-outfile =  open(out_dir * "PoA_dict_" * month_w * "_" * instance1 * ".json", "w")
-JSON.print(outfile, PoA_dict)
-close(outfile)
 
 
-outfile = open(out_dir * "tapSocialFlowVecDict_" * month_w * "_" * instance1 * ".json", "w")
-JSON.print(outfile, tapSocialFlowVecDict)
-close(outfile)
-
-
-
-outfile = open(out_dir * "cong_" * month_w * "_" * instance1 * ".json", "w")
-JSON.print(outfile, user_sol_dict)
-close(outfile)
-
-outfile = open(out_dir * "obj_dict" * month_w * "_" * instance1 * ".json", "w")
-JSON.print(outfile, obj_dict)
-close(outfile)
+y = @parallel vcat for instan = ["AM", "MD", "PM" , "NT"]# function biblev(instance)
+	biblev(instan);
+end;
 
 
 #=
@@ -378,5 +381,5 @@ close(outfile)
 
 #PoA_dict
 
-=#
+
 

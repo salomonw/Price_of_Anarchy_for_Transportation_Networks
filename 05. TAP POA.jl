@@ -16,7 +16,7 @@ year = parameters_julia.year
 instances_ = parameters_julia.instances_ID
 
 
-instance_ = instances_[4];
+instance_ = instances_[1];
 
 using JSON
 
@@ -40,11 +40,17 @@ cnt = 0
 poaDict = Dict{}()
 social = Dict{}()
 user = Dict{}()
-flow_user  = GLS_julia.GLS_juliaf();
+flow_user, link_vector = GLS_julia.GLS_juliaf(instance_);
 
 #load OD pair-route incidence
 odPairRoute = readstring(out_dir * "od_pair_route_incidence_" * instance1 *  files_ID * ".json");
 odPairRoute = JSON.parse(odPairRoute);
+
+for route in keys(odPairRoute)
+    if odPairRoute[route]>0
+        odPairRoute[route] = 1
+    end
+end
 
 #load link-route incidence
 linkRoute = readstring(out_dir * "link_route_incidence_" * instance1 *  files_ID * ".json");
@@ -72,6 +78,14 @@ include("Julia_files/load_network_uni_class.jl");
 
 for day in week_day_Apr_list
 
+	#load OD pair-route incidence
+	#odPairRoute = readstring(out_dir * "demandsDict/jacobi" * string(day) * "_" * month_w * "_" *instance1 * ".json");
+	#odPairRoute = JSON.parse(odPairRoute);
+	#odPairRoute = odPairRoute[:,:]
+	#println(odPairRoute)	
+	#println(length(odPairRoute))
+	#println(length(odPairRoute[1]))
+	#odPairRoute = reshape(odPairRoute, length(odPairRoute), length(odPairRoute[1]))
 
 	ta_data = load_ta_network_(out_dir, files_ID, month_w, string(day) , instance1);
 
@@ -127,7 +141,7 @@ for day in week_day_Apr_list
 
 	best_key = readstring(out_dir * "cross_validation_best_key/cross_validation_best_key_" * month_w * "_" * string(day) * "_" * instance1 * ".json")
 	best_key = JSON.parse(best_key)
-	best_key = "(7, 0.5, 1000.0, 1)"
+	#best_key = "(7, 0.5, 1000.0, 1)"
 	fcoeffs = coeffs_dict_Apr_PM_[best_key]
 	polyDeg = length(fcoeffs)
 
@@ -181,8 +195,8 @@ for day in week_day_Apr_list
 	#@expression(m, f, sum{free_flow_time[a]*linkFlow[a] + .03*free_flow_time[a]*((linkFlow[a])^5)/((capacity[a])^4), a = 1:numLinks} )
 
 
-	#@NLexpression(m, f, sum{ free_flow_time[a] * fcoeffs[i]  *linkFlow[a]^i / capacity[a]^(i-1) , i = 1:polyDeg , a = 1:numLinks }) ;
-
+	@NLexpression(m, f, sum{ free_flow_time[a] * fcoeffs[i]  *linkFlow[a]^i / capacity[a]^(i-1) , i = 1:polyDeg , a = 1:numLinks }) ;
+#=
 	@NLexpression(m, f, sum{free_flow_time[a] * fcoeffs[1] * linkFlow[a] +
 	        free_flow_time[a] * fcoeffs[2] * linkFlow[a]^2 / capacity[a] +
 	        free_flow_time[a] * fcoeffs[3] * linkFlow[a]^3 / capacity[a]^2 +
@@ -190,7 +204,7 @@ for day in week_day_Apr_list
 	        free_flow_time[a] * fcoeffs[5] * linkFlow[a]^5 / capacity[a]^4 +
 	        free_flow_time[a] * fcoeffs[6] * linkFlow[a]^6 / capacity[a]^5 +
 			free_flow_time[a] * fcoeffs[7] * linkFlow[a]^7 / capacity[a]^6 , a = 1:numLinks})
-
+=#
 	@NLobjective(m, Min, f);
 	#print(m) 
 
@@ -224,7 +238,7 @@ for day in week_day_Apr_list
 	#for i = 1:length(week_day_Apr_list)
 	#poaDictAprPM =  socialObj(flow_user[:,cnt+1])/getobjectivevalue(m)
 	#println(socialObj(flow_user[:, cnt]))
-	cnt +=1
+	cnt += 1
 	
 	user_flow_tap_MSA = readstring(out_dir * "demandsDict/tapFlowDicDict" * string(day) * "_" * month_w * "_"  * instance1 * ".json")
 	user_flow_tap_MSA = JSON.parse(user_flow_tap_MSA)
@@ -241,6 +255,7 @@ for day in week_day_Apr_list
 
 	social[day] = getobjectivevalue(m)
 	user[day] = socialObj(user_flow)
+	#user[day] = socialObj(flow_user[:, cnt])
 	poaDict[day] = (user[day]/social[day])
 
 end

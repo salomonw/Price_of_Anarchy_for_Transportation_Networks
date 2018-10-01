@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+face# -*- coding: utf-8 -*-
 """
 Created on Mon Jun 11 13:50:19 2018
 
@@ -51,8 +51,6 @@ create_East_Massachusetts_trips(out_dir, files_ID, month_w, time_instances, n_zo
 
 create_East_Massachusetts_net(out_dir, files_ID, month_w, month, year, time_instances, n_zones, week_day_list )
 
-
-
     
 '''
 RUN JULIA: 02. uni-class_traffic_assignment_MSA_function.jl         
@@ -63,6 +61,12 @@ RUN JULIA: 03. Plot_comparison_results_Apr.ipynb
 '''
 RUN JULIA: 04. sensitivity_analysis_Finite_Difference_Approximation
 '''
+
+
+path_incidence_matrix_jing(out_dir, files_ID, time_instances, month_w, number_of_routes_per_od, theta, lower_bound_route )
+create_node_link_incidence(out_dir, files_ID, time_instances).
+
+'''RUN JULIA prepare_demand_data '''
 
 parse_data_for_TAP(out_dir, files_ID, time_instances, month_w, week_day_list)
 
@@ -101,7 +105,7 @@ def plot_POA(time_instances, out_dir, month_w):
 
 
     
-    with open(out_dir + "coeffs_dict_Apr_AM" +'.json', 'r') as json_file:
+    with open(out_dir + "coeffs_dict_Apr_PM" +'.json', 'r') as json_file:
         coeffs_dict_Apr_AM = json.load(json_file)
         
     

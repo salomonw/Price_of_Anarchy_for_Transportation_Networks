@@ -7,10 +7,7 @@ import pandas as pd
 from utils_julia import *
 from parameters_julia import *
 
-def GLS_juliaf():
-
-    with open(out_dir + 'instance_comm.txt') as ins_file:
-        instance = file.read(ins_file)
+def GLS_juliaf(instance):
 
     od_nodesList_dict = zload(out_dir + 'od_nodesList_dict.pkz')
 
@@ -44,7 +41,6 @@ def GLS_juliaf():
     flow_after_conservation = collections.OrderedDict(sorted(flow_after_conservation.items()))
 
     x = np.zeros(numEdges)
-
     for ts in flow_after_conservation :
         #ts = flow_after_conservation.keys()[0]
         #x = np.zeros(numEdges)
@@ -52,6 +48,8 @@ def GLS_juliaf():
         if np.isin(day, week_day_Apr_list)+0 == np.int32(1) :
             a = np.array(list(flow_after_conservation[ts].values()))
             x = np.c_[x,a]
+
+    
 
     x = np.delete(x,0,1)
     x = np.asmatrix(x)
@@ -66,12 +64,14 @@ def GLS_juliaf():
     link_day_Apr_list = []
     #year = 2012
     #month = 4
+    link_vector = []
     for edge in link_edge_dict.values():
-        print edge
+        #print edge
         for day in week_day_Apr_list: 
             key = 'link_' +  str(edge) + '_' + str(year) + '_' + str(month) + '_'   + str(day) 
         #    print key
             link_day_Apr_list.append(link_day_minute_Apr_dict_JSON[key] ['avg_flow_' + instance ])
+        link_vector.append(edge)
 
     # print(len(link_day_minute_Apr_list))
 
@@ -83,5 +83,5 @@ def GLS_juliaf():
     y_ = y_[np.all(y_ != 0, axis=1)]
     x_ = np.transpose(y_)
     x_ = np.matrix(x_)
-
-    return x_
+    #it = flow_after_conservation.items()
+    return x_, link_vector
