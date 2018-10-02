@@ -691,15 +691,16 @@ function adjustingODdemands(instance, day, cnt, out_dir, month_w, month, year, f
 
 
     # cost function parameters
-    coeffs_dict_Apr_PM_ = readstring(out_dir * "coeffs_dict_" * month_w *  "_" * "AM" * ".json");
+    coeffs_dict_Apr_PM_ = readstring(out_dir * "coeffs_dict_" * month_w *  "_" * instance * ".json");
     coeffs_dict_Apr_PM_ = JSON.parse(coeffs_dict_Apr_PM_);
 
     # cross-validation best key selection
     best_key = readstring(out_dir * "cross_validation_best_key/cross_validation_best_key_" * month_w * "_" * string(day) * "_" * instance * ".json");
     best_key = JSON.parse(best_key);
-    best_key = "(8, 0.5, 100.0, 1)"
+    best_key = "(8, 0.5, 1.0, 2)"
     fcoeffs = coeffs_dict_Apr_PM_[best_key];
-    fcoeffs = [1,0,0,0,.5,0,0,0];
+    #fcoeffs = [1,0,0,0,.5,0,0,0];
+    #fcoeffs = [1.0,-0.00302509, 0.0577279, -0.195632, 0.620696, -0.905963, 0.936143, -0.469483, 0.108584];
     polyDeg = length(fcoeffs);
 
     # load network
@@ -774,9 +775,9 @@ function adjustingODdemands(instance, day, cnt, out_dir, month_w, month, year, f
 
 
     demandsVecDict[0] = demandsDicToVec(g_0, odPairLabel_);
-    demandsVecDict[0] = ones(length(demandsVecDict[0]))    
+    #demandsVecDict[0] = ones(length(demandsVecDict[0]))    
     demandsVecDict[1] = demandsDicToVec(g_0, odPairLabel_);
-    demandsVecDict[1] = ones(length(demandsVecDict[1]))    
+    #demandsVecDict[1] = ones(length(demandsVecDict[1]))    
 
 
     objFunDict[1] = objF(graph, link_list, gamma1, gamma2, demandsVecDict[0], 
@@ -891,13 +892,13 @@ function adjustingODdemands(instance, day, cnt, out_dir, month_w, month, year, f
     close(outfile)
     
     # Calculating POA
-    #tapSocialFlowDicDict_[day], tapSocialFlowVecDict_[day] =  tapMSASocial(demandsDict[las], fcoeffs, graph, link_list, start_node, end_node, free_flow_time, capacity, numLinks, numZones);
-    tapSocialFlowDicDict[day] = socialOpt(out_dir, files_ID, instance, demandsVecDict[las], polyDeg, free_flow_time, fcoeffs, capacity)
+    tapSocialFlowDicDict_[day], tapSocialFlowVecDict_[day] =  tapMSASocial(demandsDict[las], fcoeffs, graph, link_list, start_node, end_node, free_flow_time, capacity, numLinks, numZones);
+    #tapSocialFlowDicDict[day] = socialOpt(out_dir, files_ID, instance, demandsVecDict[las], polyDeg, free_flow_time, fcoeffs, capacity)
     #print(tapSocialFlowDicDict[day])
     
-    user_sol_dict[day] = socialObj(flow_observ[:, cnt], free_flow_time, polyDeg, fcoeffs, capacity, numLinks) ;
-    #user_sol_dict[day] = socialObj(tapFlowVecDict[las], free_flow_time, polyDeg, fcoeffs, capacity, numLinks) ;
-    #_sol_dict[day] = socialObj(tapSocialFlowVecDict_[day], free_flow_time, polyDeg, fcoeffs, capacity, numLinks);
+    #user_sol_dict[day] = socialObj(flow_observ[:, cnt], free_flow_time, polyDeg, fcoeffs, capacity, numLinks) ;
+    user_sol_dict[day] = socialObj(tapFlowVecDict[las], free_flow_time, polyDeg, fcoeffs, capacity, numLinks) ;
+    tapSocialFlowDicDict[day] = socialObj(tapSocialFlowVecDict_[day], free_flow_time, polyDeg, fcoeffs, capacity, numLinks);
     
     PoA_dict[day] = user_sol_dict[day] / tapSocialFlowDicDict[day];
     
