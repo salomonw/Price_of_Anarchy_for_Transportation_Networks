@@ -27,7 +27,11 @@ def parse_data_for_Julia(out_dir, files_ID, time_instances):
     # Read flows
     flows_after = {}
     flows_before = {}
+    speed_before = {}
+    density = {}
     flows_after_k = {}
+    speed_before_k = {}
+    density_k  = {}
     for instance in time_instances['id']:   
         flows_before_0 = pd.read_pickle(out_dir + 'flows_before_QP_2_' + files_ID + '_' + instance +'.pkz')
         flows_before[instance] = collections.OrderedDict(sorted(flows_before_0.items()))
@@ -36,6 +40,18 @@ def parse_data_for_Julia(out_dir, files_ID, time_instances):
         
         flows_after_k1 = list(flows_after[instance].keys())
         flows_after_k[instance] = pd.DatetimeIndex(flows_after_k1)
+        
+        speed_before_0 = pd.read_pickle(out_dir + 'speed_links' + files_ID + '_' + instance +'.pkz')
+        speed_before[instance] = collections.OrderedDict(sorted(speed_before_0.items()))
+        
+        speed_before_k1 = list(speed_before[instance].keys())
+        speed_before_k[instance] = pd.DatetimeIndex(speed_before_k1)
+        
+        density_0 = pd.read_pickle(out_dir + 'density_links' + files_ID + '_' + instance +'.pkz')
+        density[instance] = collections.OrderedDict(sorted(density_0.items()))
+
+        density_k1 = list(density[instance].keys())
+        density_k[instance] = pd.DatetimeIndex(density_k1)
         
         uniq_days = flows_after_k[instance].normalize().unique()
         
@@ -66,17 +82,29 @@ def parse_data_for_Julia(out_dir, files_ID, time_instances):
             for instance in time_instances['id']:
 
                 flows_after_k2 = flows_after_k[instance]
+                speed_before_k2 = speed_before_k[instance]
+                density_k2 = density_k[instance]
+                
                 keys_ = 'link_' + str(edge) + '_' + str(year) + '_' + str(month) + '_' + str(day)
                 from_date = datetime.datetime(year,month,day,0,0,0)
                 to_date = from_date + datetime.timedelta(days = 1)
                 
                 idx2 = (flows_after_k2 > from_date) & (flows_after_k2 <= to_date)
                 flow_days = flows_after_k2[idx2]
+                speed_days = speed_before_k2[idx2]
+                density_days = density_k2[idx2]
                 
                 flow_days_dict = { your_key: flows_after[instance][your_key] for your_key in flow_days.values }
                 flow_days_dict = collections.OrderedDict(sorted(flow_days_dict.items()))
                 
+                speed_days_dict = { your_key: speed_before[instance][your_key] for your_key in speed_days.values }
+                speed_days_dict = collections.OrderedDict(sorted(speed_days_dict.items()))
+                
+                density_days_dict = { your_key: density[instance][your_key] for your_key in density_days.values }
+                density_days_dict = collections.OrderedDict(sorted(density_days_dict.items()))
+                
                 flow_avg = link_avg_flow[str(edge) + '_' + instance]
+                
                 idx3 = (flow_avg.index > from_date) & (flow_avg.index <= to_date)
                 flow_avg = flow_avg[idx3]
                 key['avg_flow_' + instance] = flow_avg['flow'][0]
@@ -84,11 +112,17 @@ def parse_data_for_Julia(out_dir, files_ID, time_instances):
                 key['capac_'+ instance] = capacity_link[str(edge) + '_' + instance]
                 
                 v = []
+                u = []
+                x = []
                 for j in flow_days_dict.keys():
                     v.append(flow_days_dict[j][str(edge)])
+                    u.append(speed_days_dict[j][edge])
+                    x.append(density_days_dict[j][str(edge)])
                     #print(flow_days_dict[j][str(edge)])
                     
                 key['flow_'+ instance] = v
+                key['speed_'+ instance] = u
+                key['denisty_'+ instance] = x
                 
             link_min_dict[keys_] = key
             

@@ -7,7 +7,7 @@ Created on Wed Sep 26 11:52:21 2018
 def create_node_link_incidence(out_dir, files_ID, time_instances):    
     from utils import *
     import json
-    link_label_dict = zload( out_dir + 'link_label_dict.pkz')
+    link_label_dict = zload( out_dir + 'link_label_dict_network.pkz')
     
     instance = time_instances['id'][0]
 

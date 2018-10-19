@@ -109,8 +109,10 @@ def runGLS_f(out_dir, files_ID, time_instances, month_w, week_day_list, average_
         gls_cost_ = {}
         x_ins = np.zeros(numEdges)
         #flow_after_conservation = pd.read_pickle(out_dir + 'flows_after_QP' + files_ID + '_' + instance + '.pkz')
-        flow_after_conservation = pd.read_pickle(out_dir + 'flows_before_QP_2_' + files_ID + '_' + instance +'.pkz')
-        
+        #flow_after_conservation = pd.read_pickle(out_dir + 'flows_before_QP_2_' + files_ID + '_' + instance +'.pkz')
+        #flow_after_conservation = pd.read_pickle(out_dir + 'density_links' + files_ID + '_' + instance +'.pkz')
+        flow_after_conservation = pd.read_pickle(out_dir + 'density_links_before_QP' + files_ID + '_' + instance +'.pkz')
+       
         flow_after_conservation = collections.OrderedDict(sorted(flow_after_conservation.items()))
         
         a = []
@@ -133,7 +135,7 @@ def runGLS_f(out_dir, files_ID, time_instances, month_w, week_day_list, average_
                     x = np.c_[x,a]
                     x_ins = np.c_[x_ins,a]
             
-            x = np.delete(x,0,1)
+            x = np.delete(x_ins,0,1)
             x = np.asmatrix(x)
             
     

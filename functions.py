@@ -110,12 +110,12 @@ def flow_conservation_adjustment(G,y):
 
 # Retrive the TMCs data
 #Filters TMC data for all csv files contained in folder the output is a set of files containing data 
-def filter_TMC_mult_files(dir_data, files_ID, confidence_score_min, c_value_min, out_dir):
+def filter_TMC_mult_files(dir_data, files_ID, confidence_score_min, c_value_min, out_dir, filtered_data_dir):
     df = pd.DataFrame()
     cnt = 0
     filtered_files_list = []
     dir_ = os.path.join(dir_data)
-   # tmc_net_list = zload(out_dir + 'tmc_net_list' + files_ID + '.pkz')
+    tmc_net_list = zload(out_dir + 'tmc_net_list' + files_ID + '.pkz')
     for root,dirs,files in os.walk(dir_):
         for file in files:
             df = pd.DataFrame()
@@ -137,7 +137,7 @@ def filter_TMC_mult_files(dir_data, files_ID, confidence_score_min, c_value_min,
                     filtered_files_list.append( out_dir + 'filtered_tmc_date_' + file[:-4]  +'.pkz' )
                     print(file + ' : ' + str(cnt))
                 print('-----------------------------------------------------')
-                pd.to_pickle(df, out_dir + 'filtered_tmc_' + file[:-4]  +'.pkz')
+                pd.to_pickle(df, filtered_data_dir + 'filtered_tmc_' + file[:-4]  +'.pkz')
                 del df
     
 
@@ -291,8 +291,11 @@ def filter_time_instances(out_dir, files_ID, time_instances, data_granularity):
         df = df.reset_index()
         a=[]
         avg = []
+        sp = []
         for idx, row2 in df.iterrows():
             capacity = tmc_instance_char['AB_'+ time_instances.id[index] +'CAPAC'][row2['tmc_code']]
+            length = tmc_instance_char['LENGTH'][row2['tmc_code']]
+            num_lanes = tmc_instance_char['AB_AMLANE'][row2['tmc_code']]
             free_flow_sp = tmc_instance_char['free_flow_speed'][row2['tmc_code']]
             speed = row2['speed']
             avg_speed = row2['avg_speed_day']
@@ -303,21 +306,26 @@ def filter_time_instances(out_dir, files_ID, time_instances, data_granularity):
                     speed = 0.0000001 
                     cnt_1 += 1
                 df.set_value(idx,'speed', speed)
-            x_flow = greenshield(min(speed,free_flow_sp) , capacity , free_flow_sp)
-            avg_flow = greenshield(min(avg_speed,free_flow_sp) , capacity , free_flow_sp) # check avg_speed for 2015 dataset
+            x_flow = greenshield(min(speed, free_flow_sp) , capacity , free_flow_sp)
+            avg_flow = greenshield(min(avg_speed, free_flow_sp) , capacity , free_flow_sp) # check avg_speed for 2015 dataset
             a.append([row2['idx'], x_flow])
             avg.append([row2['idx'], avg_flow])
-       
+            sp.append([row2['idx'], speed])
+            
         a = pd.DataFrame(a)
         a = a.rename(index=str, columns={0: "idx", 1 : "xflow"})
         
         avg = pd.DataFrame(avg)
         avg = avg.rename(index=str, columns={0: "idx", 1 : "avg_flow"})
         
+        sp = pd.DataFrame(sp)
+        sp= sp.rename(index=str, columns={0: "idx", 1 : "speed2"})
         
         df = df.join(a.set_index('idx'), on='idx')
         df = df.join(avg.set_index('idx'), on='idx')
-        del a, chunk, avg
+        df = df.join(sp.set_index('idx'), on='idx')
+        
+        del a, chunk, avg, sp
     
         pd.to_pickle(df, out_dir + 'filtered_tmc_date_time_flow' + files_ID + '_' + row['id'] +'.pkz')   
         pd.to_pickle(result2, out_dir + 'result_2' + files_ID + '_' + row['id'] +'.pkz') #!!!!!!!!!!!!!!! RENAME !!!!!!!!!!!
@@ -335,10 +343,16 @@ def calculate_data_flows(out_dir, files_ID, time_instances, days_of_week):
     G_ = {}
     link_avg_flow = {}
     capacity_link = {}
+    
     for instance in list(time_instances['id']):
         link_ = list()
         link_flow = {}
         linkFlow = pd.DataFrame()
+        speed_flow = {}
+        linkSpeed= pd.DataFrame()
+        link_density = {}
+        linkDensity = pd.DataFrame()
+        
         df = pd.read_pickle(out_dir + 'filtered_tmc_date_time_flow' + files_ID + '_' + instance +'.pkz')
         result2 = pd.read_pickle(out_dir + 'result_2' + files_ID + '_' + instance + '.pkz') #!!!!!!!!!!!!!!! RENAME !!!!!!!!!!!
         result2 = result2[~result2.index.duplicated(keep='first')]
@@ -357,28 +371,48 @@ def calculate_data_flows(out_dir, files_ID, time_instances, days_of_week):
         
         for link in list(tmc_edge_df.link.unique()):
             l_xflows = pd.DataFrame()
+            l_speed = pd.DataFrame()
+            l_density = pd.DataFrame()
+            
             tmc_list = tmc_edge_df[tmc_edge_df['link']==link]['TMC']
             df2 = df[df['tmc_code'].isin(tmc_list)]
             
             df2['Shape_Leng'] = 0.000621371192 * df2['Shape_Leng']  #since the speed (miles/hr) and len (meters --> miles)
-            df2['prod'] = df2['xflow'] * df2['Shape_Leng'] / df2['avg_speed_day'] 
+            df2['prod'] = df2['xflow'] * df2['Shape_Leng'] / df2['avg_speed_day']
+            df2['prod_speed'] = df2['speed'] * df2['Shape_Leng'] / df2['avg_speed_day']
             df2['travelTime'] = df2['Shape_Leng'] / df2['avg_speed_day']
             
             grouped = df2.groupby('measurement_tstamp').sum()
             l_xflows['flow'] = grouped['prod'] / (grouped['travelTime'])
+            l_speed['speed'] = grouped['prod_speed'] / (grouped['travelTime'])
             
             if l_xflows.isnull().values.any() == True:
-                time.sleep()
+                l_xflows = l_xflows.interpolate(method='linear')
+                
+            if l_speed.isnull().values.any() == True:
+                l_speed = l_speed.interpolate(method='linear')
+                #break
+                #time.sleep()
             summary = df2.groupby('measurement_tstamp').mean()
             tmc_length = df2.groupby('tmc_code').mean()['Shape_Leng']
             l_length[link] =  sum(tmc_length)
             tmc_avgSpeed = df2.groupby('tmc_code').mean()['speed']
             l_avgSpeed[link] = sum(tmc_avgSpeed*tmc_length)/sum(tmc_length)
             l_avgTravelTime = df2.groupby('measurement_tstamp').sum()['travel_time'] ### travel_time_minutes -> for 2015 , travel_time -> for 2012 
+            
+            l_avgTravelTime[l_avgTravelTime==0] = float('nan')
+            
+            if l_avgTravelTime.isnull().values.any() == True:
+                l_avgTravelTime= l_avgTravelTime.interpolate(method='linear')
+            
+            
             link_flow[link] = l_xflows
             linkFlow = linkFlow.append(l_xflows)
             link_.extend([link]*len(l_xflows))
             
+            speed_flow[link] = l_speed
+            linkSpeed = linkSpeed.append(l_speed)
+                        
             free_flow_tmc = free_flow_speed.reset_index()
             #free_flow_tmc = free_flow_tmc[free_flow_tmc['tmc_code'].isin(tmc_list)]
             free_flow_tmc = pd.merge(df2, free_flow_tmc, on='tmc_code', how='inner')
@@ -407,36 +441,77 @@ def calculate_data_flows(out_dir, files_ID, time_instances, days_of_week):
             str_inst = 'AB_' + instance + 'CAPAC'
             capacity_link[str(link) + '_' + instance] = sum(link_att[str_inst]*link_att['LENGTH'])/sum(link_att['LENGTH'])
             
+            l_density = l_xflows
+            l_density['density'] = greenshield_density(list(l_speed['speed']), capacity_link[str(link) + '_' + instance], free_flow_link[link], l_length[link], 1)
+            l_density = pd.DataFrame(l_density['density'], columns=['density'])
+            link_density[link] = l_density
+            linkDensity = linkDensity.append(link_density[link])
+
+            
         linkFlow['link'] = link_
         linkFlow = linkFlow.reset_index()
         unique_t = linkFlow['measurement_tstamp'].unique()
-
+        
+        linkSpeed['link'] = link_
+        linkSpeed = linkSpeed.reset_index()
+        #unique_t = linkFlow['measurement_tstamp'].unique()
+        
+        linkDensity['link'] = link_
+        linkDensity = linkDensity.reset_index()
+        
         G_[instance] = nx.DiGraph()
         for edge in list( G.edges()):
             G_[instance].add_edge(edge[0], edge[1], length = l_length[edge], avgSpeed = l_avgSpeed[edge])
-            
+        
+        #CALCULATE FLOW AS DENSITY
+        
+        
         flow_after_conservation={}
         flow_before_conservation_ = {}
+        speed_before_conservation = {}
+        density_before_conservation = {}
+        density_before_conservation_ = {}
         for idx in list(unique_t):
             ins = linkFlow[linkFlow['measurement_tstamp']==idx]
             ins = ins[['link','flow']].set_index('link').to_dict()['flow']
+            ins_s = linkSpeed[linkSpeed['measurement_tstamp']==idx]
+            ins_s = ins_s[['link','speed']].set_index('link').to_dict()['speed']
+            ins_d = linkDensity[linkDensity['measurement_tstamp']==idx]
+            ins_d['link'] = ins_d['link'].astype(str)
+            ins_d = ins_d[['link','density']].set_index('link').to_dict()['density']
+            
+            
             if len(ins) == len(link_flow): #if there is no data of one llnk for an instance, then delete it
                 flow_after_conservation[idx] = flow_conservation_adjustment(G,ins)
                 flow_before_conservation_[idx] = ins
-            
+                
+            if len(ins_s) == len(link_flow): #if there is no data of one llnk for an instance, then delete it
+                speed_before_conservation[idx] = ins_s
+                density_before_conservation[idx] = ins_d
+                density_before_conservation_[idx] = flow_conservation_adjustment(G,ins_d )
+                
         pd.to_pickle(flow_after_conservation, out_dir + 'flows_after_QP' + files_ID + '_' + instance +'.pkz')
         pd.to_pickle(linkFlow, out_dir + 'flows_before_QP' + files_ID + '_' + instance +'.pkz')
         pd.to_pickle(flow_before_conservation_, out_dir + 'flows_before_QP_2_' + files_ID + '_' + instance +'.pkz')
-        
+        pd.to_pickle(speed_before_conservation, out_dir + 'speed_links' + files_ID + '_' + instance +'.pkz')
+        pd.to_pickle(density_before_conservation_, out_dir + 'density_links' + files_ID + '_' + instance +'.pkz')
+        pd.to_pickle(density_before_conservation, out_dir + 'density_links_before_QP' + files_ID + '_' + instance +'.pkz')
+            
         for i in flow_after_conservation.keys():
             ts = pd.to_datetime(i) 
             d = ts.strftime('%Y-%m-%d-%H-%M-%S')
             flow_after_conservation[d] = flow_after_conservation.pop(i)
-          
+             
+        for i in density_before_conservation.keys():
+            ts = pd.to_datetime(i) 
+            d = ts.strftime('%Y-%m-%d-%H-%M-%S')
+            density_before_conservation[d] = density_before_conservation.pop(i)
         
         with open(out_dir + 'flows_after_QP' + files_ID + '_' + instance +'.json', 'w') as fp:
             json.dump(flow_after_conservation, fp)
-      
+
+        with open(out_dir + 'density_links' + files_ID + '_' + instance +'.json', 'w') as afp:
+            json.dump(density_before_conservation, afp)     
     
     zdump(capacity_link, out_dir + 'capacity_link' + files_ID + '.pkz')       
     zdump(link_avg_flow, out_dir + 'link_avg_day_flow' + files_ID + '.pkz')        

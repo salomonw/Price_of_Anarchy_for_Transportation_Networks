@@ -15,7 +15,7 @@ G = import_jing_net(dir_shpfile, files_ID, out_dir)
 
 extract_2012_INRIX_data(dir_data , out_dir, filtered_data_dir, files_ID , confidence_score_min, c_value_min, year)
 
-#filter_TMC_mult_files(dir_data, files_ID, confidence_score_min, c_value_min, out_dir)
+#filter_TMC_mult_files(dir_data, files_ID, confidence_score_min, c_value_min, out_dir, filtered_data_dir)
 
 filter_dates_and_free_flow_calc(filtered_data_dir, files_ID, out_dir, percentile_free_flow, dates_input)
 
@@ -39,6 +39,8 @@ runGLS_f(out_dir, files_ID, time_instances, month_w, week_day_list, average_over
 
 # ------------------------------ Inverse Optimization -------------------------
 
+
+
 parse_data_for_Julia(out_dir, files_ID, time_instances)
 
 '''
@@ -55,6 +57,9 @@ create_East_Massachusetts_net(out_dir, files_ID, month_w, month, year, time_inst
 '''
 RUN JULIA: 02. uni-class_traffic_assignment_MSA_function.jl         
 '''
+
+calc_testing_errors(out_dir, files_ID, time_instances, month_w, week_day_list, deg_grid, c_grid, lamb_grid, train_idx)
+
 '''
 RUN JULIA: 03. Plot_comparison_results_Apr.ipynb
 '''
@@ -64,7 +69,7 @@ RUN JULIA: 04. sensitivity_analysis_Finite_Difference_Approximation
 
 
 path_incidence_matrix_jing(out_dir, files_ID, time_instances, month_w, number_of_routes_per_od, theta, lower_bound_route )
-create_node_link_incidence(out_dir, files_ID, time_instances).
+create_node_link_incidence(out_dir, files_ID, time_instances)
 
 '''RUN JULIA prepare_demand_data '''
 

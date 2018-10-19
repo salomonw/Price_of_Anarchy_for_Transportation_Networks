@@ -172,6 +172,83 @@ for folder in jing_folders:
     plt.title('scatter capacities' )
 
 
+
+#### -------------- Capacity of Links -----------------------------------------------------------------
+
+        # Read flows form Jing
+        import os
+        import json
+        os.chdir(jing_folders[0])
+        link_label_dict_= zload('link_label_dict_.pkz')
+        with open('../temp_files/link_day_minute_Apr_dict_JSON_adjusted.json', 'r') as json_file:
+            link_day_minute_Apr_dict_JSON_ = json.load(json_file)
+
+        a = np.random.choice(link_day_minute_Apr_dict_JSON_.keys())
+        day = link_day_minute_Apr_dict_JSON_[a]['day']
+       # link_idx = link_day_minute_Apr_dict_JSON_[a]['link_idx']
+
+        os.chdir(jing_folders[0])
+        with open('../temp_files/link_day_minute_Apr_dict_JSON_adjusted.json', 'r') as json_file:
+            link_day_minute_Apr_dict_JSON_ = json.load(json_file)
+
+        os.chdir('G:/My Drive/Github/PoA/Price_of_Anarchy_for_Transportation_Networks')
+        instance = 'AM'
+        # Convert Salo's flow into Jing
+
+        dicti = {}
+        dicti[0] = '(1, 2)'
+        dicti[2] = '(1, 3)'
+        dicti[1] = '(2, 1)'
+        dicti[4] = '(2, 3)'
+        dicti[6] = '(2, 4)'
+        dicti[3] = '(3, 1)'
+        dicti[5] = '(3, 2)'
+        dicti[8] = '(3, 5)'
+        dicti[10] = '(3, 6)'
+        dicti[7] = '(4, 2)'
+        dicti[12] = '(4, 5)'
+        dicti[16] = '(4, 8)'
+        dicti[9] = '(5, 3)'
+        dicti[13] = '(5, 4)'
+        dicti[14] = '(5, 6)'
+        dicti[18] = '(5, 7)'
+        dicti[11] = '(6, 3)'
+        dicti[15] = '(6, 5)'
+        dicti[20] = '(6, 7)'
+        dicti[19] = '(7, 5)'
+        dicti[21] = '(7, 6)'
+        dicti[22] = '(7, 8)'
+        dicti[17] = '(8, 4)'
+        dicti[23] = '(8, 7)'
+        
+        capac_link_jing = {}
+        for i in dicti.values():
+            capac_link_jing[i] = 0
+        
+        cnt = 0
+        keys = link_day_minute_Apr_dict_JSON_.keys()
+        while min(capac_link_jing.values()) == 0:
+            
+            capa = link_day_minute_Apr_dict_JSON_[keys[cnt]][instance + "_capac"]
+            link_id = int(keys[cnt].split("_")[1])
+            capac_link_jing[dicti[link_id]] = capa
+            cnt += 1 
+      
+        capac_link_salo_ = zload(out_dir + "capacity_link" + files_ID + ".pkz")
+        capac_link_salo = {}
+        for i in capac_link_salo_.keys():
+            if i.split("_")[1] == instance:
+                capac_link_salo[i.split("_")[0]] = capac_link_salo_[i]
+                
+
+        plt.figure()
+        plt.plot(capac_link_jing.values(), label="capa_jing")
+        plt.plot(capac_link_salo.values(), label="capa_salo")
+        plt.title('Link capacities '+ instance)
+        plt.legend()
+
+
+
 #### -------------  Flows before conservation  (Link level) ---------------------------------------------------------------------------
 
 import json
@@ -568,3 +645,273 @@ for instance in instances:
     plt.show()
 
 
+
+
+
+
+###### ------------------ Comparison of hisograms (flows)  -------------------
+        # Read flows form Jing
+        import os
+        import json
+        os.chdir(jing_folders[0])
+        link_label_dict_= zload('link_label_dict_.pkz')
+        with open('../temp_files/link_day_minute_Apr_dict_JSON_adjusted.json', 'r') as json_file:
+            link_day_minute_Apr_dict_JSON_ = json.load(json_file)
+
+       # a = np.random.choice(link_day_minute_Apr_dict_JSON_.keys())
+       # day = link_day_minute_Apr_dict_JSON_[a]['day']
+       # link_idx = link_day_minute_Apr_dict_JSON_[a]['link_idx']
+
+
+        os.chdir('G:/My Drive/Github/PoA/Price_of_Anarchy_for_Transportation_Networks')
+        instance = 'AM'
+        # Convert Salo's flow into Jing
+
+        dicti = {}
+        dicti[0] = '(1, 2)'
+        dicti[2] = '(1, 3)'
+        dicti[1] = '(2, 1)'
+        dicti[4] = '(2, 3)'
+        dicti[6] = '(2, 4)'
+        dicti[3] = '(3, 1)'
+        dicti[5] = '(3, 2)'
+        dicti[8] = '(3, 5)'
+        dicti[10] = '(3, 6)'
+        dicti[7] = '(4, 2)'
+        dicti[12] = '(4, 5)'
+        dicti[16] = '(4, 8)'
+        dicti[9] = '(5, 3)'
+        dicti[13] = '(5, 4)'
+        dicti[14] = '(5, 6)'
+        dicti[18] = '(5, 7)'
+        dicti[11] = '(6, 3)'
+        dicti[15] = '(6, 5)'
+        dicti[20] = '(6, 7)'
+        dicti[19] = '(7, 5)'
+        dicti[21] = '(7, 6)'
+        dicti[22] = '(7, 8)'
+        dicti[17] = '(8, 4)'
+        dicti[23] = '(8, 7)'
+        
+        flow_after_conservation = pd.read_pickle(out_dir + 'flows_after_QP' + files_ID + '_' + instance +'.pkz')
+        flow_after_conservation = zload(out_dir + "link_min_dict" + files_ID + ".pkz")
+        
+        capacity = zload(out_dir + "capacity_link" + files_ID + ".pkz")
+        
+        columns = 5
+        rows = int(ceil(len(dicti.keys())/columns))
+        fig=plt.figure(figsize=(columns*5, rows*4))
+
+        i = 0
+        for link in dicti.keys():
+            flow_day_j = []
+            flow_day_s = []
+            i +=1
+            #flow_day_s_ = []
+            for day in week_day_list:
+                flow_day_j_ = link_day_minute_Apr_dict_JSON_["link_" + str(link) + "_" + str(day)][instance + "_flow_minute"]
+                flow_day_s__ = flow_after_conservation["link_" + str(dicti[link]) + "_" + str(year) + "_" + str(month) + "_" + str(day)]
+                flow_day_s_  = flow_day_s__["denisty_" + str(instance)]
+                
+                flow_day_j.extend(flow_day_j_)
+                flow_day_s.extend(flow_day_s_) 
+                
+                capac = capacity[str(dicti[link]) + "_" + str(instance)]
+                
+            fig.add_subplot(rows, columns, i)
+            #plt.figure()
+            plt.title('link' +  str(dicti[link]) + " :" + str(instance) )
+            plt.axvline(capac, label = "capacity", color='k', linestyle='dashed', linewidth=2)
+            plt.hist(flow_day_j, label = "jing", color='b',  bins=np.linspace(1,10000,40), edgecolor='k', alpha=0.65)
+            plt.hist(flow_day_s, label = "salo", color='r',  bins=np.linspace(1,10000,40), edgecolor='k', alpha=0.65)
+            plt.legend() 
+            
+        plt.show()
+        
+        #plt.title('Flow adjusted '+ instance + ' link:' + dicti[link_idx] + ' day:' + str(day ))
+        
+
+
+###### ------------------ Comparison of hisograms (speed)  -------------------
+        # Read flows form Jing
+        import os
+        import json
+        os.chdir(jing_folders[0])
+        link_label_dict_= zload('link_label_dict_.pkz')
+        with open('../temp_files/link_day_minute_Apr_dict_JSON_adjusted.json', 'r') as json_file:
+            link_day_minute_Apr_dict_JSON_ = json.load(json_file)
+
+        with open('G:/My Drive/Github/PoA/results/Braess/demandsDict/demandsDictfull_full_full.json', 'r') as json_file:
+            demand = json.load(json_file)
+       # a = np.random.choice(link_day_minute_Apr_dict_JSON_.keys())
+       # day = link_day_minute_Apr_dict_JSON_[a]['day']
+       # link_idx = link_day_minute_Apr_dict_JSON_[a]['link_idx']
+       
+        columns = 5
+        rows = int(np.ceil(len(dicti.keys())/columns))
+        fig=plt.figure(figsize=(columns*5, rows*4))
+        
+        os.chdir('G:/My Drive/Github/PoA/Price_of_Anarchy_for_Transportation_Networks')
+        
+        instance = 'NT'
+        
+        out_dirs = ['../results/_cdc_all_comp_apr_2012/' , '../results/_cdc_apr_2015/' ]
+        files_IDs = ['_cdc_all_comp_apr_2012', '_cdc_apr_2015']
+        years = [2012, 2015]
+        week_day_lists = [[2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30],[1 ,2 ,3 ,6 ,7 ,8 ,9 ,10, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 27, 28 ,29, 30]]
+        instances = ["NT"]
+        for j in range(len(out_dirs)):
+            out_dir = out_dirs[j]
+            files_ID = files_IDs[j]
+            year = years[j]
+            week_day_list = week_day_lists[j]
+            i = 0
+            # Convert Salo's flow into Jing
+    
+            dicti = {}
+            dicti[0] = '(1, 2)'
+            dicti[2] = '(1, 3)'
+            dicti[1] = '(2, 1)'
+            dicti[4] = '(2, 3)'
+            dicti[6] = '(2, 4)'
+            dicti[3] = '(3, 1)'
+            dicti[5] = '(3, 2)'
+            dicti[8] = '(3, 5)'
+            dicti[10] = '(3, 6)'
+            dicti[7] = '(4, 2)'
+            dicti[12] = '(4, 5)'
+            dicti[16] = '(4, 8)'
+            dicti[9] = '(5, 3)'
+            dicti[13] = '(5, 4)'
+            dicti[14] = '(5, 6)'
+            dicti[18] = '(5, 7)'
+            dicti[11] = '(6, 3)'
+            dicti[15] = '(6, 5)'
+            dicti[20] = '(6, 7)'
+            dicti[19] = '(7, 5)'
+            dicti[21] = '(7, 6)'
+            dicti[22] = '(7, 8)'
+            dicti[17] = '(8, 4)'
+            dicti[23] = '(8, 7)'
+            
+        
+        
+        
+            #flow_after_conservation = pd.read_pickle(out_dir + 'flows_after_QP' + files_ID + '_' + instance +'.pkz')
+            speed_before = zload(out_dir + "link_min_dict" + files_ID + ".pkz")
+            
+            capacity = zload(out_dir + "capacity_link" + files_ID + ".pkz")
+            
+            # calculate speed averages
+            avg = {}
+            for link in dicti.keys():
+                speed_day_s = []
+                i +=1
+                for instance in instances:
+                    for day in week_day_list:
+                        speed_day_s__ = speed_before["link_" + str(dicti[link]) + "_" + str(year) + "_" + str(month) + "_" + str(day)]
+                        speed_day_s_  = speed_day_s__["speed_" + str(instance)]
+                        speed_day_s.extend(speed_day_s_) 
+                        speed_day_s = [x for x in speed_day_s if str(x) != 'nan']
+                avg[link] = mean(speed_day_s)
+            
+            
+   
+            
+            i=0
+            for link in dicti.keys():
+                i +=1
+                #speed_day_j = []
+                speed_day_s = []
+                #flow_day_s_ = []
+                
+            #for instance in time_instances['id']:
+                for day in week_day_list:
+                    #speed_day_j_ = link_day_minute_Apr_dict_JSON_["link_" + str(link) + "_" + str(day)][instance + "_flow_minute"]
+                    speed_day_s__ = speed_before["link_" + str(dicti[link]) + "_" + str(year) + "_" + str(month) + "_" + str(day)]
+                    speed_day_s_  = speed_day_s__["speed_" + str(instance)]
+                    
+                    #speed_day_j.extend(speed_day_j_)
+                    speed_day_s.extend(speed_day_s_) 
+                    speed_day_s = [x for x in speed_day_s if str(x) != 'nan']
+                    capac = capacity[str(dicti[link]) + "_" + str(instance)]
+            
+                fig.add_subplot(rows, columns, i)
+                #plt.figure()
+                plt.title('link' +  str(dicti[link]) + " :" + str(instance) )
+                #plt.axvline(speed_day_s__['free_flow_speed'], label = "FF", color='k', linestyle='dashed', linewidth=2)
+                #plt.axvline(avg[link], label = "avg", color='b', linestyle='dashed', linewidth=2)
+               # plt.hist(flow_day_j, label = "jing", color='b', edgecolor='k', alpha=0.65)
+                plt.hist(speed_day_s, label = str(year), bins=np.linspace(1,80,20),  edgecolor='k', alpha=0.65)
+                plt.legend()      
+                
+       # del rows, i
+            
+            
+            #plt.title('Flow adjusted '+ instance + ' link:' + dicti[link_idx] + ' day:' + str(day ))
+            
+
+
+###### ------------------ Speed vs Flow  -------------------
+
+
+        os.chdir('G:/My Drive/Github/PoA/Price_of_Anarchy_for_Transportation_Networks')
+        instance = 'NT'
+   
+        link_min_dict = zload(out_dir + "link_min_dict" + files_ID + ".pkz")
+        
+        
+        capacity = zload(out_dir + "capacity_link" + files_ID + ".pkz")
+        
+        speed_all = []
+        flow_all = []
+        
+        columns = 5
+        rows = int(ceil(len(dicti.keys())/columns))
+        fig=plt.figure(figsize=(columns*5, rows*4))
+        i=0
+        
+        
+        for link in dicti.keys():
+            speed_day_s = []
+            flow_day_s = []
+            i += 1
+           # for instance in time_instances['id']:
+            for day in week_day_list:
+                #Speed
+                speed_day_s__ = link_min_dict["link_" + str(dicti[link]) + "_" + str(year) + "_" + str(month) + "_" + str(day)]
+                speed_day_s_  = speed_day_s__["speed_" + str(instance)]
+                
+                speed_day_s.extend(speed_day_s_) 
+                speed_all.extend(speed_day_s)
+                
+                #FLow
+                flow_day_s_  = speed_day_s__["denisty_" + str(instance)]
+
+                flow_day_s.extend(flow_day_s_) 
+                flow_all.extend(flow_day_s)
+                
+                
+                capac = capacity[str(dicti[link]) + "_" + str(instance)]
+                
+            #plt.figure()
+            fig.add_subplot(rows, columns, i)
+            plt.title('Speed vs Flow' )
+            plt.axvline(capac, label = "capacity", color='k', linestyle='dashed', linewidth=2)
+            plt.scatter(flow_day_s, speed_day_s, alpha=0.65, label = str(dicti[link]))
+            #plt.hist(speed_day_s, label = "salo", color='r', edgecolor='k', alpha=0.65)
+            plt.legend()        
+        
+        #plt.title('Flow adjusted '+ instance + ' link:' + dicti[link_idx] + ' day:' + str(day ))
+        
+        #plt.figure()
+        #plt.scatter(flow_all, speed_all)
+        #plt.legend() 
+
+    
+    fig=plt.figure(figsize=(12,8))
+    plt.title('Speed vs Flow' )
+    plt.xlabel('Density (veh/hr)')
+    plt.ylabel('Speed (miles/hr)')
+    a = pd.read_pickle('filtered_tmc_date_time_flow_cdc_all_comp_apr_2012_MD.pkz')
+    plt.scatter(a['xflow'], a['speed'])

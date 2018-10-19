@@ -83,6 +83,25 @@ def greenshield(speed,capacity,free_flow_speed):
     return x
 
 
+#Greenshield, density
+# v = v_min + (v_max - v_min)(1-den/max_den)
+# -> den = ((v - v_min)/(v_max - v_min) -1) * - max_den
+def greenshield_density(speed, capacity, free_flow_speed, length, num_lanes):
+    v_min = 5
+    v_max = free_flow_speed
+    #max_den = length/0.00298295 *num_lanes #average size of a car
+    max_den = 4*capacity
+    den = []
+    for v in speed:
+        if v > v_max:
+            v = v_max
+    
+        if v < v_min:
+            v = v_min
+    
+        den.append(((v - v_min)/(v_max - v_min) - 1) * - max_den)
+    return den
+
 
 # Plot shapefiles
 def plot_shp(shp_obj):

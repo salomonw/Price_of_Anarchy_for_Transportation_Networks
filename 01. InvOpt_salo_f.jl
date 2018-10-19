@@ -237,7 +237,8 @@ using Graphs
     inst = "NT"
 	# Assing file names 
 	link_day_min_path = out_dir * "link_min_dict" * files_ID * ".json"
-    flow_path =  out_dir * "flows_after_QP" * files_ID * "_" * inst * ".json"
+    #flow_path =  out_dir * "flows_after_QP" * files_ID * "_" * inst * ".json"
+    flow_path =  out_dir * "density_links" * files_ID * "_" * inst * ".json"
     save_file_path = out_dir * "coeffs_dict_" * month_w * "_" * inst * ".json"
     OD_demand_path = out_dir * "OD_demands/OD_demand_matrix_" * month_w * "_" * "full" * "_weekday_" * inst * files_ID * ".txt"
 

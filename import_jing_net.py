@@ -19,8 +19,8 @@ from util_data_storage_and_load import *
 
 def import_jing_net(dir_shpfile, files_ID, out_dir):
     # Importing Jing data about the relation between TMC and link as well as the incidence matrix
-    os.chdir('G:/My Drive/GitHub/InverseVIsTraffic/Python_files')
-    link_with_capac_list = list(zload('G:/My Drive/GitHub/InverseVIsTraffic/temp_files/links_with_capac.pkz'))
+    os.chdir('G:/My Drive/Github/InverseVIsTraffic/Python_files')
+    link_with_capac_list = list(zload('G:/My Drive/Github/InverseVIsTraffic1/temp_files/links_with_capac.pkz'))
     
     os.chdir('G:/My Drive/Github/PoA/Price_of_Anarchy_for_Transportation_Networks')
     

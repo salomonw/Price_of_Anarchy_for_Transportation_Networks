@@ -54,6 +54,7 @@ def parse_data_for_TAP(out_dir, files_ID, time_instances, month_w, week_day_list
             MA_journal_trips_lines = MA_journal_trips.readlines()
     
     numZones = int(MA_journal_trips_lines[0].split(' ')[3])
+    numZones = n_zones
     
     od_pairs = []
     for i in range(numZones+1)[1:]:
@@ -451,6 +452,7 @@ def calc_testing_errors(out_dir, files_ID, time_instances, month_w, week_day_lis
         testing_sets[3] = testing_set_3
         
         iter_week = week_day_list
+        iter_week = []
         iter_week.append('full')
 
         with open(out_dir + "coeffs_keys_"+ month_w + "_" + instance +'.json', 'r') as json_file:
@@ -459,7 +461,7 @@ def calc_testing_errors(out_dir, files_ID, time_instances, month_w, week_day_lis
         for day in iter_week:
 
            # with open(out_dir + 'uni-class_traffic_assignment/MSA_flows_' + month_w + '_' + 'full' + '_' + instance + '.json', 'r') as json_file:
-            with open(out_dir + 'uni-class_traffic_assignment/MSA_flows_' + month_w + '_' + str(day) + '_' + instance + '.json', 'r') as json_file:
+            with open(out_dir + 'uni-class_traffic_assignment/MSA_flows_' + month_w + '_' + 'full' + '_' + instance + '.json', 'r') as json_file:
                 xl = json.load(json_file)
             testing_errors_dict = {}
             testing_idx = {}

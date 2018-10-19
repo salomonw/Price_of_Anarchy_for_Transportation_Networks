@@ -7,17 +7,38 @@ import collections
 import seaborn as sns
 import pandas as pd
 
+def histo_flows(instance, out_dir, files_ID, year, month, week_day_list):
+    link_min_dict = zload(out_dir + "link_min_dict" + files_ID + ".pkz")
+    link_id = zload(out_dir + "link_edge_dict" + files_ID + ".pkz")
+    capacity = zload(out_dir + "capacity_link" + files_ID + ".pkz")
+    
+    for i in link_id.keys():
+        flow = []
+        for day in week_day_list:
+            a = link_min_dict["link_" + str(link_id[i]) + "_" + str(year) + "_" + str(month) + "_" + str(day)]
+            a = a["flow_" + instance]
+            flow.extend(a)
+        capac = capacity[str(link_id[i]) + "_" + instance]
+        
+        plt.figure()
+        plt.title('link' +  str(link_id[i]) + " :" + instance )
+        plt.axvline(capac, color='k', linestyle='dashed', linewidth=2)
+        plt.hist(flow, color='c', edgecolor='k', alpha=0.65)
+        
+            
+    
+
 def plot_POA(instance, out_dir, month_w):
 #for instance in time_instances['id']:
-	with open(out_dir + "PoA_dict_noAdj_" + month_w + '_' + instance + '.json', 'r') as json_file:
-		PoA_dict_noAdj = json.load(json_file)
-	PoA_dict_noAdj = sorted(PoA_dict_noAdj.items())
-	x, y = zip(*PoA_dict_noAdj)
+	#with open(out_dir + "PoA_dict_noAdj_" + month_w + '_' + instance + '.json', 'r') as json_file:
+#		PoA_dict_noAdj = json.load(json_file)
+	#PoA_dict_noAdj = sorted(PoA_dict_noAdj.items())
+	#x, y = zip(*PoA_dict_noAdj)
 
 	PoA_dict = {}
 
-	for i in range(len(x)):
-		PoA_dict[int(x[i])] = y[i]
+	#for i in range(len(x)):
+	#	PoA_dict[int(x[i])] = y[i]
 	
 
 	with open(out_dir + "PoA_dict_" + month_w + '_' + instance + '.json', 'r') as json_file:
@@ -27,7 +48,7 @@ def plot_POA(instance, out_dir, month_w):
 
 	PoA_dict2 = {}
 
-	for i in range(len(x)):
+	for i in range(len(x2)):
 		PoA_dict2[int(x2[i])] = y2[i]
 	
 	plt.figure()
@@ -88,15 +109,15 @@ def plt_cong_vs_poa(instance, out_dir, month_w):
 		cong_dict[int(x2[i])] = y2[i]
 
 	#Load PoA
-	with open(out_dir + "PoA_dict_noAdj_" + month_w + '_' + instance + '.json', 'r') as json_file:
-		PoA_dict_noAdj = json.load(json_file)
-	PoA_dict_noAdj = sorted(PoA_dict_noAdj.items())
-	x, y = zip(*PoA_dict_noAdj)
+#	with open(out_dir + "PoA_dict_noAdj_" + month_w + '_' + instance + '.json', 'r') as json_file:
+		#PoA_dict_noAdj = json.load(json_file)
+	#PoA_dict_noAdj = sorted(PoA_dict_noAdj.items())
+	#x, y = zip(*PoA_dict_noAdj)
 
 	PoA_dict = {}
 
-	for i in range(len(x)):
-		PoA_dict[int(x[i])] = y[i]
+	#for i in range(len(x)):
+#		PoA_dict[int(x[i])] = y[i]
 	
 
 	with open(out_dir + "PoA_dict_" + month_w + '_' + instance + '.json', 'r') as json_file:
@@ -106,14 +127,14 @@ def plt_cong_vs_poa(instance, out_dir, month_w):
 
 	PoA_dict2 = {}
 
-	for i in range(len(x)):
+	for i in range(len(x2)):
 		PoA_dict2[int(x2[i])] = y2[i]
 
 
 	#Dict relating cong and Poa
 	poa_cong_dict = {}
-	for key in PoA_dict.keys():
-		poa_cong_dict[PoA_dict[key]] = cong_dict[key]
+	for key in PoA_dict2.keys():
+		poa_cong_dict[PoA_dict2[key]] = cong_dict[key]
 
 	
 	plt.figure()
@@ -146,15 +167,15 @@ def plt_cong_vs_all(time_instances, out_dir, month_w):
 			cong_dict[int(x2[i])] = y2[i]
 
 		#Load PoA
-		with open(out_dir + "PoA_dict_noAdj_" + month_w + '_' + instance + '.json', 'r') as json_file:
-			PoA_dict_noAdj = json.load(json_file)
-		PoA_dict_noAdj = sorted(PoA_dict_noAdj.items())
-		x, y = zip(*PoA_dict_noAdj)
+	#	with open(out_dir + "PoA_dict_noAdj_" + month_w + '_' + instance + '.json', 'r') as json_file:
+#			PoA_dict_noAdj = json.load(json_file)
+		#PoA_dict_noAdj = sorted(PoA_dict_noAdj.items())
+		#x, y = zip(*PoA_dict_noAdj)
 
 		PoA_dict = {}
 
-		for i in range(len(x)):
-			PoA_dict[int(x[i])] = y[i]
+		for i in range(len(x2)):
+			PoA_dict[int(x2[i])] = y2[i]
 		
 
 		with open(out_dir + "PoA_dict_" + month_w + '_' + instance + '.json', 'r') as json_file:
@@ -164,7 +185,7 @@ def plt_cong_vs_all(time_instances, out_dir, month_w):
 
 		PoA_dict2 = {}
 
-		for i in range(len(x)):
+		for i in range(len(x2)):
 			PoA_dict2[int(x2[i])] = y2[i]
 
 
@@ -205,15 +226,15 @@ def plt_obj_vs_all(time_instances, out_dir, month_w):
 
 		#print obj_dict
 		#Load PoA
-		with open(out_dir + "PoA_dict_noAdj_" + month_w + '_' + instance + '.json', 'r') as json_file:
-			PoA_dict_noAdj = json.load(json_file)
-		PoA_dict_noAdj = sorted(PoA_dict_noAdj.items())
-		x, y = zip(*PoA_dict_noAdj)
+		#with open(out_dir + "PoA_dict_noAdj_" + month_w + '_' + instance + '.json', 'r') as json_file:
+	#		PoA_dict_noAdj = json.load(json_file)
+	#	PoA_dict_noAdj = sorted(PoA_dict_noAdj.items())
+#		x, y = zip(*PoA_dict_noAdj)
 
 		PoA_dict = {}
 
-		for i in range(len(x)):
-			PoA_dict[int(x[i])] = y[i]
+		for i in range(len(x2)):
+			PoA_dict[int(x2[i])] = y2[i]
 		
 
 		with open(out_dir + "PoA_dict_" + month_w + '_' + instance + '.json', 'r') as json_file:
@@ -223,7 +244,7 @@ def plt_obj_vs_all(time_instances, out_dir, month_w):
 
 		PoA_dict2 = {}
 
-		for i in range(len(x)):
+		for i in range(len(x2)):
 			PoA_dict2[int(x2[i])] = y2[i]
 
 		with open(out_dir + "cong_" + month_w + '_' + instance + '.json', 'r') as json_file:
@@ -277,15 +298,15 @@ def plt_obj_vs_cong_all(time_instances, out_dir, month_w):
 
 		#print obj_dict
 		#Load PoA
-		with open(out_dir + "PoA_dict_noAdj_" + month_w + '_' + instance + '.json', 'r') as json_file:
-			PoA_dict_noAdj = json.load(json_file)
-		PoA_dict_noAdj = sorted(PoA_dict_noAdj.items())
-		x, y = zip(*PoA_dict_noAdj)
+	#	with open(out_dir + "PoA_dict_noAdj_" + month_w + '_' + instance + '.json', 'r') as json_file:
+#			PoA_dict_noAdj = json.load(json_file)
+		#PoA_dict_noAdj = sorted(PoA_dict_noAdj.items())
+		#x, y = zip(*PoA_dict_noAdj)
 
 		PoA_dict = {}
 
-		for i in range(len(x)):
-			PoA_dict[int(x[i])] = y[i]
+		for i in range(len(x2)):
+			PoA_dict[int(x2[i])] = y2[i]
 		
 
 		with open(out_dir + "PoA_dict_" + month_w + '_' + instance + '.json', 'r') as json_file:
@@ -295,7 +316,7 @@ def plt_obj_vs_cong_all(time_instances, out_dir, month_w):
 
 		PoA_dict2 = {}
 
-		for i in range(len(x)):
+		for i in range(len(x2)):
 			PoA_dict2[int(x2[i])] = y2[i]
 
 		with open(out_dir + "cong_" + month_w + '_' + instance + '.json', 'r') as json_file:
@@ -409,10 +430,10 @@ def plot_poa_gls(out_dir, files_ID,  month_w, time_instances, week_day_list):
 			gls_cost_vec = json.load(json_file)
 
 		#Load PoA
-		with open(out_dir + "PoA_dict_noAdj_" + month_w + '_' + instance + '.json', 'r') as json_file:
-			PoA_dict_noAdj = json.load(json_file)
-		PoA_dict_noAdj = sorted(PoA_dict_noAdj.items())
-		x, y = zip(*PoA_dict_noAdj)
+		#with open(out_dir + "PoA_dict_noAdj_" + month_w + '_' + instance + '.json', 'r') as json_file:
+	#		PoA_dict_noAdj = json.load(json_file)
+#		PoA_dict_noAdj = sorted(PoA_dict_noAdj.items())
+		#x, y = zip(*PoA_dict_noAdj)
 
 		PoA_dict = {}
 
@@ -439,7 +460,7 @@ def plot_poa_gls(out_dir, files_ID,  month_w, time_instances, week_day_list):
 			poa_gls_dict[PoA_dict2[key]] = gls_cost_vec[str(key)]
 
 	
-		PoA_dict_noAdj = []
+		#PoA_dict_noAdj = []
 		#	PoA_dict = plt.plot(x, y, "bo-")
 		plt_ = plt.scatter(poa_gls_dict.values(),poa_gls_dict.keys(), alpha = 0.7, label= instance)
 		plt.legend(loc=0)
@@ -465,19 +486,49 @@ def plot_cost_funct(out_dir, files_ID, link, month_w, key, time_instances):
 		coeff = coeff[key]
 
 
+def plot_fcoeff(out_dir, month_w, instance):
+	with open(out_dir + "fcoeffs_" + month_w + '_' + instance + '.json', 'r') as json_file:
+		fcoeff_dict = json.load(json_file)
+	
+	x = np.linspace(0,1.3,100)
+
+	for day in fcoeff_dict.keys():
+		f = []
+		#print(fcoeff_dict[day].values()[0][1])
+		#print(range(len(fcoeff_dict[day])))
+		for i in x:
+			f.append(sum([fcoeff_dict[day].values()[0][a]*i**(a) for a in range(len(fcoeff_dict[day].values()[0]))]))
+		#print(f)
+		plt_ = plt.scatter(x,f, alpha = 0.7, label= str(day))
+		plt.legend(loc=0)
+		#plt.legend(loc=0)
+		#plt.legend(PoA_dict_noAdj, instance, loc=0)
+		#plt.xlabel('GLS cost ' + month_w)
+		#plt.ylabel('PoA')
+		#pylab.xlim(-0.1, 1.6)
+		#pylab.ylim(0.9, 2.0)
+	plt.grid("on")
+	fig_ = plt_.get_figure()
+	fig_.savefig(out_dir + 'fcoeffs'+ '_' + instance + '_' +  month_w +'.pdf')
+	fig_.clf()
 
 week_day_list = week_day_list[0:21]
+#week_day_list = [week_day_list[1]]
+print(week_day_list)
 
 for instance in time_instances['id']:
+#for instance in ['AM',  'PM']:    
 	plot_POA(instance, out_dir, month_w)
 	plot_cong(instance, out_dir, month_w)
 	plt_cong_vs_poa(instance, out_dir, month_w)
 	heatmap_ODdemand(out_dir, files_ID,  month_w, instance, week_day_list)
 	heatmap_ODdemand_adj(out_dir, files_ID,  month_w, instance, week_day_list)
+	plot_fcoeff(out_dir, month_w, instance)
 
 plt_obj_vs_cong_all(time_instances, out_dir, month_w)
 plt_obj_vs_all(time_instances, out_dir, month_w)
 plt_cong_vs_all(time_instances, out_dir, month_w)
+
 ''' 
 
 plot_poa_gls(out_dir, files_ID,  month_w, time_instances, week_day_list)

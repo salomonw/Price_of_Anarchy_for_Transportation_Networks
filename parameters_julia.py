@@ -9,9 +9,9 @@ import pandas as pd
 import os 
 
 'Parameters'
-dir_shpfile = 'G:/My Drive/GitHub/PoA/shp/Jing/journal.shp'
+dir_shpfile = 'G:/My Drive/Github/PoA/shp/Jing/journal.shp'
 dir_data = 'G:/Team Drives/MPO 2012/raw/Apr' # Will take all of the csv files contained in folders and subfolders
-files_ID = '_cdc_all_comp_apr_2012'
+files_ID = '_cdc_apr_2012_density'
 dir_capacity_data = 'G:/Team Drives/MPO 2012/capacity data/'
 
 out_dir = '../results/' + files_ID + '/' 
