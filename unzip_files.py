@@ -4,6 +4,7 @@ import pandas as pd
 from utils import *
 import glob
 import csv
+
 '''
 def extract_2012_INRIX_data(files_dir, tmc_net_dir, out_dir, files_ID, confidence_score_min,c_value_min):
 	#tmc_net_list = zload(tmc_net_dir + 'tmc_net_list' + files_ID + '.pkz')

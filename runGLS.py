@@ -1,4 +1,4 @@
-from parameters_julia import *
+from parameters import *
 from utils_julia import *
 from OD_functions import *
 #from functions import *

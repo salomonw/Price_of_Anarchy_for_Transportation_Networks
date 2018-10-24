@@ -398,7 +398,7 @@ def calculate_data_flows(out_dir, files_ID, time_instances, days_of_week):
             l_length[link] =  sum(tmc_length)
             tmc_avgSpeed = df2.groupby('tmc_code').mean()['speed']
             l_avgSpeed[link] = sum(tmc_avgSpeed*tmc_length)/sum(tmc_length)
-            l_avgTravelTime = df2.groupby('measurement_tstamp').sum()['travel_time'] ### travel_time_minutes -> for 2015 , travel_time -> for 2012 
+            l_avgTravelTime = df2.groupby('measurement_tstamp').sum()['travel_time_minutes'] ### travel_time_minutes -> for 2015 , travel_time -> for 2012 
             
             l_avgTravelTime[l_avgTravelTime==0] = float('nan')
             

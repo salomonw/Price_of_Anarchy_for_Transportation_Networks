@@ -595,22 +595,22 @@ for instance in instances:
 import pandas as pd
 import json
     
-instances= ['AM', 'MD', 'PM', 'NT'  ]
+instances= ['NT'  ]
 folder = jing_folders[0]
 
 for instance in instances:
     os.chdir('G:\My Drive\Github\PoA\Price_of_Anarchy_for_Transportation_Networks')
     list_of_lists_s = []
-    with open(out_dir + 'uni-class_traffic_assignment_MSA_flows_' + month_w + '_' + instance  +'.json', 'r') as json_file:
-        uni_class_traffic_assignment_MSA_flows_ = json.load(json_file)
+   # with open(out_dir + 'uni-class_traffic_assignment_MSA_flows_' + month_w + '_' + instance  +'.json', 'r') as json_file:
+    #    uni_class_traffic_assignment_MSA_flows_ = json.load(json_file)
 
-    uni_class_salo = pd.DataFrame.from_dict(uni_class_traffic_assignment_MSA_flows_).transpose()
+    #uni_class_salo = pd.DataFrame.from_dict(uni_class_traffic_assignment_MSA_flows_).transpose()
     
     
     
 
 
-    with open(out_dir + "coeffs_dict_" + month_w + "_" + instance +".json", 'r') as the_file:
+    with open(out_dir + "demandsDict/coeffs_dict" + day + "_" + month_w + "_" + instance +".json", 'r') as the_file:
         coeffs_dict_ = json.load(the_file)
 
 
