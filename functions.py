@@ -379,12 +379,12 @@ def calculate_data_flows(out_dir, files_ID, time_instances, days_of_week):
             
             df2['Shape_Leng'] = 0.000621371192 * df2['Shape_Leng']  #since the speed (miles/hr) and len (meters --> miles)
             df2['prod'] = df2['xflow'] * df2['Shape_Leng'] / df2['avg_speed_day']
-            df2['prod_speed'] = df2['speed'] * df2['Shape_Leng'] / df2['avg_speed_day']
+            df2['prod_speed'] = df2['Shape_Leng'] / df2['speed'] 
             df2['travelTime'] = df2['Shape_Leng'] / df2['avg_speed_day']
             
             grouped = df2.groupby('measurement_tstamp').sum()
             l_xflows['flow'] = grouped['prod'] / (grouped['travelTime'])
-            l_speed['speed'] = grouped['prod_speed'] / (grouped['travelTime'])
+            l_speed['speed'] = grouped['prod_speed'] / (grouped['Shape_Leng'])
             
             if l_xflows.isnull().values.any() == True:
                 l_xflows = l_xflows.interpolate(method='linear')
@@ -398,7 +398,7 @@ def calculate_data_flows(out_dir, files_ID, time_instances, days_of_week):
             l_length[link] =  sum(tmc_length)
             tmc_avgSpeed = df2.groupby('tmc_code').mean()['speed']
             l_avgSpeed[link] = sum(tmc_avgSpeed*tmc_length)/sum(tmc_length)
-            l_avgTravelTime = df2.groupby('measurement_tstamp').sum()['travel_time_minutes'] ### travel_time_minutes -> for 2015 , travel_time -> for 2012 
+            l_avgTravelTime = df2.groupby('measurement_tstamp').sum()['travel_time'] ### travel_time_minutes -> for 2015 , travel_time -> for 2012 
             
             l_avgTravelTime[l_avgTravelTime==0] = float('nan')
             

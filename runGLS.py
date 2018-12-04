@@ -21,8 +21,74 @@ def average_over_time(time_window, x):
     y = np.delete(y,0,1)
     y = np.asmatrix(y)
     return y
+
+
+def GLS(x, A):
+    """
+    x: sample matrix, each column is a link flow vector sample; 24 * K
+    A: path-link incidence matrix
+    P: logit route choice probability matrix
+    L: dimension of xi
+    ----------------
+    return: xi
+    ----------------
+    """
+
     
-def GLS(x, A, L):
+    K = np.size(x, 1)
+    
+    S = samp_cov(x)
+    
+    inv_S = inv(S).real
+    
+    A_t = np.transpose(A)
+
+    Q_ = np.dot(np.dot(A_t, inv_S), A)
+
+    Q = Q_
+
+    L = len(Q)
+
+    T = [np.dot(np.dot(A_t, inv_S), x[:, k]) for k in range(K)]
+    b = [sum(i) for i in zip(*T)]
+
+
+    model = Model("OD_matrix_estimation")
+
+    xi = []
+    for l in range(L):
+        xi.append(model.addVar(name='xi_' + str(l)))
+
+    model.update() 
+
+    # Set objective: (K/2) xi' * Q * xi - b' * xi
+    obj = 0
+    for i in range(L):
+        for j in range(L):
+            obj += (1.0 / 2) * K * xi[i] * Q[i, j] * xi[j]
+    for l in range(L):
+        obj += - b[l] * xi[l]
+    model.setObjective(obj)
+
+    # Add constraint: xi >= 0
+    for l in range(L):
+        model.addConstr(xi[l] >= 0)
+
+        #model.addConstr(xi[l] == 0)
+    model.update() 
+
+    model.setParam('OutputFlag', False)
+    model.optimize()
+
+    xi_list = []
+    for v in model.getVars():
+
+        xi_list.append(v.x)
+
+    return xi_list, model.objVal
+
+''' 
+def GLS(x, A):
     """
     x: sample matrix, each column is a link flow vector sample; 24 * K
     A: path-link incidence matrix
@@ -80,7 +146,7 @@ def GLS(x, A, L):
         xi_list.append(v.x)
 
     return xi_list, model.objVal
-
+'''
 def saveDemandVec(edges, out_dir, instance, files_ID, lam_list, month_id, day ):
     lam_dict = {}
     n = edges  # number of nodes
@@ -109,9 +175,9 @@ def runGLS_f(out_dir, files_ID, time_instances, month_w, week_day_list, average_
         gls_cost_ = {}
         x_ins = np.zeros(numEdges)
         #flow_after_conservation = pd.read_pickle(out_dir + 'flows_after_QP' + files_ID + '_' + instance + '.pkz')
-        #flow_after_conservation = pd.read_pickle(out_dir + 'flows_before_QP_2_' + files_ID + '_' + instance +'.pkz')
+        flow_after_conservation = pd.read_pickle(out_dir + 'flows_before_QP_2_' + files_ID + '_' + instance +'.pkz')
         #flow_after_conservation = pd.read_pickle(out_dir + 'density_links' + files_ID + '_' + instance +'.pkz')
-        flow_after_conservation = pd.read_pickle(out_dir + 'density_links_before_QP' + files_ID + '_' + instance +'.pkz')
+        #flow_after_conservation = pd.read_pickle(out_dir + 'density_links_before_QP' + files_ID + '_' + instance +'.pkz')
        
         flow_after_conservation = collections.OrderedDict(sorted(flow_after_conservation.items()))
         

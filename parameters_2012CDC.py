@@ -62,9 +62,9 @@ for i in range(9)[1:]:
             od_pairs.append([i, j])
 
 od_pairs
-number_of_routes_per_od = 3
+number_of_routes_per_od = 6
 theta = 0.8
-lower_bound_route = 0
+lower_bound_route = 0.02
 
 average_over_time_p = 5 # averaging the samples to find OD Demand *min
 
@@ -86,13 +86,3 @@ train_idx = range(1, 4)
 deg_grid = range(4, 9)
 c_grid = list(np.arange(.5, 3, .5))
 lamb_grid = [10. ** m for m in range(-3, 4)]
-
-
-
-
-
-
-
-
-
-

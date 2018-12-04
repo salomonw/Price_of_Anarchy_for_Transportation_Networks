@@ -9,9 +9,9 @@ import pandas as pd
 import os 
 
 'Parameters'
-dir_shpfile = 'G:/My Drive/Github/PoA/shp/Jing/journal.shp'
+dir_shpfile = 'G:/My Drive/GitHub/PoA/shp/Jing/journal.shp'
 dir_data = 'G:/Team Drives/MPO 2012/raw/Apr' # Will take all of the csv files contained in folders and subfolders
-files_ID = '_cdc_apr_2012_density'
+files_ID = '_cdc_all_comp_apr_2012'
 dir_capacity_data = 'G:/Team Drives/MPO 2012/capacity data/'
 
 out_dir = '../results/' + files_ID + '/' 
@@ -62,9 +62,9 @@ for i in range(9)[1:]:
             od_pairs.append([i, j])
 
 od_pairs
-number_of_routes_per_od = 6
+number_of_routes_per_od = 3
 theta = 0.8
-lower_bound_route = 0.02
+lower_bound_route = 0
 
 average_over_time_p = 5 # averaging the samples to find OD Demand *min
 

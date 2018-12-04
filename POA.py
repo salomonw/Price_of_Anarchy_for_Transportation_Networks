@@ -455,7 +455,11 @@ def calc_testing_errors(out_dir, files_ID, time_instances, month_w, week_day_lis
         iter_week = []
         iter_week.append('full')
 
-        with open(out_dir + "coeffs_keys_"+ month_w + "_" + instance +'.json', 'r') as json_file:
+#        with open(out_dir + "coeffs_keys_"+ month_w + "_" + instance +'.json', 'r') as json_file:
+ #           coeffs_keys = json.load(json_file)
+
+
+        with open(out_dir + "demandsDict/coeffs_dictfull_" + month_w + "_" + instance +'.json', 'r') as json_file:
             coeffs_keys = json.load(json_file)
 
         for day in iter_week:

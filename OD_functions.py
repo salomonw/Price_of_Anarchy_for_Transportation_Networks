@@ -2,6 +2,7 @@
 from utils import *
 from math import exp
 from functions import *
+from numpy.linalg import inv
 
 def od_pair_definition(out_dir, files_ID ):
     G = zload(out_dir + 'G' + files_ID + '.pkz')
@@ -11,7 +12,12 @@ def od_pair_definition(out_dir, files_ID ):
             if i != j:
                 od_pairs.append((i, j))
     zdump(od_pairs, out_dir + 'od_pairs'+ files_ID + '.pkz')
-
+    
+    with open(out_dir + 'od_pairs'+ files_ID + '.txt', 'w') as f:
+        cnt = 0
+        for od in od_pairs:
+            f.write(str(cnt) + "\t" + str(od) + '\n')
+            cnt += 1
 
 def routes(G, out_dir, files_ID, od_pairs, number_of_routes_per_od, instance):
     
@@ -124,6 +130,8 @@ def filter_routes(out_dir, instance, files_ID, lower_bound_route):
     zdump(A, out_dir + 'path-link_incidence_matrix_'+ instance + files_ID + '.pkz')
     zdump(P, out_dir + 'OD_pair_route_incidence_'+ instance + files_ID + '.pkz') 
     zdump(routes, out_dir + 'routes_info'+ instance + '.pkz')
+
+    np.savetxt(out_dir + 'path-link_incidence_matrix_' + instance + files_ID + '.txt', A, '%i')
     
 def path_incidence_matrix(out_dir, files_ID, time_instances, number_of_routes_per_od, theta, lower_bound_route ):
     G_ = zload( out_dir + 'G_' + files_ID + '.pkz' )
@@ -329,6 +337,70 @@ def path_incidence_matrix_jing(out_dir, files_ID, time_instances, month_id, numb
 
 
 
+def GLS(x, A):
+    """
+    x: sample matrix, each column is a link flow vector sample; 24 * K
+    A: path-link incidence matrix
+    P: logit route choice probability matrix
+    L: dimension of xi
+    ----------------
+    return: xi
+    ----------------
+    """
+
+
+    K = np.size(x, 1)
+    
+    S = samp_cov(x)
+    
+    inv_S = inv(S).real
+    
+    A_t = np.transpose(A)
+
+    Q_ = np.dot(np.dot(A_t, inv_S), A)
+
+    Q = Q_
+
+    L = len(Q)
+
+    T = [np.dot(np.dot(A_t, inv_S), x[:, k]) for k in range(K)]
+    b = [sum(i) for i in zip(*T)]
+
+
+    model = Model("OD_matrix_estimation")
+
+    xi = []
+    for l in range(L):
+        xi.append(model.addVar(name='xi_' + str(l)))
+
+    model.update() 
+
+    # Set objective: (K/2) xi' * Q * xi - b' * xi
+    obj = 0
+    for i in range(L):
+        for j in range(L):
+            obj += (1.0 / 2) * K * xi[i] * Q[i, j] * xi[j]
+    for l in range(L):
+        obj += - b[l] * xi[l]
+    model.setObjective(obj)
+
+    # Add constraint: xi >= 0
+    for l in range(L):
+        model.addConstr(xi[l] >= 0)
+
+        #model.addConstr(xi[l] == 0)
+    model.update() 
+
+    model.setParam('OutputFlag', False)
+    model.optimize()
+
+    xi_list = []
+    for v in model.getVars():
+
+        xi_list.append(v.x)
+
+    return xi_list, model.objVal
+'''
 def GLS(xa, A, L):
     import numpy as np
     from numpy.linalg import inv
@@ -388,7 +460,7 @@ def GLS(xa, A, L):
  
     return xi_list, model.objVal
 
-
+'''
 def GLS2(x, A, P, L):
     import numpy as np
     from numpy.linalg import inv
@@ -457,13 +529,13 @@ def ODandRouteChoiceMat(P, xi_list):
     L = np.size(P,0)  # dimension of lam
     
     lam = []
-    for l in range(L):
+    for l in range(size(P,0)):
         lam.append(model.addVar(name='lam_' + str(l)))
         model.update()
         model.addConstr(lam[l] >= 0)
         
     p = {}
-    for i in range(np.size(P,0)):
+    for i in range(size(P,0)):
         for j in range(np.size(P,1)):
             p[(i,j)] = model.addVar(name='p_' + str(i) + ',' + str(j))  
             model.update()
@@ -471,17 +543,17 @@ def ODandRouteChoiceMat(P, xi_list):
             if P[i,j] == 0:
                 model.addConstr(p[(i,j)] == 0)
     
-    for i in range(np.size(P,0)):
-        model.addConstr(sum([p[(i,j)] for j in range(np.size(P,1))]) == 1)
+    for i in range(size(P,0)):
+        model.addConstr(quicksum(p[(i,j)] for j in range(size(P,1))) == 1)
     
     for idx in range(len(xi_list)):
-        model.addConstr(sum([p[(l,idx)] * lam[l] for l in range(L)]) >= xi_list[idx])
-        model.addConstr(sum([p[(l,idx)] * lam[l] for l in range(L)]) <= xi_list[idx])
+        model.addConstr(quicksum(p[(l,idx)] * lam[l] for l in range(L)) >= xi_list[idx])
+        model.addConstr(quicksum(p[(l,idx)] * lam[l] for l in range(L)) <= xi_list[idx])
     
     model.update()
     
     obj = 0
-    model.setObjective(obj)
+    model.setObjective(quicksum(p[1,j] for j in range(size(P,1))))
     
     model.update() 
     
@@ -496,7 +568,44 @@ def ODandRouteChoiceMat(P, xi_list):
             
     return lam_list
 
-                    
+'''
+
+def GLSp2(xi_list, P, L):
+    
+    P[P>0]=1
+    mGLSJulia = Model('GLSp2')
+    
+    lam = []
+    
+    for i in range(size(P,0)):
+        lam.append(mGLSJulia.addVar(name = 'lam_'+ str(i)))
+        mGLSJulia.addNLConstraint(quicksum(p[i,j] for j in range(size(P,2))) == 1)
+        
+        for j in range(size(P,1)):
+            p[(i,j)] = mGLSJulia.addVar(name='p_' + str(i) + ',' + str(j))
+            
+            if P[i,j] == 0:
+                mGLSJulia.addConstr(p[(i,j)] >= 0)
+    
+    mGLSJulia.update()
+    
+    for i in range(size(P,0)):
+        mGLSJulia.addNLConstraint(sum{p[i,j], j = 1:size(P,1)} == 1)
+        
+    for l in range(len(xi_list)):
+        mGLSJulia.addNLConstraint(sum{p[i,l] * lam[i], i = 1:size(P,1)} == xi_list[l])
+    
+    mGLSJulia.update()
+    
+    mGLSJulia.setNLObjective(Min, sum{p[1,j], j = 1:size(P,2)})  # play no actual role, but could not use zero objective
+    
+    mGLSJulia.update()
+
+    model.setParam('OutputFlag', False)
+    model.optimize()
+    
+'''
+        
 def runGLS(out_dir, files_ID, time_instances, month_id):
     import numpy as np
     from numpy.linalg import inv

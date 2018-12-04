@@ -594,56 +594,55 @@ for instance in instances:
 ###### ------------------ Comparison of coefficients -------------------
 import pandas as pd
 import json
-    
-instances= ['NT'  ]
+import random
+day = "full"    
+instances= ['AM', 'MD', 'PM', 'NT' ]
 folder = jing_folders[0]
 
-for instance in instances:
-    os.chdir('G:\My Drive\Github\PoA\Price_of_Anarchy_for_Transportation_Networks')
-    list_of_lists_s = []
-   # with open(out_dir + 'uni-class_traffic_assignment_MSA_flows_' + month_w + '_' + instance  +'.json', 'r') as json_file:
-    #    uni_class_traffic_assignment_MSA_flows_ = json.load(json_file)
-
-    #uni_class_salo = pd.DataFrame.from_dict(uni_class_traffic_assignment_MSA_flows_).transpose()
-    
-    
-    
-
-
-    with open(out_dir + "demandsDict/coeffs_dict" + day + "_" + month_w + "_" + instance +".json", 'r') as the_file:
-        coeffs_dict_ = json.load(the_file)
-
-
-
-    os.chdir(folder)
-   
-    os.chdir(folder)
-    list_of_lists_j = []
-    with open('../temp_files/OD_demand_matrix_Apr_weekday_'+ instance + '.txt', 'r') as the_file:
-        idx = 0
-        for line in the_file:
-            inner_list = [elt.strip() for elt in line.split(',')]
-            list_of_lists_j.append(inner_list)
-
-    od_demand_j=[]
-    x_axis=[]
-    for i in list_of_lists_j:
-        od_demand_j.append(float(i[2]))
-        x_axis.append(str((int(i[0]),int(i[1]))))
-
-
-    od_demand_s=[]
-    for i in list_of_lists_s:
-        od_demand_s.append(float(i[2]))
-
+def BPR(coeffs, max_x):
+    x = np.linspace(0,max_x)
+    y2 = []
+    for xi in x:
+        y = np.sum([coeffs[i]*xi**(i) for i in range(len(coeffs))])
+        y2.append(y)
+    return x, y2
+        
+for h in range(2):
     plt.figure()
-    plt.title('OD Demand '+ instance + ' period')
-    plt.bar(range(len(x_axis)), od_demand_j, label= 'od jing', alpha = 0.5)
-    plt.bar(range(len(x_axis)),od_demand_s,label= 'od salo', alpha = 0.5)
-    #plt.xlabel(x_axis)
+    for instance in instances:
+        os.chdir('G:\My Drive\Github\PoA\Price_of_Anarchy_for_Transportation_Networks')
+        
+        with open(out_dir + "coeffs_dict" + "_" + month_w + "_" + instance +".json", 'r') as the_file:
+            coeffs_dict_s = json.load(the_file)
+        
+        with open(out_dir + "coeffs_keys" + "_" + month_w + "_" + instance +".json", 'r') as the_file:
+            coeffs_keys_s = json.load(the_file)
+        
+        os.chdir(folder)
+           
+        os.chdir(folder)
+        list_of_lists_j = []
+        with open('../temp_files/coeffs_dict' + "_" + month_w + "_" + instance +".json", 'r') as json_file:
+            coeffs_dict_j = json.load(json_file)
+            
+        
+        key = random.choice(coeffs_keys_s)
+        key = "(8, 0.5, 1000.0, 1)"
+        x_s, y_s = BPR(coeffs_dict_s[key], 1.2)
+        x_j, y_j= BPR(coeffs_dict_j[key.replace(" ", "")], 1.2)
+        
+        #print(1)
+        #plt.figure()
+        if h == 0:
+            plt.title('coeff_key'+ key + ' Salo')
+            plt.plot(x_s, y_s, label= instance, alpha = 1)
+        if h == 1:   
+            plt.title('coeff_key'+ key + ' Jing')
+            plt.plot(x_j, y_j, label= instance, alpha = 1)
+        #plt.bar(range(len(x_axis)),od_demand_s,label= 'od salo', alpha = 0.5)
+        #plt.xlabel(x_axis)
     plt.legend()
     plt.show()
-
 
 
 
@@ -711,7 +710,7 @@ for instance in instances:
             for day in week_day_list:
                 flow_day_j_ = link_day_minute_Apr_dict_JSON_["link_" + str(link) + "_" + str(day)][instance + "_flow_minute"]
                 flow_day_s__ = flow_after_conservation["link_" + str(dicti[link]) + "_" + str(year) + "_" + str(month) + "_" + str(day)]
-                flow_day_s_  = flow_day_s__["denisty_" + str(instance)]
+                flow_day_s_  = flow_day_s__["flow_" + str(instance)]
                 
                 flow_day_j.extend(flow_day_j_)
                 flow_day_s.extend(flow_day_s_) 
@@ -759,7 +758,7 @@ for instance in instances:
         files_IDs = ['_cdc_all_comp_apr_2012', '_cdc_apr_2015']
         years = [2012, 2015]
         week_day_lists = [[2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 23, 24, 25, 26, 27, 30],[1 ,2 ,3 ,6 ,7 ,8 ,9 ,10, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 27, 28 ,29, 30]]
-        instances = ["NT"]
+        instances = ["AM"]
         for j in range(len(out_dirs)):
             out_dir = out_dirs[j]
             files_ID = files_IDs[j]
@@ -835,6 +834,7 @@ for instance in instances:
                     speed_day_s.extend(speed_day_s_) 
                     speed_day_s = [x for x in speed_day_s if str(x) != 'nan']
                     capac = capacity[str(dicti[link]) + "_" + str(instance)]
+            
             
                 fig.add_subplot(rows, columns, i)
                 #plt.figure()

@@ -6,7 +6,10 @@ Created on Mon Jun 11 13:50:19 2018
 """
 
 
-# ---------------------------- Load Function adn parameters ------------------
+# ---------------------------- Load Function and parameters ------------------
+import os
+os.chdir('G:/My Drive/Github/PoA/Price_of_Anarchy_for_Transportation_Networks')
+
 execfile('load_fcn_par.py')
 
 # ---------------------------- Preprocessing ----------------------------------
@@ -37,7 +40,9 @@ od_pair_definition(out_dir, files_ID )
 
 path_incidence_matrix(out_dir, files_ID, time_instances, number_of_routes_per_od, theta, lower_bound_route )
 
-runGLS_f(out_dir, files_ID, time_instances, month_w, week_day_list, average_over_time)
+
+"RUN JULIA: GLS_j.jl "
+#runGLS_f(out_dir, files_ID, time_instances, month_w, week_day_list, average_over_time)
 
 # ------------------------------ Inverse Optimization -------------------------
 
@@ -56,15 +61,27 @@ create_East_Massachusetts_net(out_dir, files_ID, month_w, month, year, time_inst
 
 month_id = month_w
 
-execfile('../demand_adjustment_MA_density/01_find_paths.py')
+
+execfile('POA_1118/01_find_paths.py')
+execfile('POA_1118/02_create_node_link_incidence.py')
+
+
+
+
 
 execfile('../demand_adjustment_MA_density/03_create_node_link_incidence.py')
+
+
 
 '''
 
 RUN JULIA: 04. prepare_demand_data
+include()
+
+include("06.\ MSAcross.jl")
 
 RUN JULIA: 05. demand_adjustment_full
+
 
 '''
 
