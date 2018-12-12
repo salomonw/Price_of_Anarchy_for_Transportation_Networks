@@ -20,9 +20,8 @@ def od_pair_definition(out_dir, files_ID ):
             cnt += 1
 
 def routes(G, out_dir, files_ID, od_pairs, number_of_routes_per_od, instance):
-    
     # Create Routes
-    routes = []
+    routes_ = []
     link_dict = dict(zip(list(G.edges()),range(len(list(G.edges())))))
     OD_dict = dict(zip(od_pairs,range(len(od_pairs))))
     OD_pair_route_dict = {}
@@ -48,35 +47,35 @@ def routes(G, out_dir, files_ID, od_pairs, number_of_routes_per_od, instance):
         
         OD_pair_route_list = []
         for i in filtered_routes:
-            routes.append([i[0], i[1], cnt_route])
+            routes_.append([i[0], i[1], cnt_route])
             OD_pair_route_list.append(cnt_route)
             cnt_route += 1
         OD_pair_route_dict[cnt_od] = OD_pair_route_list
         cnt_od += 1
             
         # Create Path-Link Incidence Matrix
-        r = len(routes) # Number of routes
+        r = len(routes_) # Number of routes
         m = len(list(G.edges())) # Number of links
         A = np.zeros((m, r))
-        for route2 in routes:
+        for route2 in routes_:
             edgesinpath=zip(route2[0][0:],route2[0][1:])           
             for edge in edgesinpath:
                 #print(link)
                 link = link_dict[edge] 
-                A[link,routes.index(route2)] = 1
+                A[link,routes_.index(route2)] = 1
                 
     zdump(A, out_dir + 'path-link_incidence_matrix_'+ instance + files_ID + '.pkz')
 
     #length_of_route_list = [[i[1][0], i[2]] for i in routes]
     length_of_route_dict = {}
-    for i in routes:
+    for i in routes_:
         length_of_route_dict[i[2]]=i[1][0] 
         
     # calculate route choice probability matrix P
     # logit choice parameter
     theta = 0.8 #send as parameter !
     s = len(od_pairs) # number of OD pairs
-    r = len(routes) # Number of routes
+    r = len(routes_) # Number of routes
     P = np.zeros((s, r))
     for i in range(s):
         for r_ in OD_pair_route_dict[i]:
@@ -85,54 +84,51 @@ def routes(G, out_dir, files_ID, od_pairs, number_of_routes_per_od, instance):
             P[i, r_] = exp(- theta * length_of_route_dict[r_]) / \
             sum([exp(- theta * length_of_route_dict[j]) \
                              for j in OD_pair_route_dict[i]])
+    
+    
     zdump(P, out_dir + 'OD_pair_route_incidence_'+ instance + files_ID + '.pkz')     
-    zdump(routes, out_dir + 'routes_info'+ instance + '.pkz')
+    zdump(routes_, out_dir + 'routes_info'+ instance + '.pkz')
     #return routes, A, P
 
 #number_of_routes_per_od = 3
 #routes = routes(G, od_pairs, number_of_routes_per_od)
 
-def filter_routes(out_dir, instance, files_ID, lower_bound_route):
-    
-    
-    A = zload(out_dir + 'path-link_incidence_matrix_'+ instance + files_ID + '.pkz')
-    P = zload(out_dir + 'OD_pair_route_incidence_'+ instance + files_ID + '.pkz')
-    routes =  zload(out_dir + 'routes_info'+ instance + '.pkz')
-    
-    routes = np.c_[np.sum(P,axis=0),routes]
-    routes = pd.DataFrame(routes)
-    routes = routes [ routes[0] > lower_bound_route ]
-    
-    
-    P_t = np.transpose(P)
-    A_t = np.transpose(A)
-    
-    idx = np.where(sum(P)>lower_bound_route)
-    
+def filter_routes_a(out_dir, instance, files_ID, lower_bound_route):
+    A_ = zload(out_dir + 'path-link_incidence_matrix_'+ instance + files_ID + '.pkz')
+    P_ = zload(out_dir + 'OD_pair_route_incidence_'+ instance + files_ID + '.pkz')
+   # print(np.size(P_,1))
+    routes_ =  zload(out_dir + 'routes_info'+ instance + '.pkz')
+    routes_ = np.c_[np.sum(P_,axis=0), routes_]
+    routes_ = pd.DataFrame(routes_)
+    routes_ = routes_[routes_[0] > lower_bound_route] 
+    P_t = np.transpose(P_)
+    A_t = np.transpose(A_)  
+    idx = np.where(sum(P_,0)>lower_bound_route)
+    #print(np.size(idx,1))
+    #print(np.size(P_t,0))
     P_t = P_t[idx]
+    #print(np.size(P_t,0))
     P = np.transpose(P_t)
-    
+    #print(np.size(P,1))
     A_t = A_t[idx]
     A = np.transpose(A_t)
-    
     P = [[float(i)/sum(P[j]) for i in P[j]] for j in range(len(P))]
+    #P2 = np.zeros((len(P), len(P[0])))
+    #for i in range(len(P)):
+    #    for j in range(len(P[i])):
+    #        P2[i,j] = P[i][j]
+    P2 = P
+    #print(np.size(P2,1))
+    np.save(out_dir + 'path-link_incidence_matrix_filt'+ instance + files_ID , A)
+    #zdump(A, out_dir + 'path-link_incidence_matrix_'+ instance + files_ID + '.pkz')
+    np.save(out_dir + 'OD_pair_route_incidence_filt_'+ instance + files_ID , P2) 
+    #zdump(P_t, out_dir + 'OD_pair_route_incidence_filt_'+ instance + files_ID + '.pkz') 
+    np.save(out_dir + 'routes_info_filt_'+ instance , routes_)    
+    #zdump(routes_, out_dir + 'routes_info_filt_'+ instance + '.pkz')
+    np.savetxt(out_dir + 'path-link_incidence_matrix_filt' + instance + files_ID + '.txt', A, '%i')
     
-    P = np.asmatrix(P)
-    
-    idx2 = np.where(P>0)
-    
-   # routes = np.c_[np.sum(P,axis=0),routes]
-    #routes = pd.DataFrame(routes)
-    #routes = routes [ routes[0] > lower_bound_route ]
-    #P[idx2] = 1
-   
 
-    zdump(A, out_dir + 'path-link_incidence_matrix_'+ instance + files_ID + '.pkz')
-    zdump(P, out_dir + 'OD_pair_route_incidence_'+ instance + files_ID + '.pkz') 
-    zdump(routes, out_dir + 'routes_info'+ instance + '.pkz')
 
-    np.savetxt(out_dir + 'path-link_incidence_matrix_' + instance + files_ID + '.txt', A, '%i')
-    
 def path_incidence_matrix(out_dir, files_ID, time_instances, number_of_routes_per_od, theta, lower_bound_route ):
     G_ = zload( out_dir + 'G_' + files_ID + '.pkz' )
     od_pairs = zload(out_dir + 'od_pairs'+ files_ID + '.pkz')
@@ -140,7 +136,9 @@ def path_incidence_matrix(out_dir, files_ID, time_instances, number_of_routes_pe
     for instance in list(time_instances['id']):
         G = G_[instance]
         routes(G, out_dir, files_ID, od_pairs, number_of_routes_per_od, instance)
-        filter_routes(out_dir, instance, files_ID, lower_bound_route)
+    
+    for instance in list(time_instances['id']):
+        filter_routes_a(out_dir, instance, files_ID, lower_bound_route)
         
 
 def path_incidence_matrix_jing(out_dir, files_ID, time_instances, month_id, number_of_routes_per_od, theta, lower_bound_route ):
@@ -398,8 +396,9 @@ def GLS(x, A):
     for v in model.getVars():
 
         xi_list.append(v.x)
+    gls_cost =model.objVal
+    return xi_list, gls_cost
 
-    return xi_list, model.objVal
 '''
 def GLS(xa, A, L):
     import numpy as np

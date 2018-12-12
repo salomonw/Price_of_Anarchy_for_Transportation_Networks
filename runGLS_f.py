@@ -10,6 +10,10 @@ import math
 
 # runGLS_f exectuable from Julia (delete writing the txt files)
 def GLS_p1(instance, day_, average_over_time):
+    try:
+        del A,P
+    except:
+        []
     time_window = average_over_time
     edges = zload(out_dir + 'link_length_dict.pkz')
     node_link_inc = zload(out_dir + 'node_link_incidence.pkz')    
@@ -31,10 +35,10 @@ def GLS_p1(instance, day_, average_over_time):
 
     a = []
     #x = []
-    A = zload(out_dir + 'path-link_incidence_matrix_'+ instance + files_ID + '.pkz')
-    A = np.asmatrix(A)
-    P = zload(out_dir + 'OD_pair_route_incidence_'+ instance + files_ID + '.pkz')
-    P = np.asmatrix(P)   
+    A = np.load(out_dir + 'path-link_incidence_matrix_filt'+ instance + files_ID + '.npy')
+   # A = np.asmatrix(A)
+    P = np.load(out_dir + 'OD_pair_route_incidence_filt_'+ instance + files_ID + '.npy')
+   # P = np.asmatrix(P)   
 
     #for day_ in week_day_Apr_list:    
     x = np.zeros(numEdges)
@@ -86,9 +90,6 @@ def GLS_p1(instance, day_, average_over_time):
     return xi_list, x, A, P, gls_cost
 
 
-
-
-
 # runGLS_f exectuable from Julia, for flows over days
 def GLS_p1_all(instance, week_day_list, average_over_time, period): # notice that period can be "all" or "daily_avg"
     time_window = average_over_time
@@ -99,7 +100,6 @@ def GLS_p1_all(instance, week_day_list, average_over_time, period): # notice tha
     x2 = np.zeros(numEdges)
     for day_ in week_day_list:
         week_day_Apr_list = week_day_list
-
         #for instance in time_instances['id']:
         gls_cost_ = {}
         x_ins = np.zeros(numEdges)
@@ -107,15 +107,13 @@ def GLS_p1_all(instance, week_day_list, average_over_time, period): # notice tha
         flow_after_conservation = pd.read_pickle(out_dir + 'flows_before_QP_2_' + files_ID + '_' + instance +'.pkz')
         #flow_after_conservation = pd.read_pickle(out_dir + 'density_links' + files_ID + '_' + instance +'.pkz')
         #flow_after_conservation = pd.read_pickle(out_dir + 'density_links_before_QP' + files_ID + '_' + instance +'.pkz')
-
         flow_after_conservation = collections.OrderedDict(sorted(flow_after_conservation.items()))
-
         a = []
-        A = zload(out_dir + 'path-link_incidence_matrix_'+ instance + files_ID + '.pkz')
-        A = np.asmatrix(A)
-        P = zload(out_dir + 'OD_pair_route_incidence_'+ instance + files_ID + '.pkz')
-        P = np.asmatrix(P)   
-
+        A = np.load(out_dir + 'path-link_incidence_matrix_filt'+ instance + files_ID + '.npy')
+        #A = np.asmatrix(A)
+        P = np.load(out_dir + 'OD_pair_route_incidence_filt_'+ instance + files_ID + '.npy')
+        #P = np.asmatrix(P)   
+       
         #for day_ in week_day_Apr_list:    
         x = np.zeros(numEdges)
         L = np.size(P, 0)        
@@ -139,7 +137,6 @@ def GLS_p1_all(instance, week_day_list, average_over_time, period): # notice tha
         x = np.transpose(y)
         x = np.matrix(x)
 
-
         if period == "all":
             x2 = np.c_[x2, x]
           #  x2 = np.delete(x2,0,1)
@@ -148,10 +145,7 @@ def GLS_p1_all(instance, week_day_list, average_over_time, period): # notice tha
             x = np.matrix(x)
             x2 = np.c_[x2 ,x]
           #  x2 = np.delete(x2,0,1)
-
     x2 = np.delete(x2,0,1)
-
-
     xi_list = None
     try:
         xi_list, gls_cost = GLS(x2, A)
@@ -171,12 +165,10 @@ def GLS_p1_all(instance, week_day_list, average_over_time, period): # notice tha
                 xi_list = 1
                 print('error, no PSD Q was found')
             xi_list, gls_cost = GLS(x1, A)
-
+            return xi_list, x, A, P, gls_cost
         except:
             pass
-
     return xi_list, x, A, P, gls_cost
-
 
 
 

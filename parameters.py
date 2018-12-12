@@ -64,7 +64,7 @@ for i in range(9)[1:]:
 od_pairs
 number_of_routes_per_od = 3
 theta = 0.8
-lower_bound_route = 0
+lower_bound_route = 0.02
 
 average_over_time_p = 5 # averaging the samples to find OD Demand *min
 

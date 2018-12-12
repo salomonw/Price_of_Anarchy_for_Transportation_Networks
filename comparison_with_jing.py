@@ -547,12 +547,12 @@ for instance in instances:
 
 
 ### ----------- Comparison of OD-Demands --------------
-instances= ['AM', 'MD', 'PM', 'NT'  ]
+instances= ['AM', 'MD', 'PM', 'NT']
 folder = jing_folders[0]
 for instance in instances:
     os.chdir('G:/My Drive/Github/PoA/Price_of_Anarchy_for_Transportation_Networks')
     list_of_lists_s = []
-    with open(out_dir + 'OD_demands/OD_demand_matrix_'+ month_w + '_full_weekday_'+ instance + files_ID + '.txt', 'r') as the_file:
+    with open(out_dir + 'OD_demands/OD_demand_matrix_'+ month_w + '_all_weekday_'+ instance + files_ID + '.txt', 'r') as the_file:
         idx = 0
         for line in the_file:
             inner_list = [elt.strip() for elt in line.split(',')]
@@ -583,7 +583,6 @@ for instance in instances:
     plt.bar(range(len(x_axis)),od_demand_s,label= 'od salo', alpha = 0.5)
     #plt.xlabel(x_axis)
     plt.legend()
-
     plt.show()
 
 

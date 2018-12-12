@@ -54,6 +54,8 @@ RUN JULIA: 01. InvOpt_salo_f.jl  JULIA 0.6.4
 
 create_testing_set(week_day_list_1, week_day_list_2, week_day_list_3, year, month, time_instances, month_w, out_dir, files_ID)
 
+week_day_list.append("all")
+
 create_East_Massachusetts_trips(out_dir, files_ID, month_w, time_instances, n_zones, week_day_list)
 
 create_East_Massachusetts_net(out_dir, files_ID, month_w, month, year, time_instances, n_zones, week_day_list )
@@ -62,14 +64,31 @@ create_East_Massachusetts_net(out_dir, files_ID, month_w, month, year, time_inst
 month_id = month_w
 
 
-execfile('POA_1118/01_find_paths.py')
-execfile('POA_1118/02_create_node_link_incidence.py')
-
-
-
-
+execfile('../demand_adjustment_MA/01_find_paths.py')
+#execfile('../demand_adjustment_MA/02_create_node_link_incidence.py')
 
 execfile('../demand_adjustment_MA_density/03_create_node_link_incidence.py')
+
+
+'''
+
+RUN JULIA: POA_iteration
+
+'''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

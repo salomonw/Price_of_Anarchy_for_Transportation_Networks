@@ -79,7 +79,7 @@ function saveDemandVec(od_pairs, file_name, lam_list)
 	end
 end
 
-
+#=
 # Solve P1 and P2 of GLS for every day and every instance
 for instance in time_instances
 	for day in week_day_list
@@ -102,6 +102,7 @@ for instance in time_instances
 	    #close(outfile)
 	end
 end
+=#
 
 # Solve P1 and P2 of GLS for every instance using ALL observations
 for instance in time_instances
@@ -109,34 +110,39 @@ for instance in time_instances
 	P[P.>0] = 1;
 	lam_, Pr, obj  = GLS_p2(xi_list, P);
 
-	file_name = out_dir * "OD_demands/OD_demand_matrix_" * month_w * "_" * "full" *  "_weekday_" * instance * files_ID * ".txt"
-	saveDemandVec(od_pairs, file_name, lam_)
+	for i in ["all", "full"]
+		file_name = out_dir * "OD_demands/OD_demand_matrix_" * month_w * "_" * i *  "_weekday_" * instance * files_ID * ".txt"
+		saveDemandVec(od_pairs, file_name, lam_)
 
-	P_file_name = out_dir * "OD_demands/OD_route_prob_matrix_" * month_w * "_" * "full" *  "_weekday_" * instance * files_ID * ".txt"
-	writedlm(P_file_name, Pr) 
+		P_file_name = out_dir * "OD_demands/OD_route_prob_matrix_" * month_w * "_" * i *  "_weekday_" * instance * files_ID * ".txt"
+		writedlm(P_file_name, Pr) 
 
-	# Calculate flows APg
-	flow_file = out_dir * "OD_demands/flow_APg_" * month_w * "_" * "full" *  "_weekday_" * instance * files_ID * ".txt"
-	writedlm(flow_file, A*Pr'*lam_ )
+		# Calculate flows APg
+		flow_file = out_dir * "OD_demands/flow_APg_" * month_w * "_" * i *  "_weekday_" * instance * files_ID * ".txt"
+		writedlm(flow_file, A*Pr'*lam_ )
 
-	# Store data flows flows 
-	flow_file = out_dir * "OD_demands/flow_data_" * month_w * "_" * "full" *  "_weekday_" * instance * files_ID * ".txt"
-	writedlm(flow_file, mean(x,2) )
+		# Store data flows flows 
+		flow_file = out_dir * "OD_demands/flow_data_" * month_w * "_" * i *  "_weekday_" * instance * files_ID * ".txt"
+		writedlm(flow_file, mean(x,2) )
 
-	gls_name = out_dir * "OD_demands/gls_cost_vec_" * month_w * "_weekday_" * instance * files_ID * ".json"
-	outfile = open(gls_name, "w")
-    JSON.print(outfile, gls_cost)
-    close(outfile)
+		gls_name = out_dir * "OD_demands/gls_cost_vec_" * month_w * "_weekday_" * instance * files_ID * ".json"
+		outfile = open(gls_name, "w")
+	    JSON.print(outfile, gls_cost)
+	    close(outfile)
+	end
 end
-
 #=
 # Solve P1 and P2 of GLS for every instance using daily averages
 for instance in time_instances
-	xi_list, x, A, P = runGLS_f.GLS_p1_all(instance, week_day_list, average_over_time_p, "daily_avg");
+	xi_list, x, A, P = runGLS_f.GLS_p1_all(instance, week_day_list, average_over_time_p, "all")
 	P[P.>0] = 1;
 	lam_, Pr, obj  = GLS_p2(xi_list, P);
 
+	file_name = out_dir * "OD_demands/OD_demand_matrix_" * month_w * "_" * "full" *  "_weekday_" * instance * files_ID * ".txt"
+	saveDemandVec(od_pairs, file_name, lam_)
+
 	file_name = out_dir * "OD_demands/OD_demand_matrix_" * month_w * "_" * "all" *  "_weekday_" * instance * files_ID * ".txt"
 	saveDemandVec(od_pairs, file_name, lam_)
+
 end
 =#
